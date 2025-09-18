@@ -1,7 +1,6 @@
-package com.example.signinandlogin.controller
+package com.example.signupandlogin.controller
 
-import com.example.signinandlogin.model.AuthResult
-import com.example.signinandlogin.model.User
+import com.example.signupandlogin.model.AuthResult
 
 class AuthController {
     var result: AuthResult? = null

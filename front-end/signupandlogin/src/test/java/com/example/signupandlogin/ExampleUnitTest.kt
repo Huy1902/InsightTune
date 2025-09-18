@@ -1,4 +1,4 @@
-package com.example.signinandlogin
+package com.example.signupandlogin
 
 import org.junit.Test
 

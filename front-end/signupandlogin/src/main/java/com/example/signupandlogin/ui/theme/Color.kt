@@ -1,4 +1,4 @@
-package com.example.signinandlogin.ui.theme
+package com.example.signupandlogin.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

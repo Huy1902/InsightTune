@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.signinandlogin"
+    namespace = "com.example.signupandlogin"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.signinandlogin"
+        applicationId = "com.example.signupandlogin"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

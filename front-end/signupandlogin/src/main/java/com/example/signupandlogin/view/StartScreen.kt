@@ -1,4 +1,4 @@
-package com.example.signinandlogin.view
+package com.example.signupandlogin.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -19,8 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.signinandlogin.controller.AuthController
-import com.example.signinandlogin.R
+import com.example.signupandlogin.controller.AuthController
+import com.example.signupandlogin.R
 
 @Composable
 fun StartScreen(onSwitchToSignUp: () -> Unit) {
