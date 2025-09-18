@@ -11,8 +11,5 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @ComponentScan (basePackages = {"com.pm.userservice"})
 public class WebConfig implements WebMvcConfigurer {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 }

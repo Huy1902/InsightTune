@@ -6,7 +6,6 @@ import com.pm.userservice.mapper.UserMapper;
 import com.pm.userservice.models.User;
 import com.pm.userservice.models.dto.request.UserUpdateRequest;
 import com.pm.userservice.models.dto.response.UserResponse;
-import com.pm.userservice.repository.RoleRepository;
 import com.pm.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,28 +17,21 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final RoleRepository roleRepository;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.roleRepository = roleRepository;
     }
 
     public UserResponse save(User user) {
-
-        user.setRole(roleRepository.findByName("USER").orElseThrow(()
-        -> new AppException(ErrorCode.ROLE_NOTFOUND)));
         userRepository.save(user);
-
         return userMapper.UserToUserResponse(user);
     }
 
-    public UserResponse updateUser(Long id, UserUpdateRequest request) {
+    public UserResponse updateUserProfile(Long id, UserUpdateRequest request) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
 
         user.setFullName(request.getFirstname() + " " + request.getLastname());
-        user.setPassword(request.getPassword());
         user.setAddress(request.getAddress());
         user.setPhone(request.getPhone());
 
@@ -53,9 +45,9 @@ public class UserService {
                 .stream()
                 .map(user -> UserResponse.builder()
                         .id(user.getId())
-                        .username(user.getEmail())
+                        .email(user.getEmail())
                         .fullName(user.getFullName())
-                        .role(user.getRole().getName())
+                        .fullName(user.getFullName())
                         .build())
                 .toList();
     }
@@ -73,11 +65,4 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    public UserResponse findByEmail(String email) {
-        return userMapper.UserToUserResponse(userRepository.findByEmail(email).orElseThrow(()
-                -> new AppException(ErrorCode.USER_NOTFOUND)));    }
 }

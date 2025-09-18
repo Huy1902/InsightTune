@@ -1,20 +1,16 @@
 package com.pm.userservice.controller.client;
 
-import com.pm.userservice.exception.AppException;
-import com.pm.userservice.exception.ErrorCode;
 import com.pm.userservice.mapper.UserMapper;
 import com.pm.userservice.models.User;
 import com.pm.userservice.models.dto.request.ApiResponse;
-import com.pm.userservice.models.dto.request.RegisterDTO;
+import com.pm.userservice.models.dto.request.CreateUserRequest;
 import com.pm.userservice.models.dto.request.UserUpdateRequest;
 import com.pm.userservice.models.dto.response.UserResponse;
-import com.pm.userservice.service.RoleService;
 import com.pm.userservice.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
@@ -23,30 +19,26 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-
-    private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
+
         this.userMapper = userMapper;
     }
 
-    @PostMapping("/register")
-    public ApiResponse<UserResponse> register(@Valid @RequestBody RegisterDTO userDto) {
-
-        if (userService.existsByEmail(userDto.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
-        }
-
-        if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
-            throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
-        }
-
-        User user = userMapper.registerDtoToUser(userDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    /*
+    Create client profile.
+    Long id;
+    String email;
+    String fullName;
+    String address;
+    String phone;
+     */
+    @PostMapping("/create")
+    public ApiResponse<UserResponse> register(@Valid @RequestBody CreateUserRequest req) {
+        User user = userMapper.CreateUserRequestToUser(req);
 
         return ApiResponse.<UserResponse>builder()
                 .code(200)
@@ -72,12 +64,15 @@ public class UserController {
                 .build();
     }
 
+    /*
+    Update user profile.
+     */
     @PutMapping("/{userId}")
     public ApiResponse<UserResponse> updateUser(@PathVariable Long userId,
                                            @RequestBody UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
-                .result(userService.updateUser(userId, request))
+                .result(userService.updateUserProfile(userId, request))
                 .build();
     }
 
