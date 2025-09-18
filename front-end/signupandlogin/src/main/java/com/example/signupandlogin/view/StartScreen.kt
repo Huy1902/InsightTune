@@ -19,15 +19,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import com.example.signupandlogin.controller.AuthController
 import com.example.signupandlogin.R
+import com.example.signupandlogin.controller.SignUpAndLogInController
+import com.example.signupandlogin.model.SignupModel
 
 @Composable
-fun StartScreen(onSwitchToSignUp: () -> Unit) {
-    val controller = remember { AuthController() }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var message by remember { mutableStateOf<String?>(null) }
+fun StartScreen(controller: SignUpAndLogInController) {
+
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
             0.0f to Color(0xFFFF0000),
@@ -91,7 +91,9 @@ fun StartScreen(onSwitchToSignUp: () -> Unit) {
             )
             Spacer(Modifier.height(50.dp))
             Button(
-                onClick = {},
+                onClick = {
+                    controller.onSigUpClicked()
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Red
                 ),
@@ -175,14 +177,15 @@ fun StartScreen(onSwitchToSignUp: () -> Unit) {
             }
             Spacer(modifier = Modifier.width(16.dp))
             TextButton(
-                onClick = {}
+                onClick = {
+                    controller.onLogInClicked()
+                }
             ) {
                 Text(
                     text ="Log in",
                     color = Color.White
                 )
             }
-            message?.let { Text(it) }
         }
 
     }
@@ -191,5 +194,9 @@ fun StartScreen(onSwitchToSignUp: () -> Unit) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun StartScreenPreview() {
-    StartScreen(onSwitchToSignUp = {})
+    val navController = rememberNavController()
+    val model = SignupModel()
+    val controller = SignUpAndLogInController(navController, model)
+
+    StartScreen(controller = controller)
 }
