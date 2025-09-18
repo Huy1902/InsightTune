@@ -23,4 +23,8 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(()
                 -> new AppException(ErrorCode.USER_NOTFOUND));
     }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }

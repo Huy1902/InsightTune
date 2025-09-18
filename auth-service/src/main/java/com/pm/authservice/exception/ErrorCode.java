@@ -5,8 +5,10 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
     USER_NOTFOUND(404, "User not found"),
-    UNCATEGORIZED_ERROR(999, "Uncategorized error"),
-    INVALID_KEY(1008, "Invalid key"),
+    UNCATEGORIZED_ERROR(1000, "Uncategorized error"),
+    INVALID_KEY(1001, "Invalid key"),
+    EMAIL_ALREADY_EXISTS(1002, "Email already exists"),
+    PASSWORD_NOT_MATCH(1003, "Password not match"),
     ;
 
     ErrorCode(int code, String message) {

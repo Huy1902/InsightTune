@@ -3,6 +3,8 @@ package com.pm.authservice.controller;
 import com.pm.authservice.dto.request.RegisterRequest;
 import com.pm.authservice.dto.response.ApiResponse;
 import com.pm.authservice.dto.response.UserProfileResponse;
+import com.pm.authservice.exception.AppException;
+import com.pm.authservice.exception.ErrorCode;
 import com.pm.authservice.models.User;
 import com.pm.authservice.service.UserService;
 import jakarta.validation.Valid;
@@ -20,13 +22,11 @@ import org.springframework.web.client.RestTemplate;
 public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
-    private final RestClient.Builder builder;
     private final RestTemplate restTemplate;
 
-    public AuthController(PasswordEncoder passwordEncoder, UserService userService, RestClient.Builder builder, RestTemplate restTemplate) {
+    public AuthController(PasswordEncoder passwordEncoder, UserService userService, RestTemplate restTemplate) {
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
-        this.builder = builder;
         this.restTemplate = restTemplate;
     }
 
@@ -34,6 +34,14 @@ public class AuthController {
     @PostMapping("/register")
     public ApiResponse<UserProfileResponse> register(@Valid @RequestBody RegisterRequest registerRequest){
         User user = new  User();
+
+        if (userService.existsByEmail(registerRequest.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+
+        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
 
         // luu user vao db
         user.setEmail(registerRequest.getEmail());
