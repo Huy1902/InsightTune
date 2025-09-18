@@ -23,7 +23,7 @@ import com.example.signinandlogin.controller.AuthController
 import com.example.signinandlogin.R
 
 @Composable
-fun LoginScreen(onSwitchToSignUp: () -> Unit) {
+fun StartScreen(onSwitchToSignUp: () -> Unit) {
     val controller = remember { AuthController() }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -173,6 +173,15 @@ fun LoginScreen(onSwitchToSignUp: () -> Unit) {
                   //  Spacer(modifier = Modifier.width(20.dp))
                 }
             }
+            Spacer(modifier = Modifier.width(16.dp))
+            TextButton(
+                onClick = {}
+            ) {
+                Text(
+                    text ="Log in",
+                    color = Color.White
+                )
+            }
             message?.let { Text(it) }
         }
 
@@ -181,6 +190,6 @@ fun LoginScreen(onSwitchToSignUp: () -> Unit) {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LoginScreenPreview() {
-    LoginScreen(onSwitchToSignUp = {})
+fun StartScreenPreview() {
+    StartScreen(onSwitchToSignUp = {})
 }
