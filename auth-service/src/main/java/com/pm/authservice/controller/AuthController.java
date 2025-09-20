@@ -33,19 +33,14 @@ import java.text.ParseException;
 @Slf4j
 public class AuthController {
 
-    @Value("${user-service.create-path}")
-    private String createUserPath;
-
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
-    private final RestTemplate restTemplate;
     private final RoleRepository roleRepository;
     private final CustomTokenService customTokenService;
 
-    public AuthController(PasswordEncoder passwordEncoder, AuthService authService, RestTemplate restTemplate, RestTemplate restTemplate1, RoleRepository roleRepository, CustomTokenService customTokenService) {
+    public AuthController(PasswordEncoder passwordEncoder, AuthService authService,  RoleRepository roleRepository, CustomTokenService customTokenService) {
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
-        this.restTemplate = restTemplate1;
         this.roleRepository = roleRepository;
         this.customTokenService = customTokenService;
     }
@@ -53,34 +48,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ApiResponse<UserProfileResponse> register(@Valid @RequestBody RegisterRequest registerRequest){
-        log.info("register api");
-        User user = new  User();
 
-        if (authService.existsByEmail(registerRequest.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
-        }
-
-        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
-            throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
-        }
-
-        // luu user vao db
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        // lay role tu form
-        user.setRole(roleRepository.findByName("USER").orElseThrow(()
-                -> new AppException(ErrorCode.ROLE_NOTFOUND)));
-        authService.save(user);
-
-        // lay thong tin userprofile
-        UserProfileResponse userProfileResponse = new UserProfileResponse();
-        userProfileResponse.setId(authService.findByEmail(registerRequest.getEmail()).getId());
-        userProfileResponse.setFullName(registerRequest.getFirstname()
-                + " " + registerRequest.getLastname());
-        userProfileResponse.setEmail(registerRequest.getEmail());
-
-        String url = createUserPath;
-        restTemplate.postForObject(url, userProfileResponse, Void.class);
+        UserProfileResponse userProfileResponse = authService.createUser(registerRequest);
 
         return ApiResponse.<UserProfileResponse>builder()
                 .code(200)

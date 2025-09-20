@@ -16,7 +16,8 @@ public enum ErrorCode {
     PASSWORD_INVALID(1008, "Mật khẩu phải trên 6 ký tự"),
     EMAIL_INVALID(1009, "Email không hợp lệ"),
     NOT_BLANK(1011, "Không được để trống phần này"),
-    PASSWORD_NOT_TRUE(1004, "Mật khẩu không đúng")
+    PASSWORD_NOT_TRUE(1004, "Mật khẩu không đúng"),
+    CANT_CONNECT_USERSERVICE(1010, "Can't connect userservice"),
    ;
 
     ErrorCode(int code, String message) {
