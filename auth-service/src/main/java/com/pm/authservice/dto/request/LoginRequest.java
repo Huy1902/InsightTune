@@ -1,6 +1,5 @@
 package com.pm.authservice.dto.request;
 
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -12,18 +11,12 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RegisterRequest {
-
-    private String firstname;
-
+public class LoginRequest {
+    @Email(message = "EMAIL_INVALID", regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
     @NotBlank(message = "NOT_BLANK")
-    private String lastname;
-
-    @Email(message = "EMAIL_INVALID", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
-    private String email;
+    String email;
 
     @Size(min = 6, message = "PASSWORD_INVALID")
-    private String password;
-
-    private String confirmPassword;
+    @NotBlank(message = "NOT_BLANK")
+    String password;
 }
