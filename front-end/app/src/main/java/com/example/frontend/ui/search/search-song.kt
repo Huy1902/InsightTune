@@ -123,15 +123,12 @@ fun RecentSearchItem(item: SearchItem) {
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Sửa lỗi 2: Dùng clip() để cắt ảnh thành hình tròn hoặc vuông bo góc
         Box(
             modifier = Modifier
                 .size(50.dp)
                 .background(Color.DarkGray)
                 .clip(if (item.isArtist) CircleShape else RoundedCornerShape(4.dp))
         )
-        // Đây là nơi bạn sẽ đặt hình ảnh thật, ví dụ dùng Coil:
-        // AsyncImage(model = "...", contentDescription = null, modifier = ...)
 
         Spacer(Modifier.width(16.dp))
 
@@ -139,13 +136,13 @@ fun RecentSearchItem(item: SearchItem) {
             Text(
                 item.title,
                 color = Color.White,
-                fontSize = 16.sp, // Kích thước chữ phù hợp hơn
+                fontSize = 16.sp,
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
                 item.subtitle,
                 color = Color.Gray,
-                fontSize = 14.sp, // Kích thước chữ phù hợp hơn
+                fontSize = 14.sp,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
