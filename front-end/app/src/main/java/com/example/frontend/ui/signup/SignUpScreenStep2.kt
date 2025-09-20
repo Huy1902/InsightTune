@@ -25,18 +25,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
+import com.example.app.ui.NavRoutes
 import com.example.frontend.R
 import java.nio.file.WatchEvent
+
 fun isValidPassword(password: String): Boolean {
     // Tối thiểu 8 ký tự, có ít nhất 1 chữ cái và 1 số
     val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$".toRegex()
     return passwordRegex.matches(password)
 }
+
 @Composable
 fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
     var password by remember { mutableStateOf("") }
+    var passwordCorrect by remember { mutableStateOf("") }
     var isValid by remember { mutableStateOf(true) }
-    var isVisible by remember { mutableStateOf(false) }
+    var isPasswordVisible by remember { mutableStateOf(false) }
+    var isPasswordCorrectVisible by remember { mutableStateOf(false) }
+    var isMatch by remember { mutableStateOf(true) }
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
             0.0f to Color(0xFFFF0000),
@@ -62,7 +68,7 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
                     .align(Alignment.CenterStart)
                     .padding(start = 16.dp)
                     .size(32.dp)
-                    .clickable{
+                    .clickable {
                         onBack()
                     }
             )
@@ -95,6 +101,8 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
                 modifier = Modifier.align(Alignment.Start)
             )
 
+            Spacer(modifier = Modifier.size(4.dp))
+
             TextField(
                 value = password,
                 onValueChange = {
@@ -105,20 +113,20 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
                     .fillMaxWidth()
                     .height(45.dp)
                     .clip(RoundedCornerShape(12.dp)),
-                visualTransformation = if (isVisible) VisualTransformation.None
+                visualTransformation = if (isPasswordVisible) VisualTransformation.None
                 else {
                     PasswordVisualTransformation()
                 },
                 trailingIcon = {
                     IconButton(
-                        onClick = { isVisible = !isVisible }
+                        onClick = { isPasswordVisible = !isPasswordVisible }
                     ) {
                         Icon(
-                            painter = if (isVisible)
+                            painter = if (isPasswordVisible)
                                 painterResource(id = R.drawable.opened_eye)
                             else
                                 painterResource(id = R.drawable.closed_eye),
-                            contentDescription = if (isVisible) "Hide password" else "Show password"
+                            contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
                         )
                     }
                 }
@@ -134,13 +142,59 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
                 color = Color.White,
                 modifier = Modifier.align(Alignment.Start)
             )
+
+            Spacer(modifier = Modifier.size(6.dp))
+
+            Text(
+                "Confirm your password",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.Start)
+            )
+
+            Spacer(modifier = Modifier.size(4.dp))
+
+            TextField(
+                value = passwordCorrect,
+                onValueChange = {
+                    passwordCorrect = it
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                visualTransformation = if (isPasswordCorrectVisible) VisualTransformation.None
+                else {
+                    PasswordVisualTransformation()
+                },
+                trailingIcon = {
+                    IconButton(
+                        onClick = { isPasswordCorrectVisible = !isPasswordCorrectVisible }
+                    ) {
+                        Icon(
+                            painter = if (isPasswordCorrectVisible)
+                                painterResource(id = R.drawable.opened_eye)
+                            else
+                                painterResource(id = R.drawable.closed_eye),
+                            contentDescription = if (isPasswordCorrectVisible ) "Hide password" else "Show password"
+                        )
+                    }
+                }
+            )
+
         }
 
         Spacer(modifier = Modifier.size(30.dp))
 
         Button(
             onClick = {
-                onNext()
+                isValid = isValidPassword(password)
+                isMatch = password == passwordCorrect
+                if (isValid && isMatch) {
+                    onNext()
+                }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White
@@ -155,7 +209,7 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
             )
         }
 
-        if(!isValid) {
+        if (!isValid) {
             Text(
                 "Invalid password. Please try again.",
                 fontFamily = FontFamily.Serif,
@@ -163,7 +217,20 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
                 fontSize = 10.sp,
                 color = Color.White,
             )
+        } else if (!isMatch) {
+            Text(
+                "Password does not match. Please try again.",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp,
+                color = Color.White,
+            )
+        } else {
+            Text(
+                ""
+            )
         }
+
     }
 }
 
@@ -171,6 +238,8 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
 @Composable
 fun SignUpScreenStep2Preview() {
     val navController = rememberNavController()
-
-    //SignUpScreenStep2(controller = controller)
+    SignUpScreenStep2(
+        onNext = { navController.navigate(NavRoutes.SignUpStep3.route) },
+        onBack = { navController.popBackStack() }
+    )
 }

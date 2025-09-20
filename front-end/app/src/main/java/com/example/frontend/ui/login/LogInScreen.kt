@@ -18,6 +18,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +33,7 @@ fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isValid by remember { mutableStateOf(true) }
+    var isVisible by remember { mutableStateOf(false) }
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
             0.0f to Color(0xFFFF0000),
@@ -115,11 +118,29 @@ fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
                 value = password,
                 onValueChange = {
                     password = it
+                    isValid = true
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(45.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp)),
+                visualTransformation = if (isVisible) VisualTransformation.None
+                else {
+                    PasswordVisualTransformation()
+                },
+                trailingIcon = {
+                    IconButton(
+                        onClick = { isVisible = !isVisible }
+                    ) {
+                        Icon(
+                            painter = if (isVisible)
+                                painterResource(id = R.drawable.opened_eye)
+                            else
+                                painterResource(id = R.drawable.closed_eye),
+                            contentDescription = if (isVisible) "Hide password" else "Show password"
+                        )
+                    }
+                }
             )
 
         }

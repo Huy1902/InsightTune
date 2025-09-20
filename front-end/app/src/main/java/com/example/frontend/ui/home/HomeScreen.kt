@@ -181,10 +181,23 @@ fun HomeScreenContent() {
                 "SpoTube",
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
-                fontSize = 35.sp,
+                fontSize = 25.sp,
                 color = Color.Red,
-
                 )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = null,
+                    tint = Color.Red
+                )
+            }
+
         }
 
 
@@ -202,25 +215,19 @@ fun HomeScreenContent() {
                 color = Color(255, 255, 255)
             )
 
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Default.History,
-                    contentDescription = null,
-                    tint = Color(255, 255, 255)
-                )
-
-                Spacer(modifier = Modifier.size(8.dp))
-
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = null,
-                    tint = Color(255, 255, 255)
-                )
-            }
+//            Row(
+//                horizontalArrangement = Arrangement.End,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.History,
+//                    contentDescription = null,
+//                    tint = Color(255, 255, 255)
+//                )
+//
+//                Spacer(modifier = Modifier.size(8.dp))
+//            }
         }
 
         LazyRow(

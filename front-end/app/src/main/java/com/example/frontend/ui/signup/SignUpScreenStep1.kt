@@ -23,8 +23,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
+import com.example.app.ui.NavRoutes
 import com.example.frontend.R
 import java.nio.file.WatchEvent
+
 val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$".toRegex()
 
 fun isValidEmail(email: String): Boolean {
@@ -122,7 +124,10 @@ fun SignUpScreenStep1(onNext: () -> Unit, onBack: () -> Unit) {
 
         Button(
             onClick = {
+                isValid = isValidEmail(email)
+                if (isValid) {
                     onNext()
+                }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White
@@ -137,7 +142,7 @@ fun SignUpScreenStep1(onNext: () -> Unit, onBack: () -> Unit) {
             )
         }
 
-        if(!isValid) {
+        if (!isValid) {
             Text(
                 "Invalid email. Please try again.",
                 fontFamily = FontFamily.Serif,
@@ -154,5 +159,8 @@ fun SignUpScreenStep1(onNext: () -> Unit, onBack: () -> Unit) {
 fun SignUpScreenStep1Preview() {
     val navController = rememberNavController()
 
-    //SignUpScreenStep1(onNext = null)
+    SignUpScreenStep1(
+        onNext = { navController.navigate(NavRoutes.SignUpStep2.route) },
+        onBack = { navController.popBackStack() }
+    )
 }
