@@ -39,7 +39,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
       String jwt = auth.substring(7);
       try {
         Claims claims = jwtUtil.parseClaims(jwt); // verifies signature
-        // Expect a claim like: { "authorities": ["ROLE_USER"] }
         @SuppressWarnings("unchecked")
         List<String> roles = claims.get("authorities", List.class);
 
