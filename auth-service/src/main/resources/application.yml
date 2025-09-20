@@ -18,3 +18,6 @@ server:
 
 jwt:
   signerKey : "Q+W+8at86K9vMPRa3ZZEHWOL6wiQzDmNS0X9Wu8omL2h5qgfIIb0oEchMm+v49MP"
+
+user-service:
+  create-path: http://user-service/users/create
