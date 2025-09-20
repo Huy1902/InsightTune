@@ -1,5 +1,6 @@
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,15 +59,15 @@ fun HomeScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0.0f to Color(0xFFFF0000),
-                        0.3f to Color(0xFF8B0000),
-                        0.6f to Color(0xFF000000)
-                    )
-                )
-            )
+            .background(Color.Black)
+//                Brush.verticalGradient(
+//                    colorStops = arrayOf(
+//                        0.0f to Color(0xFFFF0000),
+//                        0.3f to Color(0xFF8B0000),
+//                        0.6f to Color(0xFF000000)
+//                    )
+//                )
+//            )
     ) {
         Scaffold(
             containerColor = Color.Transparent,
@@ -159,36 +160,33 @@ fun HomeScreenContent() {
             .fillMaxSize(),
         horizontalAlignment = Alignment.Start
     ) {
-        Text(
-            "Search",
-            fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily.Serif,
-            color = Color(255, 255, 255),
-            fontSize = 23.sp,
-            modifier = Modifier
-                .padding(10.dp)
-        )
 
-        TextField(
-            placeholder = {
-                Text(
-                    "Search by songs, artists or categories",
-                    fontFamily = FontFamily.Serif
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
-                )
-            },
-            value = text,
-            onValueChange = { text = it },
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp, end = 8.dp)
-                .clip(RoundedCornerShape(16.dp))
-        )
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.spotube_cropped),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .size(100.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.size(14.dp))
+
+            Text(
+                "SpoTube",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 35.sp,
+                color = Color.Red,
+
+                )
+        }
+
 
         Spacer(modifier = Modifier.size(10.dp))
 
@@ -296,11 +294,11 @@ fun BottomNavigationBar(navController: NavController) {
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                        selectedTextColor = Color.Red,
-                        unselectedTextColor = Color.Gray,
-                        selectedIconColor = Color.Red,
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
+                    selectedTextColor = Color.Red,
+                    unselectedTextColor = Color.Gray,
+                    selectedIconColor = Color.Red,
+                    unselectedIconColor = Color.Gray,
+                    indicatorColor = Color.Transparent
                 )
             )
         }
