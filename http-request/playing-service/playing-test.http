@@ -5,7 +5,7 @@
 @baseUrl = http://localhost:4001
 @trackId = 1
 
-@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzAwMDAwMSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NTgwOTgzNjMsImV4cCI6MTc1ODEwMTk2M30.H7W9HaCkVzn3BlL5dk9XgkF4FY-w1z_feSfQzWQaFwY
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzAwMDAwMSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NTgzMzY1NzksImV4cCI6MTc1ODM0MDE3OX0.5oI4ETPoqjbLwX7M7SoDPVE3qrwMQghj49BocfAum78
 ### ----------------------------------------------------------------
 ### 1) Get signed CloudFront URL for a track
 ### ----------------------------------------------------------------

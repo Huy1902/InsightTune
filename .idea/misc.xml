@@ -8,6 +8,8 @@
         <option value="$PROJECT_DIR$/playing-service/pom.xml" />
         <option value="$PROJECT_DIR$/eureka-service/pom.xml" />
         <option value="$PROJECT_DIR$/CatalogService/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/upload-serivce/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

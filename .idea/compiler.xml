@@ -8,8 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="eureka-service" />
-        <module name="CatalogService" />
+        <module name="upload-serivce" />
         <module name="playing-service" />
+        <module name="catalog-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -20,11 +21,12 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="CatalogService" options="-parameters" />
+      <module name="catalog-service" options="-parameters" />
       <module name="demo" options="-parameters" />
       <module name="eureka-service" options="-parameters" />
       <module name="playback-service" options="-parameters" />
       <module name="playing-service" options="-parameters" />
+      <module name="upload-serivce" options="-parameters" />
     </option>
   </component>
 </project>
