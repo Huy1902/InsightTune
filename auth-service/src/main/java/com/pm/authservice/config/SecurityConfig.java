@@ -1,5 +1,6 @@
 package com.pm.authservice.config;
 
+import com.pm.authservice.entrypoint.CustomAuthEntryPoint;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -23,14 +24,17 @@ import javax.crypto.spec.SecretKeySpec;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final CustomAuthEntryPoint customAuthEntryPoint;
+
 
     private final String[] PUBLIC_ENDPOINTS = {"/auth/login", "/auth/register"};
 
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomAuthEntryPoint customAuthEntryPoint) {
         this.jwtAuthFilter = jwtAuthFilter;
+        this.customAuthEntryPoint = customAuthEntryPoint;
     }
 
     @Bean
@@ -45,9 +49,11 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.oauth2ResourceServer(oauth2 -> oauth2
-        .jwt(jwt -> jwt.decoder(jwtDecoder())
-                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
-
+                .jwt(jwt -> jwt
+                        .decoder(jwtDecoder())
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                .authenticationEntryPoint(customAuthEntryPoint) // <-- dùng custom 401
+        );
         return http.build();
     }
 

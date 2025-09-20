@@ -57,7 +57,7 @@ public class AuthService {
         boolean authenticate = passwordEncoder.matches(authenticationRequest.getPassword()
                 , user.getPassword());
         if (!authenticate) {
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+            throw new AppException(ErrorCode.PASSWORD_NOT_TRUE);
         }
 
         // accessToken
