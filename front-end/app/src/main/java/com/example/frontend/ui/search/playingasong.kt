@@ -1,7 +1,7 @@
 package com.example.playingasong.view
 
-import com.example.playingasong.R
 import androidx.compose.foundation.Image
+import com.example.frontend.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
