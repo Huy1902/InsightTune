@@ -5,7 +5,7 @@
 @baseUrl = http://localhost:4001
 @trackId = 1
 
-@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzAwMDAwMSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NTgwOTgzNjMsImV4cCI6MTc1ODEwMTk2M30.H7W9HaCkVzn3BlL5dk9XgkF4FY-w1z_feSfQzWQaFwY
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzAwMDAwMSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NTgzNTQ0MjksImV4cCI6MTc1ODM1ODAyOX0.aaDsbQNtjcqqoiYOhdsGrIk-gncMBTjxDG94tLL6dCY
 ### ----------------------------------------------------------------
 ### 1) Get signed CloudFront URL for a track
 ### ----------------------------------------------------------------
@@ -15,7 +15,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "track_id": "{{trackId}}"
+  "track_key": "{{trackId}}"
 }
 
 ### ----------------------------------------------------------------
