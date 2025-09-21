@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Front End"
 include(":app")
-

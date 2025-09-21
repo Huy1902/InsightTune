@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,12 +31,20 @@ public class User {
     @Size(min = 6, message = "Password phải có tối thiểu 6 ký tự")
     String password;
 
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    Role role;
+
+    @OneToMany(mappedBy = "user")
+    List<RefreshToken> refreshTokens;
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", role=" + role +
                 '}';
     }
 
