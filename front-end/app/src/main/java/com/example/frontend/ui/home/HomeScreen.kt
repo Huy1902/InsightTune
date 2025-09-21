@@ -171,7 +171,7 @@ fun HomeScreenContent() {
                 contentDescription = null,
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .size(100.dp),
+                    .size(80.dp),
                 contentScale = ContentScale.Crop
             )
 
@@ -192,9 +192,11 @@ fun HomeScreenContent() {
                 horizontalArrangement = Arrangement.End
             ) {
                 Icon(
-                    imageVector = Icons.Default.Settings,
+                    imageVector = Icons.Default.AccountCircle,
                     contentDescription = null,
-                    tint = Color.Red
+                    tint = Color.Red,
+                    modifier = Modifier
+                        .size(50.dp)
                 )
             }
 
