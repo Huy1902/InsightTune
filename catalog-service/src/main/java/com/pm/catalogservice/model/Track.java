@@ -35,6 +35,7 @@ public class Track {
   private Set<Artist> artists = new LinkedHashSet<>();
 
   @NotNull(message = "Storage key is required")
+  @Column(unique = true)
   private String storageKey;
 
   @Positive

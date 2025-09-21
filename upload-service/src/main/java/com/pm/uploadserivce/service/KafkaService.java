@@ -1,0 +1,46 @@
+package com.pm.uploadserivce.service;
+
+import com.pm.uploadserivce.dto.CreatedTrackRequestDto;
+import com.pm.uploadserivce.dto.CreatedTrackResponseDto;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+import track.events.CreatedTrackEvent;
+
+/**
+ * Service class receives created track from {@link UploadService}, make a {@link CreatedTrackEvent}
+ * then sending an event to kafka server with topic <code>created_track</code>
+ *
+ * @author Huy1902
+ */
+@Service
+@Slf4j @RequiredArgsConstructor
+public class KafkaService {
+  private final KafkaTemplate<String, byte[]> kafkaTemplate;
+
+  /**
+   * Transfer created Track into event for sending to server
+   *
+   * @param createdTrackRequestDto the created Track notify needed to be sent
+   * @return a {@link CreatedTrackResponseDto} contain kafka event sending status
+   */
+  public CreatedTrackResponseDto sendCreatedTrack(CreatedTrackRequestDto createdTrackRequestDto) {
+    CreatedTrackEvent createdTrackEvent = CreatedTrackEvent.newBuilder()
+            .setTitle(createdTrackRequestDto.getTitle())
+            .setAlbum(createdTrackRequestDto.getAlbum())
+            .addAllArtists(createdTrackRequestDto.getArtists())
+            .setDurationMs(createdTrackRequestDto.getDurationMs())
+            .setCoverImageKey(createdTrackRequestDto.getCoverImageKey())
+            .setStorageKey(createdTrackRequestDto.getStorageKey())
+            .build();
+    try {
+      log.info("Send Created Track Event: {}", createdTrackEvent);
+      kafkaTemplate.send("created_track", createdTrackEvent.toByteArray());
+    } catch (Exception e) {
+      log.error("Error sending Track created event: {}", e.getMessage());
+      return new  CreatedTrackResponseDto("Failed to sent event");
+    }
+    return new  CreatedTrackResponseDto("Successfully sent event");
+  }
+}
