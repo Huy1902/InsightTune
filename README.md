@@ -5,4 +5,4 @@ This is our project for Mobile Development Course in University of Engineer and 
 ### *Tutor*
 
 -  Phd. Nguyen Duc Anh
--  Master Thac Manh Cuong
+-  Master Tran Manh Cuong
