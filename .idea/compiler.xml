@@ -8,7 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="eureka-service" />
-        <module name="upload-serivce" />
+        <module name="upload-service" />
         <module name="playing-service" />
         <module name="catalog-service" />
       </profile>
@@ -26,7 +26,7 @@
       <module name="eureka-service" options="-parameters" />
       <module name="playback-service" options="-parameters" />
       <module name="playing-service" options="-parameters" />
-      <module name="upload-serivce" options="-parameters" />
+      <module name="upload-service" options="-parameters" />
     </option>
   </component>
 </project>

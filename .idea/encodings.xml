@@ -6,6 +6,6 @@
     <file url="file://$PROJECT_DIR$/eureka-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/playback-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/playing-service/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/upload-serivce/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/upload-service/src/main/java" charset="UTF-8" />
   </component>
 </project>

@@ -13,6 +13,6 @@
         <module>playing-service</module>
         <module>eureka-service</module>
         <module>catalog-service</module>
-        <module>upload-serivce</module>
+        <module>upload-service</module>
     </modules>
 </project>
