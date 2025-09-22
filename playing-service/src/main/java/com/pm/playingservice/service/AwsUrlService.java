@@ -24,7 +24,6 @@ public class AwsUrlService {
   @Value("${spotube.aws.cloudfront.urlTtlSeconds:120}")
   private long urlTtlSeconds;            // default 120s
 
-  // Accepts classpath: or file: (recommended: file:/etc/keys/cf_private_key.der)
   @Value("${spotube.aws.pvtkeyPath}")
   private Resource privateKeyResource;   // DER (PKCS#8) private key
 
