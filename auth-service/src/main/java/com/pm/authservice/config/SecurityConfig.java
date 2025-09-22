@@ -1,6 +1,9 @@
 package com.pm.authservice.config;
 
+import com.pm.authservice.config.oauth2.handlers.CustomOAuth2SuccessHandler;
 import com.pm.authservice.entrypoint.CustomAuthEntryPoint;
+import com.pm.authservice.service.CustomOAuth2UserService;
+import com.pm.authservice.service.CustomTokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,6 +28,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final CustomAuthEntryPoint customAuthEntryPoint;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2SuccessHandler  customOAuth2SuccessHandler;
 
 
     private final String[] PUBLIC_ENDPOINTS = {"/auth/login", "/auth/register"};
@@ -32,9 +37,11 @@ public class SecurityConfig {
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomAuthEntryPoint customAuthEntryPoint) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomAuthEntryPoint customAuthEntryPoint, CustomOAuth2UserService customOAuth2UserService, CustomOAuth2SuccessHandler customOAuth2SuccessHandler) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.customAuthEntryPoint = customAuthEntryPoint;
+        this.customOAuth2UserService = customOAuth2UserService;
+        this.customOAuth2SuccessHandler = customOAuth2SuccessHandler;
     }
 
     @Bean
@@ -53,7 +60,14 @@ public class SecurityConfig {
                         .decoder(jwtDecoder())
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 .authenticationEntryPoint(customAuthEntryPoint) // <-- dùng custom 401
-        );
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                        .userService(customOAuth2UserService)
+                                // inject service bạn viết
+                        )
+                        .successHandler(customOAuth2SuccessHandler)
+                );
         return http.build();
     }
 
