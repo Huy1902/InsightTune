@@ -14,15 +14,15 @@ public class JwtDevTokenGenerator {
   public static void main(String[] args) {
     String secret = System.getenv().getOrDefault(
             "SUNNO_JWT_SHARED_SECRET",
-            "secret_key_change_me_please_32_bytes_min"); // must be >= 32 bytes
+            "secret_key_change_me_please_32_bytes_min");
 
     Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
     String jwt = Jwts.builder()
             .setSubject("user_000001")
-            .claim("authorities", List.of("ROLE_USER"))   // your filter reads this claim
+            .claim("authorities", List.of("ROLE_USER"))
             .setIssuedAt(new Date())
-            .setExpiration(Date.from(Instant.now().plusSeconds(3600))) // 1 hour
+            .setExpiration(Date.from(Instant.now().plusSeconds(3600)))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
 

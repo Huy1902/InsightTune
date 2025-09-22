@@ -21,7 +21,8 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))   // ✅ no sessions/cookies
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(HttpMethod.POST, "/play").authenticated()
+                    .requestMatchers(HttpMethod.POST, "/play")
+                    .hasAnyRole("USER", "ARTIST")
                     .anyRequest().permitAll())
             .exceptionHandling(ex -> ex
                     .authenticationEntryPoint((req, res, e) ->

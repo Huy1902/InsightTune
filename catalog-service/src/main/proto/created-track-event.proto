@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package track.events;
+option java_multiple_files = true;
+
+message CreatedTrackEvent {
+  string storageKey = 1;
+  string title = 2;
+  string album = 3;
+  repeated string artists = 4;
+  int32 durationMs = 5;
+  string coverImageKey = 6;
+}

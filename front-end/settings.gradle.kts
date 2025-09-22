@@ -21,5 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Front End"
 include(":app")
-include(":signupandlogin")
-include(":playingasong")

@@ -18,8 +18,7 @@ public class PlayingController {
 
   @PostMapping("/play")
   public ResponseEntity<?> play(@RequestBody TrackRequest req, Authentication auth) throws Exception {
-    // auth != null here (JWT filter set it); you can also check roles from auth.getAuthorities()
-    String url = awsUrlService.getUrl(req.track_id());
+    String url = awsUrlService.getUrl(req.track_key());
     return ResponseEntity.ok().body(new Object() {
       public final String signedUrl = url;
     });
