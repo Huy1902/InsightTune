@@ -1,7 +1,9 @@
 package com.pm.playingservice.controller;
 
-import com.pm.playingservice.model.TrackRequest;
+import com.pm.playingservice.dto.PlayRequestDto;
+import com.pm.playingservice.dto.PlayResponseDto;
 import com.pm.playingservice.service.AwsUrlService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,10 +19,9 @@ public class PlayingController {
   }
 
   @PostMapping("/play")
-  public ResponseEntity<?> play(@RequestBody TrackRequest req, Authentication auth) throws Exception {
-    String url = awsUrlService.getUrl(req.track_key());
-    return ResponseEntity.ok().body(new Object() {
-      public final String signedUrl = url;
-    });
+  @Operation(summary = "Receive a play request then send back a play response contain a mp3 link")
+  public ResponseEntity<PlayResponseDto> play(@RequestBody PlayRequestDto req, Authentication auth) throws Exception {
+    String url = awsUrlService.getUrl(req.storageKey());
+    return ResponseEntity.ok().body(new PlayResponseDto(url));
   }
 }
