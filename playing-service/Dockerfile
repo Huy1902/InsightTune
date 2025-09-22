@@ -16,6 +16,6 @@ WORKDIR /app
 
 COPY --from=builder ./app/target/playing-service-0.0.1-SNAPSHOT.jar ./app.jar
 
-EXPOSE 4001j
+EXPOSE 4001
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

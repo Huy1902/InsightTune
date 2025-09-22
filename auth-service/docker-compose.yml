@@ -4,7 +4,7 @@ services:
   db:
     image: mysql:8
     environment:
-      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: authservice_spotube
     ports:
       - "3307:3306"
@@ -22,7 +22,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: 123456
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_NAME: authservice_spotube
     ports:
       - "8080:8080"
