@@ -9,4 +9,5 @@ public class S3UploadResponseDto {
   private String title;
   private String storageKey;
   private String coverImageKey;
+  private String status;
 }

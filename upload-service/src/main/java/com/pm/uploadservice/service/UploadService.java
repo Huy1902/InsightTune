@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -45,11 +46,11 @@ public class UploadService {
     } catch (IOException | InvalidDataException | UnsupportedTagException e) {
       log.error(e.getMessage());
     }
-    String baseKey = UUID.randomUUID().toString();
+    String baseKey = Objects.requireNonNull(metaResponseDto).getArtists().toString() + "/" + metaResponseDto.getTitle();
     S3UploadRequestDto s3UploadRequestDto = S3UploadRequestDto.builder()
             .file(trackUploadRequestDto.getFile())
-            .image(metaResponseDto != null ? metaResponseDto.getImage() : null)
-            .imageType(metaResponseDto != null ? metaResponseDto.getImageType() : null)
+            .image(metaResponseDto.getImage())
+            .imageType(metaResponseDto.getImageType())
             .key(baseKey)
             .build();
     S3UploadResponseDto s3UploadResponseDto = s3Service.uploadTrack(s3UploadRequestDto);
@@ -68,6 +69,7 @@ public class UploadService {
             .storageKey(s3UploadResponseDto.getStorageKey())
             .coverImageKey(s3UploadResponseDto.getCoverImageKey())
             .kafkaStatus(createdTrackResponseDto.getKafkaStatus())
+            .s3Status(s3UploadResponseDto.getStatus())
             .build();
   }
 }

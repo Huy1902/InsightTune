@@ -8,5 +8,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AlbumRepository extends JpaRepository<Album, UUID> {
-  Optional<Album> findAlbumByTitleIgnoreCase(@RequestParam String title);
+  Optional<Album> findByTitleIgnoreCase(@RequestParam String title);
 }
