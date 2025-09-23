@@ -25,7 +25,7 @@ public class TrackService {
   }
 
   public List<TrackResponseDto> getTracksByName(@RequestParam String title) {
-    Optional<Track> tracks = trackRepository.findTracksByTitleIgnoreCase(title);
+    Optional<Track> tracks = trackRepository.findByTitleIgnoreCase(title);
 
     return tracks.stream()
             .map(TrackMapper::toTrackResponseDto).toList();

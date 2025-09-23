@@ -10,8 +10,8 @@
         <module name="eureka-service" />
         <module name="api-gateway" />
         <module name="upload-service" />
-        <module name="playing-service" />
         <module name="catalog-service" />
+        <module name="playing-service" />
       </profile>
       <profile name="Annotation profile for user-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
