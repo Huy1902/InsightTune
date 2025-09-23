@@ -1,0 +1,115 @@
+server:
+  port: 4010
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
+
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: 2000
+            response-timeout: 5s
+          routes:
+                    - id: catalog-service
+                      uri: lb://catalog-service
+                      predicates:
+                        - Path=/tracks/**
+                      filters:
+                        - StripPrefix=0
+                        - name: Retry
+                          args:
+                            retries: 2
+                            methods: GET
+                            series: SERVER_ERROR
+                        - name: CircuitBreaker
+                          args:
+                            name: tracksCB
+                            fallbackUri: forward:/__fallback/tracks
+
+                    - id: playing-service
+                      uri: lb://playing-service
+                      predicates:
+                        - Path=/play/**
+                      filters:
+                        - StripPrefix=0
+                        - name: CircuitBreaker
+                          args:
+                            name: playCB
+                            fallbackUri: forward:/__fallback/play
+
+                    - id: upload-service
+                      uri: lb://upload-service
+                      predicates:
+                        - Path=/upload/**
+                      filters:
+                        - StripPrefix=0
+                        - name: RequestSize
+                          args:
+                            maxSize: 50MB
+                        - name: CircuitBreaker
+                          args:
+                            name: uploadCB
+                            fallbackUri: forward:/__fallback/upload
+
+                    - id: docs-catalog
+                      uri: lb://catalog-service
+                      predicates: [ Path=/_docs/catalog ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-play
+                      uri: lb://playing-service
+                      predicates: [ Path=/_docs/play ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-upload
+                      uri: lb://upload-service
+                      predicates: [ Path=/_docs/upload ]
+                      filters:
+                        - SetPath=/v3/api-docs
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials RETAIN_FIRST
+            - RemoveRequestHeader=Host
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                          allowedOrigins: "*"
+                          allowedMethods: "*"
+                          allowedHeaders: "*"
+                          allowCredentials: false
+
+#    # -------- Static discovery (no Eureka): maps logical names -> URLs -------
+#    discovery:
+#      client:
+#        simple:
+#          instances:
+#            track-service:
+#              - uri: http://localhost:4000
+#            playing-service:
+#              - uri: http://localhost:4001
+#            upload-service:
+#              - uri: http://localhost:4002
+
+springdoc:
+  swagger-ui:
+    path: /docs
+    urls:
+      - name: Catalog Service
+        url: /_docs/catalog
+      - name: Playing Service
+        url: /_docs/play
+      - name: Upload Service
+        url: /_docs/upload
