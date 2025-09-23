@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegisterRequest {
 
-    private String firstname;
+    private String firstname ="";
 
     @NotBlank(message = "NOT_BLANK")
     private String lastname;

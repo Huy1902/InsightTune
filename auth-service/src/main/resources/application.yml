@@ -2,8 +2,23 @@ spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/authservice_spotube
     username: root
-    password: 123456
+    password: ${MYSQL_ROOT_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: email, profile
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+# endpoint login gg: http://localhost:8080/login/oauth2/code/google
 
   jpa:
     hibernate:
@@ -14,7 +29,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 server:
-  port: 8082 # port riêng cho auth-service
+  port: 8080 # port riêng cho auth-service
 
 jwt:
   signerKey : "Q+W+8at86K9vMPRa3ZZEHWOL6wiQzDmNS0X9Wu8omL2h5qgfIIb0oEchMm+v49MP"
