@@ -4,12 +4,21 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
-    USER_NOTFOUND(404, "User not found"),
+    USER_NOTFOUND(404, "Email không tồn tại"),
     UNCATEGORIZED_ERROR(1000, "Uncategorized error"),
     INVALID_KEY(1001, "Invalid key"),
-    EMAIL_ALREADY_EXISTS(1002, "Email already exists"),
-    PASSWORD_NOT_MATCH(1003, "Password not match"),
-    ;
+    EMAIL_ALREADY_EXISTS(400, "Email đã tồn tại"),
+    PASSWORD_NOT_MATCH(400, "Mật khẩu không khớp"),
+    ROLE_NOTFOUND(404, "Role not found"),
+    UNAUTHENTICATED(1005, "Unauthenticated"),
+    REFRESHTOKEN_INVALID(404, "Refresh token không tồn tại"),
+    REFRESHTOKEN_ISREVOKED(401, "Refresh token is overdue"),
+    PASSWORD_INVALID(400, "Mật khẩu phải trên 6 ký tự"),
+    EMAIL_INVALID(400, "Email không hợp lệ"),
+    NOT_BLANK(400, "Không được để trống phần này"),
+    PASSWORD_NOT_TRUE(400, "Mật khẩu không đúng"),
+    CANT_CONNECT_USERSERVICE(500, "Can't connect userservice"),
+   ;
 
     ErrorCode(int code, String message) {
         this.code = code;
