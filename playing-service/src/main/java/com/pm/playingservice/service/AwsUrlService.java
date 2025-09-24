@@ -27,12 +27,7 @@ public class AwsUrlService {
   @Value("${spotube.aws.pvtkeyPath}")
   private Resource privateKeyResource;   // DER (PKCS#8) private key
 
-  @Value("${spotube.aws.objectPrefix:tracks/}")
-  private String objectPrefix;           // e.g. "tracks/"
-
-  public String getUrl(String trackId) throws Exception {
-    // Build the object key your CF behavior protects:
-    String objectKey = objectPrefix + trackId + ".mp3";
+  public String getUrl(String objectKey) throws Exception {
 
     // Load the DER private key to a temp file (the signer API needs a File)
     File tempKeyFile = File.createTempFile("cf-key-", ".der");

@@ -14,7 +14,7 @@ import java.security.Key;
 public class JwtUtil {
 
   @Value("${spotube.jwt.shared_secret}")
-  private String secret; // use a 32+ byte secret for HS256
+  private String secret;
 
   private Key key() {
     return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
@@ -25,7 +25,7 @@ public class JwtUtil {
             .setSigningKey(key())
             .build()
             .parseClaimsJws(jwt)
-            .getBody(); // throws if invalid/expired
+            .getBody();
   }
 }
 

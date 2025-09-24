@@ -1,27 +1,50 @@
 package com.pm.playingservice.controller;
 
-import com.pm.playingservice.dto.PlayRequestDto;
-import com.pm.playingservice.dto.PlayResponseDto;
+import com.pm.playingservice.dto.*;
 import com.pm.playingservice.service.AwsUrlService;
+import com.pm.playingservice.service.UserStateService;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
+@Slf4j
 public class PlayingController {
   private final AwsUrlService awsUrlService;
+  private final UserStateService userStateService;
 
-  public PlayingController(AwsUrlService awsUrlService) {
-    this.awsUrlService = awsUrlService;
-  }
 
   @PostMapping("/play")
-  @Operation(summary = "Receive a play request then send back a play response contain a mp3 link")
+  @Operation(summary = "Receive a play request then send back a play response contain a mp3 link and image link")
   public ResponseEntity<PlayResponseDto> play(@RequestBody PlayRequestDto req, Authentication auth) throws Exception {
-    String url = awsUrlService.getUrl(req.storageKey());
-    return ResponseEntity.ok().body(new PlayResponseDto(url));
+    String trackUrl = awsUrlService.getUrl(req.storageKey());
+    String imageUrl = awsUrlService.getUrl(req.coverImageKey());
+    return ResponseEntity.ok().body(new PlayResponseDto(trackUrl, imageUrl));
   }
+
+  @PostMapping("/user_state")
+  @Operation(summary = "Update user state of an user")
+  public ResponseEntity<UserStateRespondDto> updateUserState(@RequestBody UserStateRequestDto userStateRequestDto,
+                                                         Authentication auth) throws Exception {
+    String email = auth.getName();
+    UserStateUpdateRespondDto userStateUpdateRespondDto= userStateService.upsert(new UserStateUpdateRequestDto(email,
+            userStateRequestDto.trackId(), userStateRequestDto.positionMs()));
+    log.info("Update user state for email: {} with status {}", email, userStateUpdateRespondDto.status());
+    return ResponseEntity.ok().body(new UserStateRespondDto(userStateRequestDto.trackId(), userStateRequestDto.positionMs()));
+
+  }
+
+
+  @GetMapping("/user_state")
+  @Operation(summary = "Find user state by email")
+  public ResponseEntity<UserStateRespondDto> findUserState(Authentication auth) throws Exception {
+    String email = auth.getName();
+    UserStateRespondDto userStateRespondDto = userStateService.getUserState(email);
+    return ResponseEntity.ok().body(userStateRespondDto);
+  }
+
 }
