@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -22,12 +25,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.frontend.ui.playingsong.MusicPlayerViewModel
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
-fun Playingasong (onSwitchPlayingasong: () -> Unit) {
+fun Playingasong (viewModel: MusicPlayerViewModel) {
 
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
@@ -36,6 +40,15 @@ fun Playingasong (onSwitchPlayingasong: () -> Unit) {
             1f to Color(0xFF430E09)
         )
     )
+
+    val state by viewModel.playerState.collectAsState()
+
+    val songUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+
+    LaunchedEffect(key1 = songUrl) {
+
+        viewModel.loadAndPlaySong(songUrl)
+    }
 
     Box(
         modifier = Modifier
@@ -127,7 +140,7 @@ fun Playingasong (onSwitchPlayingasong: () -> Unit) {
                         painter = painterResource(R.drawable.progressbar),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(490.dp)
+                            .fillMaxWidth()
                     )
                 }
             }
@@ -149,11 +162,18 @@ fun Playingasong (onSwitchPlayingasong: () -> Unit) {
                     contentDescription = null,
                     modifier = Modifier.size(30.dp)
                 )
-                Image (
-                    painter = painterResource(R.drawable.pausesong),
-                    contentDescription = null,
-                    modifier = Modifier.size(50.dp)
-                )
+                IconButton (onClick = {viewModel.onPlayPauseClick() }) {
+                    Image (
+                        painter = painterResource(if (state.isPlaying) R.drawable.pausesong else R.drawable.pausesong),
+                        contentDescription = null,
+                        modifier = Modifier.size(50.dp)
+                    )
+        }
+//                Image (
+//                    painter = painterResource(R.drawable.pausesong),
+//                    contentDescription = null,
+//                    modifier = Modifier.size(50.dp)
+//                )
                 Image (
                     painter = painterResource(R.drawable.nextsong),
                     contentDescription = null,
@@ -171,8 +191,11 @@ fun Playingasong (onSwitchPlayingasong: () -> Unit) {
     }
 }
 
-@Preview
-@Composable
-fun PlayingasongPreview() {
-    Playingasong (onSwitchPlayingasong = {})
-}
+
+
+
+//@Preview
+//@Composable
+//fun PlayingasongPreview() {
+//    Playingasong (viewModel = viewModel { MusicPlayerViewModel(exoPlayer) })
+//}
