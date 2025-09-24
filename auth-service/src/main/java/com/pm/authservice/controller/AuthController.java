@@ -14,6 +14,7 @@ import com.pm.authservice.models.User;
 import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.service.AuthService;
 import com.pm.authservice.service.CustomTokenService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +48,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
+    @Operation(summary = "Register", description = "API register")
     public ApiResponse<UserProfileResponse> register(@Valid @RequestBody RegisterRequest registerRequest){
 
         UserProfileResponse userProfileResponse = authService.createUser(registerRequest);
@@ -58,6 +60,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login", description = "API login bằng email, password")
     public ApiResponse<AuthenticationResponse> login(@Valid @RequestBody LoginRequest loginRequest){
         var result = authService.authenticate(loginRequest);
 
@@ -68,6 +71,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
+    @Operation(summary = "Refresh accessToken", description = "API refresh")
     public ApiResponse<AuthenticationResponse> refresh(@RequestBody RefreshTokenRequest request) throws ParseException, JOSEException {
         return ApiResponse.<AuthenticationResponse>builder()
                 .code(200)
@@ -76,6 +80,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @Operation(summary = "Logout", description = "API logout bằng refreshToken ở body và accessToken header")
     public ApiResponse<AuthenticationResponse> logout(@RequestBody LogoutRequest logoutRequest) throws ParseException {
         authService.logout(logoutRequest);
         return ApiResponse.<AuthenticationResponse>builder()
