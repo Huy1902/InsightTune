@@ -8,5 +8,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ArtistRepository extends JpaRepository<Artist, UUID> {
-  Optional<Artist> findArtistByNameIgnoreCase(@RequestParam String name);
+  Optional<Artist> findByNameIgnoreCase(@RequestParam String name);
 }

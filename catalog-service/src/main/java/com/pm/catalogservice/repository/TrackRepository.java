@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TrackRepository extends JpaRepository<Track, UUID> {
-  Optional<Track> findTracksByTitleIgnoreCase(@RequestParam String title);
+  Optional<Track> findByTitleIgnoreCase(@RequestParam  String title);
   Optional<Track> findTrackByStorageKey(@RequestParam String storageKey);
 }

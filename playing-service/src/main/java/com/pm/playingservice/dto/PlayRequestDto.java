@@ -1,5 +1,5 @@
 package com.pm.playingservice.dto;
 
 
-public record PlayRequestDto(String storageKey) {
+public record PlayRequestDto(String storageKey, String coverImageKey) {
 }

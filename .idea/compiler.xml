@@ -10,8 +10,8 @@
         <module name="eureka-service" />
         <module name="api-gateway" />
         <module name="upload-service" />
-        <module name="playing-service" />
         <module name="catalog-service" />
+        <module name="playing-service" />
       </profile>
       <profile name="Annotation profile for user-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -23,18 +23,11 @@
         <module name="auth-service" />
         <module name="user-service" />
       </profile>
-      <profile name="Annotation profile for history-service" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.40/lombok-1.18.40.jar" />
-        </processorPath>
-        <module name="history-service" />
-      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="demo" target="21" />
+      <module name="gateway-api" target="21" />
+      <module name="proto-apis" target="21" />
       <module name="SpoTube" target="1.5" />
     </bytecodeTargetLevel>
   </component>
@@ -45,7 +38,6 @@
       <module name="catalog-service" options="-parameters" />
       <module name="demo" options="-parameters" />
       <module name="eureka-service" options="-parameters" />
-      <module name="history-service" options="-parameters" />
       <module name="playing-service" options="-parameters" />
       <module name="upload-service" options="-parameters" />
       <module name="user-service" options="-parameters" />

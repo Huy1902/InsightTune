@@ -1,4 +1,4 @@
 package com.pm.playingservice.dto;
 
-public record PlayResponseDto (String url){
+public record PlayResponseDto (String trackUrl, String coverImageUrl) {
 }

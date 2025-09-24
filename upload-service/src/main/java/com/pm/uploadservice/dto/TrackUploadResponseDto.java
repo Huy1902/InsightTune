@@ -14,4 +14,5 @@ public class TrackUploadResponseDto {
   private String storageKey;
   private String coverImageKey;
   private String kafkaStatus;
+  private String s3Status;
 }

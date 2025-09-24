@@ -8,6 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Objects;
+import java.security.MessageDigest;
 import java.util.UUID;
 
 /**
@@ -37,7 +42,7 @@ public class UploadService {
   private final S3Service s3Service;
   private final KafkaService kafkaService;
 
-  public TrackUploadResponseDto uploadTrack(TrackUploadRequestDto trackUploadRequestDto) {
+  public TrackUploadResponseDto uploadTrack(TrackUploadRequestDto trackUploadRequestDto) throws NoSuchAlgorithmException {
     MetaRequestDto metaRequestDto = new MetaRequestDto(trackUploadRequestDto.getFile());
     MetaResponseDto metaResponseDto = null;
     try {
@@ -45,11 +50,19 @@ public class UploadService {
     } catch (IOException | InvalidDataException | UnsupportedTagException e) {
       log.error(e.getMessage());
     }
-    String baseKey = UUID.randomUUID().toString();
+    String rawKey = Objects.requireNonNull(metaResponseDto).getArtists().getFirst().trim() + metaResponseDto.getTitle().trim();
+
+    MessageDigest md = MessageDigest.getInstance("SHA-256");
+    byte[] digest = md.digest(rawKey.getBytes());
+
+    long value = new BigInteger(1, Arrays.copyOf(digest, 8)).longValue();
+    String baseKey = String.format("%012d", value); // 12 digits
+
+    log.info("baseKey: {}", baseKey);
     S3UploadRequestDto s3UploadRequestDto = S3UploadRequestDto.builder()
             .file(trackUploadRequestDto.getFile())
-            .image(metaResponseDto != null ? metaResponseDto.getImage() : null)
-            .imageType(metaResponseDto != null ? metaResponseDto.getImageType() : null)
+            .image(metaResponseDto.getImage())
+            .imageType(metaResponseDto.getImageType())
             .key(baseKey)
             .build();
     S3UploadResponseDto s3UploadResponseDto = s3Service.uploadTrack(s3UploadRequestDto);
@@ -68,6 +81,7 @@ public class UploadService {
             .storageKey(s3UploadResponseDto.getStorageKey())
             .coverImageKey(s3UploadResponseDto.getCoverImageKey())
             .kafkaStatus(createdTrackResponseDto.getKafkaStatus())
+            .s3Status(s3UploadResponseDto.getStatus())
             .build();
   }
 }

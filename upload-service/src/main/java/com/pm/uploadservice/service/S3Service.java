@@ -65,8 +65,10 @@ public class S3Service {
                       .build(),
               RequestBody.fromBytes(s3UploadRequestDto.getFile().getBytes())
       );
+      s3UploadResponseDtoBuilder.status("Success");
     } catch (IOException e) {
       log.error("Failed to upload track: {}", e.getMessage());
+      s3UploadResponseDtoBuilder.status("Failed");
     }
 
     s3UploadResponseDtoBuilder.storageKey(keyTrack);

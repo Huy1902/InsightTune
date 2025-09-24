@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
 
   private final JwtUtil jwtUtil;
@@ -44,6 +46,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         List<GrantedAuthority> authorities = roles == null ? List.of()
                 : roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        String email = claims.getSubject();
+        log.info("Receive token contain email: {}", email);
+
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
@@ -58,10 +63,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     chain.doFilter(request, response);
   }
 
-  // Optionally run this filter only for /play
-  @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) {
-    return !"/play".equals(request.getServletPath());
-  }
+//  // Optionally run this filter only for /play
+//  @Override
+//  protected boolean shouldNotFilter(HttpServletRequest request) {
+//    return !"/play".equals(request.getServletPath());
+//  }
 }
 
