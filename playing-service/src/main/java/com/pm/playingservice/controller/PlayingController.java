@@ -26,6 +26,13 @@ public class PlayingController {
     return ResponseEntity.ok().body(new PlayResponseDto(trackUrl, imageUrl));
   }
 
+  @GetMapping("/url")
+  @Operation(summary = "Get an image link of a song")
+  public ResponseEntity<LinkRespondDto> getLink(@RequestParam String key) throws Exception {
+    String url = awsUrlService.getUrl(key);
+    return ResponseEntity.ok().body(new LinkRespondDto(url));
+  }
+
   @PostMapping("/user_state")
   @Operation(summary = "Update user state of an user")
   public ResponseEntity<UserStateRespondDto> updateUserState(@RequestBody UserStateRequestDto userStateRequestDto,
