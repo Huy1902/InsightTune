@@ -24,6 +24,7 @@ import com.example.frontend.ui.signup.SignUpScreenStep1
 import com.example.frontend.ui.signup.SignUpScreenStep2
 import com.example.frontend.ui.signup.SignUpScreenStep3
 import com.example.frontend.ui.start.StartScreen
+import com.example.playingasong.view.Playingasong
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 
@@ -109,6 +110,7 @@ fun AppNavHost() {
             composable(NavRoutes.Home.route) {
                 HomeScreen()
             }
+
         }
     }
 }

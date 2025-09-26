@@ -65,6 +65,11 @@ class MusicPlayerViewModel(private val exoPlayer: ExoPlayer) : ViewModel() {
         Log.d("PlayerDebug", "Nút Play/Pause đã được ấn")
     }
 
+    fun seekToPosition(position : Long) {
+        exoPlayer.seekTo(position)
+    }
+
+
     override fun onCleared() {
         exoPlayer.removeListener(listener)
         exoPlayer.release()

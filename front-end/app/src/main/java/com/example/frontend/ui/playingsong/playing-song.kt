@@ -1,5 +1,7 @@
 package com.example.playingasong.view
 
+import android.widget.SeekBar
+import androidx.compose.material3.Slider
 import androidx.compose.foundation.Image
 import com.example.frontend.R
 import androidx.compose.foundation.background
@@ -29,6 +31,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.MediaMetadata
+import androidx.media3.exoplayer.ExoPlayer
+import com.example.app.ui.NavRoutes
+import com.example.frontend.ui.playingsong.PlayerSeekBar
+import com.example.frontend.ui.playingsong.PlayerState
+import com.example.frontend.ui.theme.FrontEndTheme
 
 @Composable
 fun Playingasong (viewModel: MusicPlayerViewModel) {
@@ -126,24 +142,12 @@ fun Playingasong (viewModel: MusicPlayerViewModel) {
 
                 )
             }
-            Row (
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Box (
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .size(60.dp),
-                    contentAlignment = Alignment.Center
-
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.progressbar),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
+            PlayerSeekBar(
+                playerState = state,
+                onSeek = {
+                    newPosition -> viewModel.seekToPosition(newPosition)
                 }
-            }
+            )
 
             Row (
                 modifier = Modifier
@@ -164,16 +168,11 @@ fun Playingasong (viewModel: MusicPlayerViewModel) {
                 )
                 IconButton (onClick = {viewModel.onPlayPauseClick() }) {
                     Image (
-                        painter = painterResource(if (state.isPlaying) R.drawable.pausesong else R.drawable.pausesong),
+                        painter = painterResource(if (state.isPlaying) R.drawable.pausesong else R.drawable.playing),
                         contentDescription = null,
                         modifier = Modifier.size(50.dp)
                     )
         }
-//                Image (
-//                    painter = painterResource(R.drawable.pausesong),
-//                    contentDescription = null,
-//                    modifier = Modifier.size(50.dp)
-//                )
                 Image (
                     painter = painterResource(R.drawable.nextsong),
                     contentDescription = null,
@@ -191,11 +190,3 @@ fun Playingasong (viewModel: MusicPlayerViewModel) {
     }
 }
 
-
-
-
-//@Preview
-//@Composable
-//fun PlayingasongPreview() {
-//    Playingasong (viewModel = viewModel { MusicPlayerViewModel(exoPlayer) })
-//}
