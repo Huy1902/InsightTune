@@ -17,8 +17,9 @@ public enum ErrorCode {
     EMAIL_INVALID(400, "Email không hợp lệ"),
     NOT_BLANK(400, "Không được để trống phần này"),
     PASSWORD_NOT_TRUE(400, "Mật khẩu không đúng"),
-    CANT_CONNECT_USERSERVICE(500, "Can't connect userservice"),
-   ;
+    CANT_CONNECT_USERSERVICE(500, "Can't connect user-service"),
+    CANT_CHANGE_ROLE(400, "Không thể đổi role thành USER"),
+    ;
 
     ErrorCode(int code, String message) {
         this.code = code;

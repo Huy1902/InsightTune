@@ -59,7 +59,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         else {
             log.info(user.toString());
         }
-        // Có thể trả về CustomOAuth2User nếu muốn wrap thêm roles
+        // Có thể trả về CustomOAuth2User nếu muốn   wrap thêm roles
         return oAuth2User;
 
     }

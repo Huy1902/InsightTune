@@ -1,15 +1,17 @@
 package com.pm.userservice.controller.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pm.userservice.mapper.UserMapper;
 import com.pm.userservice.models.User;
-import com.pm.userservice.models.dto.request.ApiResponse;
+import com.pm.userservice.models.dto.response.ApiResponse;
 import com.pm.userservice.models.dto.request.CreateUserRequest;
 import com.pm.userservice.models.dto.request.UserUpdateRequest;
 import com.pm.userservice.models.dto.response.UserResponse;
 import com.pm.userservice.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +39,7 @@ public class UserController {
     String phone;
      */
     @PostMapping("/create")
+    @Operation(summary = "Create user", description = "Receive email and password to create user")
     public ApiResponse<UserResponse> register(@Valid @RequestBody CreateUserRequest req) {
         User user = userMapper.CreateUserRequestToUser(req);
 
@@ -48,36 +51,31 @@ public class UserController {
     }
 
     @GetMapping
-    public ApiResponse<List<UserResponse>> findAll() {
-        return ApiResponse.<List<UserResponse>>builder()
-                .code(200)
-                .result(userService.findAll())
-                .build();
-    }
-
-
-    @GetMapping("/{userId}")
-    public ApiResponse<UserResponse> findById(@PathVariable Long userId) {
+    @Operation(summary = "Find user by token", description = "Find user by token")
+    public ApiResponse<UserResponse> findById(Authentication authentication) {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
-                .result(userService.findById(userId))
+                .result(userService.findByEmail(authentication.getName()))
                 .build();
     }
 
     /*
     Update user profile.
      */
-    @PutMapping("/{userId}")
-    public ApiResponse<UserResponse> updateUser(@PathVariable Long userId,
-                                           @RequestBody UserUpdateRequest request) {
+    @PutMapping
+    @Operation(summary = "Update user profile"
+            , description = "Update profile user by token and UserUpdateRequest")
+    public ApiResponse<UserResponse> updateUser(Authentication authentication,
+                                                @Valid @RequestBody UserUpdateRequest request) throws JsonProcessingException {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
-                .result(userService.updateUserProfile(userId, request))
+                .result(userService.updateUserProfile(authentication.getName(), request))
                 .build();
     }
 
-    @DeleteMapping("/{userId}")
-    public void deleteUser(@PathVariable Long userId) {
-        userService.deleteById(userId);
+    @DeleteMapping
+    @Operation(summary = "Delete user by token")
+    public void deleteUser(Authentication authentication) {
+        userService.deleteByEmail(authentication.getName());
     }
 }

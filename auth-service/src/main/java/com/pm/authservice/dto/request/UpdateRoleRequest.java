@@ -1,4 +1,4 @@
-package com.pm.authservice.dto.response;
+package com.pm.authservice.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,9 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserProfileResponse {
-    Long id;
+public class UpdateRoleRequest {
     String email;
-    String fullName;
     String role;
 }

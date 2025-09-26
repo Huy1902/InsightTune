@@ -1,11 +1,9 @@
-package com.pm.historyservice.config;
+package com.pm.userservice.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -17,7 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
-@ComponentScan(basePackages = "com.pm.historyservice")
+@ComponentScan(basePackages = "com.pm.userservice")
 public class SecurityConfig {
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
@@ -26,14 +24,16 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
-                                "/h2-console/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**"
+                                , "/swagger-ui.html", "/users/create").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()// cho phép public
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
-                                .frameOptions(frame -> frame.disable()));
+                                .frameOptions(frame -> frame.disable())
+                );
         http.oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.decoder(jwtDecoder())
+                .jwt(jwt -> jwt.decoder(jwtDecoder())
                 ));
 
         return http.build();
