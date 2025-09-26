@@ -55,9 +55,9 @@ public class MetadataService {
    *
    * @param metaRequestDto request wrapper containing the uploaded {@link MultipartFile}.
    * @return a response DTO containing parsed metadata (title, album, artists, duration, image bytes).
-   * @throws IOException              if file transfer or deletion fails.
-   * @throws InvalidDataException     if the MP3 file is invalid.
-   * @throws UnsupportedTagException  if tags are unsupported.
+   * @throws IOException             if file transfer or deletion fails.
+   * @throws InvalidDataException    if the MP3 file is invalid.
+   * @throws UnsupportedTagException if tags are unsupported.
    */
   public MetaResponseDto buildMetadata(MetaRequestDto metaRequestDto)
           throws IOException, InvalidDataException, UnsupportedTagException {
@@ -110,9 +110,13 @@ public class MetadataService {
         title = baseName(file.getOriginalFilename());
       }
 
+      if(!StringUtils.hasText(album)) {
+        album = "";
+      }
+
       return MetaResponseDto.builder()
-              .title(title)
-              .album(album)
+              .title(title.trim())
+              .album(album.trim())
               .artists(artists)
               .durationMs(durationMs)
               .image(image)
@@ -154,13 +158,28 @@ public class MetadataService {
    * @param artistRaw the raw artist string (e.g., "Artist feat. Guest").
    * @return list of cleaned artist names, never {@code null}.
    */
+
   private static List<String> splitArtists(String artistRaw) {
     if (!StringUtils.hasText(artistRaw)) return List.of();
-    String[] parts = artistRaw.split("(?i)\\s*(,|&|\\bfeat\\.?\\b|\\bft\\.?\\b|\\bx\\b)\\s*");
+
+    // Delimiters:
+    //  - comma
+    //  - & (ampersand)
+    //  - feat. / ft. (case-insensitive, as whole words)
+    //  - 'x' ONLY when surrounded by spaces (A x B), not in "DJ X," or "X." etc.
+    String[] parts = artistRaw.split(
+            "(?i)\\s*(?:,|&|\\bfeat\\.?\\b|\\bft\\.?\\b|\\s+x\\s+)\\s*"
+    );
+
     return Arrays.stream(parts)
+            .map(s -> s == null ? "" : s.trim())
+            // strip leading/trailing punctuation and extra spaces
+            .map(s -> s.replaceAll("^[\\p{Punct}\\s]+", "")
+                    .replaceAll("[\\p{Punct}\\s]+$", ""))
             .filter(StringUtils::hasText)
             .toList();
   }
+
 
   /**
    * Normalizes common MIME type variants (e.g., {@code image/jpg → image/jpeg}).
