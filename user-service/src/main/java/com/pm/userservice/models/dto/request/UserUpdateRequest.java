@@ -1,13 +1,24 @@
 package com.pm.userservice.models.dto.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-@Setter
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    private String firstname;
-    private String lastname;
-    private String address;
-    private String phone;
+    @NotBlank(message = "NOT_BLANK")
+    String firstname;
+
+    @NotBlank(message = "NOT_BLANK")
+    String lastname;
+
+    String address;
+    String phone;
+
+    @NotBlank(message = "NOT_BLANK")
+    String role;
 }

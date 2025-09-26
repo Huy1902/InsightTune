@@ -23,9 +23,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 public class AuthService {
-    @NonFinal
-    @Value("${jwt.signerKey}")
-    String SIGNER_KEY;
 
     @Value("${user-service.create-path}")
     private String createUserPath;
@@ -111,6 +108,7 @@ public class AuthService {
         userProfileResponse.setFullName(registerRequest.getFirstname()
                 + " " + registerRequest.getLastname());
         userProfileResponse.setEmail(registerRequest.getEmail());
+        userProfileResponse.setRole("USER");
 
         try {
             String url = createUserPath;
