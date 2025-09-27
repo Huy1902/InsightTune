@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.app.ui.NavRoutes
+import com.example.frontend.core.AppPreferences
 import com.example.frontend.ui.login.LogInScreen
 import com.example.frontend.ui.signup.AuthViewModel
 import com.example.frontend.ui.signup.SignUpScreenStep1
@@ -33,12 +34,18 @@ import com.google.accompanist.navigation.animation.composable
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AppNavHost() {
+fun AppNavHost(prefs: AppPreferences) {
     val navController = rememberNavController()
     val duration = 600
     val easing = FastOutSlowInEasing
     val context = LocalContext.current
     val vm = remember { AuthViewModel(context) }
+    val startDestination = if (prefs.getToken() != null) {
+        NavRoutes.Home.route
+    } else {
+        NavRoutes.StartScreen.route
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +61,7 @@ fun AppNavHost() {
     ) {
         AnimatedNavHost(
             navController = navController,
-            startDestination = NavRoutes.StartScreen.route,
+            startDestination = startDestination,
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { it },

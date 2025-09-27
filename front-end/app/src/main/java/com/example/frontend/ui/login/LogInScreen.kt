@@ -171,6 +171,12 @@ fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
             }
         }
 
+        LaunchedEffect(state) {
+            if (state is Resource.Success) {
+                onNext()
+            }
+        }
+
         if (state is Resource.Error) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(

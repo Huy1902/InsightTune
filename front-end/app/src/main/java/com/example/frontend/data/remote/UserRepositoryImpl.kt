@@ -17,7 +17,6 @@ class UserRepositoryImpl(
 
         Log.d("API_DEBUG", "code=${response.code()}, url=${response.raw().request.url}, error=${response.errorBody()?.string()}")
 
-
         if (response.isSuccessful) {
             val body = response.body()
             if (body != null) {
@@ -50,6 +49,10 @@ class UserRepositoryImpl(
 
     override suspend fun checkEmail(email: String): Boolean {
         return api.checkEmail(email).exists
+    }
+
+    override fun getToken(): String? {
+        return prefs.getToken()
     }
 
 }

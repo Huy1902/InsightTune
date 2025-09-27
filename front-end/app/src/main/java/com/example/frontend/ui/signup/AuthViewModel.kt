@@ -59,4 +59,9 @@ class AuthViewModel(context: Context) : ViewModel() {
             }
         }
     }
+
+    fun isLoggedIn(): Boolean {
+        return repo.getToken() != null
+    }
+
 }

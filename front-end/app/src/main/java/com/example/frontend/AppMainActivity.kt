@@ -14,6 +14,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import android.os.Bundle
 import androidx.compose.animation.ExperimentalAnimationApi
+import com.example.frontend.core.AppPreferences
 import com.example.frontend.ui.AppNavHost
 
 
@@ -21,8 +22,9 @@ import com.example.frontend.ui.AppNavHost
 class AppMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val prefs = AppPreferences(this)
         setContent {
-                AppNavHost()
+                AppNavHost(prefs = prefs)
         }
     }
 }

@@ -9,7 +9,9 @@ class AppPreferences(context: Context) {
         prefs.edit().putString(Constants.KEY_TOKEN, token).apply()
     }
 
-    fun getToken(): String? = prefs.getString(Constants.KEY_TOKEN, null)
+    fun getToken(): String? {
+        return prefs.getString(Constants.KEY_TOKEN, null)
+    }
 
     fun clear() {
         prefs.edit().clear().apply()

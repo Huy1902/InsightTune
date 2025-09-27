@@ -14,7 +14,14 @@ object ApiClient {
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(logging)
+        .addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("x-api-key", "reqres-free-v1")
+                .build()
+            chain.proceed(request)
+        }
         .build()
+
     private val retrofit = Retrofit.Builder()
         .baseUrl(Constants.BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())

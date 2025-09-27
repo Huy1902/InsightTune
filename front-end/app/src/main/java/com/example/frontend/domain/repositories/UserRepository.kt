@@ -7,4 +7,6 @@ interface UserRepository {
     suspend fun register(username: String, email: String, password: String): AuthResponseDto
 
     suspend fun checkEmail(email: String): Boolean
+
+    fun getToken(): String?
 }

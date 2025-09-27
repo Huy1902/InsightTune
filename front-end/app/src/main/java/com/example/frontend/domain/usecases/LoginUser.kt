@@ -13,7 +13,12 @@ class LoginUser(private val repo: UserRepository) {
             val res = repo.login(email, password)
             emit(Resource.Success(res))
         } catch (e: Exception) {
-            emit(Resource.Error(e.message, e))
+            val msg = if (e.message?.contains("401") == true) {
+                "Wrong email or password, please try again."
+            } else {
+                e.message ?: "Unexpected error"
+            }
+            emit(Resource.Error(msg, e))
         }
     }
 }
