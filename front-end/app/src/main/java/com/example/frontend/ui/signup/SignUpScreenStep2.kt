@@ -190,7 +190,7 @@ fun SignUpScreenStep2(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
         Button(
             onClick = {
                 when {
-                    isValidPassword(password) -> {
+                    !isValidPassword(password) -> {
                         errorMessage = "Password must be at least 8 characters and contain letters and numbers."
                     }
                     password != passwordCorrect -> {
