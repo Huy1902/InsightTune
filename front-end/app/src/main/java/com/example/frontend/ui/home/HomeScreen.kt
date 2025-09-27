@@ -60,14 +60,6 @@ fun HomeScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-//                Brush.verticalGradient(
-//                    colorStops = arrayOf(
-//                        0.0f to Color(0xFFFF0000),
-//                        0.3f to Color(0xFF8B0000),
-//                        0.6f to Color(0xFF000000)
-//                    )
-//                )
-//            )
     ) {
         Scaffold(
             containerColor = Color.Transparent,
