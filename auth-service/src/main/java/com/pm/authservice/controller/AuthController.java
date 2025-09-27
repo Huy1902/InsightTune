@@ -8,13 +8,11 @@ import com.pm.authservice.dto.request.RegisterRequest;
 import com.pm.authservice.dto.response.ApiResponse;
 import com.pm.authservice.dto.response.AuthenticationResponse;
 import com.pm.authservice.dto.response.UserProfileResponse;
-import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.service.AuthService;
 import com.pm.authservice.service.CustomTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -25,15 +23,11 @@ import java.text.ParseException;
 @Slf4j
 public class AuthController {
 
-    private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
-    private final RoleRepository roleRepository;
     private final CustomTokenService customTokenService;
 
-    public AuthController(PasswordEncoder passwordEncoder, AuthService authService,  RoleRepository roleRepository, CustomTokenService customTokenService) {
-        this.passwordEncoder = passwordEncoder;
+    public AuthController( AuthService authService, CustomTokenService customTokenService) {
         this.authService = authService;
-        this.roleRepository = roleRepository;
         this.customTokenService = customTokenService;
     }
 
