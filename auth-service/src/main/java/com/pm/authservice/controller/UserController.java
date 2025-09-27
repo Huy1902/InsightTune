@@ -24,7 +24,7 @@ public class UserController {
         int count = userService.updateRole(updateRoleRequest);
         return ApiResponse.<String>builder()
                 .code(200)
-                .result("Số bản ghi thay đổi: " + count)
+                .result("Number of records updated: " + count)
                 .build();
     }
 }

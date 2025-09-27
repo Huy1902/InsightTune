@@ -63,9 +63,10 @@ public class AuthService {
                 .orElseThrow(()-> new AppException(ErrorCode.USER_NOTFOUND));
 
         // authenticate password
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        boolean authenticate = passwordEncoder.matches(authenticationRequest.getPassword()
-                , user.getPassword());
+        boolean authenticate = this.passwordEncoder.matches(
+                authenticationRequest.getPassword(),
+                user.getPassword()
+        );
         if (!authenticate) {
             throw new AppException(ErrorCode.PASSWORD_NOT_TRUE);
         }

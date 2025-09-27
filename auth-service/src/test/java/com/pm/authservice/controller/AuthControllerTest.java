@@ -2,7 +2,11 @@ package com.pm.authservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pm.authservice.config.JwtAuthenticationFilter;
+import com.pm.authservice.dto.request.LoginRequest;
+import com.pm.authservice.dto.request.LogoutRequest;
+import com.pm.authservice.dto.request.RefreshTokenRequest;
 import com.pm.authservice.dto.request.RegisterRequest;
+import com.pm.authservice.dto.response.AuthenticationResponse;
 import com.pm.authservice.dto.response.UserProfileResponse;
 import com.pm.authservice.exception.AppException;
 import com.pm.authservice.exception.ErrorCode;
@@ -12,15 +16,15 @@ import com.pm.authservice.repository.UserRepository;
 import com.pm.authservice.service.AuthService;
 import com.pm.authservice.service.CustomTokenService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -48,6 +52,7 @@ public class AuthControllerTest {
     @MockitoBean
     private RefreshTokenRepository refreshTokenRepository;
 
+    //register
     @Test
     void givenValidInput_whenCreateUser_then200AndReturnsDtoJson() throws Exception {
         RegisterRequest  registerRequest =  RegisterRequest.builder()
@@ -124,7 +129,7 @@ public class AuthControllerTest {
     @Test
     void givenEmptyLastName_whenCreateUser_then400AndReturnsDtoJson() throws Exception {
         RegisterRequest  registerRequest =  RegisterRequest.builder()
-                .email("testexample.com")
+                .email("test@example.com")
                 .firstname("Tran")
                 .lastname("")
                 .password("123456")
@@ -145,7 +150,7 @@ public class AuthControllerTest {
     @Test
     void givenEmptyFirstName_whenCreateUser_then400AndReturnsDtoJson() throws Exception {
         RegisterRequest  registerRequest =  RegisterRequest.builder()
-                .email("testexample.com")
+                .email("test@example.com")
                 .firstname("")
                 .lastname("Dinh")
                 .password("123456")
@@ -164,4 +169,60 @@ public class AuthControllerTest {
 
     }
 
+    // login
+    @Test
+    void givenValidLoginRequest_whenLogin_thenReturnAuthenticationResponse() throws Exception {
+        LoginRequest request = new LoginRequest("test@example.com", "password");
+
+        AuthenticationResponse response = AuthenticationResponse.builder()
+                .token("access-token")
+                .refreshToken("refresh-token")
+                .authenticated(true)
+                .build();
+
+        when(authService.authenticate(any(LoginRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.token").value("access-token"))
+                .andExpect(jsonPath("$.result.authenticated").value(true));
+    }
+
+    // refresh
+    @Test
+    void givenValidRefreshToken_whenRefresh_thenReturnNewAccessToken() throws Exception {
+        RefreshTokenRequest request = new RefreshTokenRequest("refresh-token");
+
+        AuthenticationResponse response = AuthenticationResponse.builder()
+                .token("new-access-token")
+                .refreshToken("refresh-token")
+                .authenticated(true)
+                .email("test@example.com")
+                .build();
+
+        when(customTokenService.refreshAccessToken("refresh-token")).thenReturn(response);
+
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.token").value("new-access-token"))
+                .andExpect(jsonPath("$.result.authenticated").value(true));
+    }
+
+    // logout
+    @Test
+    void givenValidLogoutRequest_whenLogout_thenReturnSuccessResponse() throws Exception {
+        LogoutRequest request = new LogoutRequest("refresh-token");
+
+        doNothing().when(authService).logout(any(LogoutRequest.class));
+
+        mockMvc.perform(post("/auth/logout")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200));
+    }
 }
