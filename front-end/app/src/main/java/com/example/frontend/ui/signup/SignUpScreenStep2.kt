@@ -30,19 +30,17 @@ import com.example.frontend.R
 import java.nio.file.WatchEvent
 
 fun isValidPassword(password: String): Boolean {
-    // Tối thiểu 8 ký tự, có ít nhất 1 chữ cái và 1 số
     val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$".toRegex()
     return passwordRegex.matches(password)
 }
 
 @Composable
-fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
+fun SignUpScreenStep2(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var passwordCorrect by remember { mutableStateOf("") }
-    var isValid by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     var isPasswordVisible by remember { mutableStateOf(false) }
-    var isPasswordCorrectVisible by remember { mutableStateOf(false) }
-    var isMatch by remember { mutableStateOf(true) }
+    var isConfirmVisible by remember { mutableStateOf(false) }
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
             0.0f to Color(0xFFFF0000),
@@ -107,7 +105,7 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
                 value = password,
                 onValueChange = {
                     password = it
-                    isValid = true
+                    errorMessage = null
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -160,25 +158,26 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
                 value = passwordCorrect,
                 onValueChange = {
                     passwordCorrect = it
+                    errorMessage = null
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(45.dp)
                     .clip(RoundedCornerShape(12.dp)),
-                visualTransformation = if (isPasswordCorrectVisible) VisualTransformation.None
+                visualTransformation = if (isConfirmVisible ) VisualTransformation.None
                 else {
                     PasswordVisualTransformation()
                 },
                 trailingIcon = {
                     IconButton(
-                        onClick = { isPasswordCorrectVisible = !isPasswordCorrectVisible }
+                        onClick = { isConfirmVisible = !isConfirmVisible }
                     ) {
                         Icon(
-                            painter = if (isPasswordCorrectVisible)
+                            painter = if (isConfirmVisible)
                                 painterResource(id = R.drawable.opened_eye)
                             else
                                 painterResource(id = R.drawable.closed_eye),
-                            contentDescription = if (isPasswordCorrectVisible ) "Hide password" else "Show password"
+                            contentDescription = if (isConfirmVisible ) "Hide password" else "Show password"
                         )
                     }
                 }
@@ -190,10 +189,18 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
 
         Button(
             onClick = {
-                isValid = isValidPassword(password)
-                isMatch = password == passwordCorrect
-                if (isValid && isMatch) {
-                    onNext()
+                when {
+                    !isValidPassword(password) -> {
+                        errorMessage = "Password must be at least 8 characters and contain letters and numbers."
+                    }
+                    password != passwordCorrect -> {
+                        errorMessage = "Passwords do not match."
+                    }
+                    else -> {
+                        vm.onPasswordChange(password)
+                        errorMessage = null
+                        onNext()
+                    }
                 }
             },
             colors = ButtonDefaults.buttonColors(
@@ -209,25 +216,14 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
             )
         }
 
-        if (!isValid) {
+        errorMessage?.let {
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
-                "Invalid password. Please try again.",
+                it,
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                color = Color.White,
-            )
-        } else if (!isMatch) {
-            Text(
-                "Password does not match. Please try again.",
-                fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Bold,
-                fontSize = 10.sp,
-                color = Color.White,
-            )
-        } else {
-            Text(
-                ""
+                color = Color.White
             )
         }
 
@@ -238,8 +234,9 @@ fun SignUpScreenStep2(onNext: () -> Unit, onBack: () -> Unit) {
 @Composable
 fun SignUpScreenStep2Preview() {
     val navController = rememberNavController()
-    SignUpScreenStep2(
-        onNext = { navController.navigate(NavRoutes.SignUpStep3.route) },
-        onBack = { navController.popBackStack() }
-    )
+//    SignUpScreenStep2(
+//        //vm = AuthViewModel(navController),
+//        onNext = { navController.navigate(NavRoutes.SignUpStep3.route) },
+//        onBack = { navController.popBackStack() }
+//    )
 }

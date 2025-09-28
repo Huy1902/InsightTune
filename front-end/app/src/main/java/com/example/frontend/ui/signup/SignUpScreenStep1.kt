@@ -1,5 +1,6 @@
 package com.example.frontend.ui.signup
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,9 +36,11 @@ fun isValidEmail(email: String): Boolean {
 
 
 @Composable
-fun SignUpScreenStep1(onNext: () -> Unit, onBack: () -> Unit) {
+fun SignUpScreenStep1(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var isValid by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
             0.0f to Color(0xFFFF0000),
@@ -100,7 +103,7 @@ fun SignUpScreenStep1(onNext: () -> Unit, onBack: () -> Unit) {
                 value = email,
                 onValueChange = {
                     email = it
-                    isValid = true
+                    errorMessage = null
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -124,27 +127,47 @@ fun SignUpScreenStep1(onNext: () -> Unit, onBack: () -> Unit) {
 
         Button(
             onClick = {
-                isValid = isValidEmail(email)
-                if (isValid) {
-                    onNext()
+                if (!isValidEmail(email)) {
+                    errorMessage = "Invalid email format."
+                } else {
+                    isLoading = true
+                    vm.checkEmail(email) { exists ->
+                        isLoading = false
+                        if (exists) {
+                            errorMessage = "Email already exists. Please try another one."
+                        } else {
+                            vm.onEmailChange(email) // lưu email vào ViewModel
+                            onNext()
+                        }
+                    }
                 }
             },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White
-            )
+            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+            enabled = !isLoading
         ) {
-            Text(
-                "Next",
-                fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = Color.Black,
-            )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    color = Color.Black,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Checking...", color = Color.Black)
+            } else {
+                Text(
+                    "Next",
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                )
+            }
         }
 
-        if (!isValid) {
+        errorMessage?.let {
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
-                "Invalid email. Please try again.",
+                it,
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
@@ -158,9 +181,11 @@ fun SignUpScreenStep1(onNext: () -> Unit, onBack: () -> Unit) {
 @Composable
 fun SignUpScreenStep1Preview() {
     val navController = rememberNavController()
+   // val vm = AuthViewModel(context = Context)
 
-    SignUpScreenStep1(
-        onNext = { navController.navigate(NavRoutes.SignUpStep2.route) },
-        onBack = { navController.popBackStack() }
-    )
+//    SignUpScreenStep1(
+//        vm,
+//        onNext = { navController.navigate(NavRoutes.SignUpStep2.route) },
+//        onBack = { navController.popBackStack() }
+//    )
 }

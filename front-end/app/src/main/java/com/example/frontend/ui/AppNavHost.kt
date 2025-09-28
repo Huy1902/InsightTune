@@ -13,13 +13,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.app.ui.NavRoutes
+import com.example.frontend.core.AppPreferences
 import com.example.frontend.ui.login.LogInScreen
+import com.example.frontend.ui.signup.AuthViewModel
 import com.example.frontend.ui.signup.SignUpScreenStep1
 import com.example.frontend.ui.signup.SignUpScreenStep2
 import com.example.frontend.ui.signup.SignUpScreenStep3
@@ -30,10 +34,18 @@ import com.google.accompanist.navigation.animation.composable
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AppNavHost() {
+fun AppNavHost(prefs: AppPreferences) {
     val navController = rememberNavController()
     val duration = 600
     val easing = FastOutSlowInEasing
+    val context = LocalContext.current
+    val vm = remember { AuthViewModel(context) }
+    val startDestination = if (prefs.getToken() != null) {
+        NavRoutes.Home.route
+    } else {
+        NavRoutes.StartScreen.route
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +61,7 @@ fun AppNavHost() {
     ) {
         AnimatedNavHost(
             navController = navController,
-            startDestination = NavRoutes.StartScreen.route,
+            startDestination = startDestination,
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { it },
@@ -84,24 +96,28 @@ fun AppNavHost() {
 
             composable(NavRoutes.SignUpStep1.route) {
                 SignUpScreenStep1(
+                    vm,
                     onNext = { navController.navigate(NavRoutes.SignUpStep2.route) },
                     onBack = { navController.popBackStack() }
                 )
             }
             composable(NavRoutes.SignUpStep2.route) {
                 SignUpScreenStep2(
+                    vm,
                     onNext = { navController.navigate(NavRoutes.SignUpStep3.route) },
                     onBack = { navController.popBackStack() }
                 )
             }
             composable(NavRoutes.SignUpStep3.route) {
                 SignUpScreenStep3(
+                    vm,
                     onNext = { navController.navigate(NavRoutes.Login.route) },
                     onBack = { navController.popBackStack() }
                 )
             }
             composable(NavRoutes.Login.route) {
                 LogInScreen(
+                    vm,
                     onNext = { navController.navigate(NavRoutes.Home.route) },
                     onBack = { navController.popBackStack() }
                 )

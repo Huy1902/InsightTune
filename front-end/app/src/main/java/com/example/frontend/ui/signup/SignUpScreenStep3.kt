@@ -28,7 +28,7 @@ import java.nio.file.WatchEvent
 
 
 @Composable
-fun SignUpScreenStep3(onNext: () -> Unit, onBack: () -> Unit) {
+fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit) {
     var name by remember { mutableStateOf("") }
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
@@ -104,6 +104,7 @@ fun SignUpScreenStep3(onNext: () -> Unit, onBack: () -> Unit) {
 
         Button(
             onClick = {
+                vm.onUsernameChange(name)
                 onNext()
             },
             colors = ButtonDefaults.buttonColors(

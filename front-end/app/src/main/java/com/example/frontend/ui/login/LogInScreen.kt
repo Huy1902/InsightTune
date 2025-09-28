@@ -27,13 +27,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import java.nio.file.WatchEvent
 import com.example.frontend.R
+import com.example.frontend.core.Resource
+import com.example.frontend.ui.signup.AuthViewModel
 
 @Composable
-fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
+fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var isValid by remember { mutableStateOf(true) }
     var isVisible by remember { mutableStateOf(false) }
+    val state by vm.state.collectAsState()
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
             0.0f to Color(0xFFFF0000),
@@ -93,10 +95,8 @@ fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
             )
 
             TextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                },
+                value = vm.email,
+                onValueChange = vm::onEmailChange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(45.dp)
@@ -115,11 +115,8 @@ fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
             )
 
             TextField(
-                value = password,
-                onValueChange = {
-                    password = it
-                    isValid = true
-                },
+                value = vm.password,
+                onValueChange = vm::onPasswordChange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(45.dp)
@@ -149,28 +146,45 @@ fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
 
         Button(
             onClick = {
-                onNext()
+                vm.login()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White
             )
         ) {
-            Text(
-                "Log in",
-                fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = Color.Black,
-            )
+            if (state is Resource.Loading) {
+                CircularProgressIndicator(
+                    color = Color.Black,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Logging in...", color = Color.Black)
+            } else {
+                Text(
+                    "Log in",
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
+            }
         }
 
-        if(!isValid) {
+        LaunchedEffect(state) {
+            if (state is Resource.Success) {
+                onNext()
+            }
+        }
+
+        if (state is Resource.Error) {
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
-                "Wrong email or password, please try again.",
+                (state as Resource.Error).message ?: "Wrong email or password, please try again.",
                 fontFamily = FontFamily.Serif,
-               fontWeight = FontWeight.Bold,
-               fontSize = 10.sp,
-                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = Color.White
             )
         }
     }
