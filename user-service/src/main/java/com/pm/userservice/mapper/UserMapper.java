@@ -16,6 +16,7 @@ public class UserMapper {
         user.setFullName(req.getFullName());
         user.setAddress(req.getAddress());
         user.setPhone(req.getPhone());
+        user.setRole(req.getRole());
 
         return user;
     }
@@ -28,6 +29,7 @@ public class UserMapper {
         userResponse.setFullName(user.getFullName());
         userResponse.setAddress(user.getAddress());
         userResponse.setPhone(user.getPhone());
+        userResponse.setRole(user.getRole());
 
         return userResponse;
     }

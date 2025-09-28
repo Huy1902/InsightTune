@@ -28,7 +28,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // Lấy thông tin từ Google
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        handleOAuthUser(oAuth2User);
 
+        // Có thể trả về CustomOAuth2User nếu muốn   wrap thêm roles
+        return oAuth2User;
+
+    }
+
+    protected void handleOAuthUser(OAuth2User oAuth2User) {
+        // xử lý như bạn đang làm
         // Truy cập dữ liệu user từ attributes
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
@@ -59,8 +67,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         else {
             log.info(user.toString());
         }
-        // Có thể trả về CustomOAuth2User nếu muốn wrap thêm roles
-        return oAuth2User;
-
     }
+
 }

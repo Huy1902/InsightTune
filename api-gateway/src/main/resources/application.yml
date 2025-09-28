@@ -63,6 +63,35 @@ spring:
                             name: uploadCB
                             fallbackUri: forward:/__fallback/upload
 
+                    - id: user-service
+                      uri: lb://user-service
+                      predicates:
+                        - Path=/users/**
+                      filters:
+                        - StripPrefix=0
+
+                    - id: auth-service-user
+                      uri: lb://auth-service
+                      predicates:
+                        - Path=/user/**
+                      filters:
+                        - StripPrefix=0
+
+                    - id: auth-service-auth
+                      uri: lb://auth-service
+                      predicates:
+                        - Path=/auth/**
+                      filters:
+                        - StripPrefix=0
+
+                    - id: history-service
+                      uri: lb://history-service
+                      predicates:
+                        - Path=/history/**
+                      filters:
+                        - StripPrefix=0
+
+
                     - id: docs-catalog
                       uri: lb://catalog-service
                       predicates: [ Path=/_docs/catalog ]
@@ -78,6 +107,24 @@ spring:
                     - id: docs-upload
                       uri: lb://upload-service
                       predicates: [ Path=/_docs/upload ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-user
+                      uri: lb://user-service
+                      predicates: [ Path=/_docs/user ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-auth
+                      uri: lb://auth-service
+                      predicates: [ Path=/_docs/auth ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-history
+                      uri: lb://history-service
+                      predicates: [ Path=/_docs/history ]
                       filters:
                         - SetPath=/v3/api-docs
           default-filters:
@@ -113,3 +160,9 @@ springdoc:
         url: /_docs/play
       - name: Upload Service
         url: /_docs/upload
+      - name: User Service
+        url: /_docs/user
+      - name: Auth Service
+        url: /_docs/auth
+      - name: History Service
+        url: /_docs/history

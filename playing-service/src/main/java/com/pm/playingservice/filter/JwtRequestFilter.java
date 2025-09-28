@@ -62,11 +62,5 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
     chain.doFilter(request, response);
   }
-
-//  // Optionally run this filter only for /play
-//  @Override
-//  protected boolean shouldNotFilter(HttpServletRequest request) {
-//    return !"/play".equals(request.getServletPath());
-//  }
 }
 

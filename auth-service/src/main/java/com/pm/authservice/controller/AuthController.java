@@ -8,24 +8,13 @@ import com.pm.authservice.dto.request.RegisterRequest;
 import com.pm.authservice.dto.response.ApiResponse;
 import com.pm.authservice.dto.response.AuthenticationResponse;
 import com.pm.authservice.dto.response.UserProfileResponse;
-import com.pm.authservice.exception.AppException;
-import com.pm.authservice.exception.ErrorCode;
-import com.pm.authservice.models.User;
-import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.service.AuthService;
 import com.pm.authservice.service.CustomTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.*;
+
 
 import java.text.ParseException;
 
@@ -34,15 +23,11 @@ import java.text.ParseException;
 @Slf4j
 public class AuthController {
 
-    private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
-    private final RoleRepository roleRepository;
     private final CustomTokenService customTokenService;
 
-    public AuthController(PasswordEncoder passwordEncoder, AuthService authService,  RoleRepository roleRepository, CustomTokenService customTokenService) {
-        this.passwordEncoder = passwordEncoder;
+    public AuthController( AuthService authService, CustomTokenService customTokenService) {
         this.authService = authService;
-        this.roleRepository = roleRepository;
         this.customTokenService = customTokenService;
     }
 
@@ -87,4 +72,5 @@ public class AuthController {
                 .code(200)
                 .build();
     }
+
 }
