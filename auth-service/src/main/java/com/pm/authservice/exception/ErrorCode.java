@@ -4,21 +4,21 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
-    USER_NOTFOUND(404, "Email không tồn tại"),
+    USER_NOTFOUND(404, "Email not found"),
     UNCATEGORIZED_ERROR(1000, "Uncategorized error"),
     INVALID_KEY(1001, "Invalid key"),
-    EMAIL_ALREADY_EXISTS(400, "Email đã tồn tại"),
-    PASSWORD_NOT_MATCH(400, "Mật khẩu không khớp"),
+    EMAIL_ALREADY_EXISTS(400, "Email already exists"),
+    PASSWORD_NOT_MATCH(400, "Passwords do not match"),
     ROLE_NOTFOUND(404, "Role not found"),
     UNAUTHENTICATED(1005, "Unauthenticated"),
-    REFRESHTOKEN_INVALID(404, "Refresh token không tồn tại"),
-    REFRESHTOKEN_ISREVOKED(401, "Refresh token is overdue"),
-    PASSWORD_INVALID(400, "Mật khẩu phải trên 6 ký tự"),
-    EMAIL_INVALID(400, "Email không hợp lệ"),
-    NOT_BLANK(400, "Không được để trống phần này"),
-    PASSWORD_NOT_TRUE(400, "Mật khẩu không đúng"),
-    CANT_CONNECT_USERSERVICE(500, "Can't connect user-service"),
-    CANT_CHANGE_ROLE(400, "Không thể đổi role thành USER"),
+    REFRESHTOKEN_INVALID(404, "Refresh token not found"),
+    REFRESHTOKEN_ISREVOKED(401, "Refresh token is revoked"),
+    PASSWORD_INVALID(400, "Password must be at least 6 characters"),
+    EMAIL_INVALID(400, "Invalid email"),
+    NOT_BLANK(400, "Field must not be blank"),
+    PASSWORD_NOT_TRUE(400, "Incorrect password"),
+    CANT_CONNECT_USERSERVICE(500, "Cannot connect to user-service"),
+    CANT_CHANGE_ROLE(400, "Cannot change role to USER"),
     ;
 
     ErrorCode(int code, String message) {
