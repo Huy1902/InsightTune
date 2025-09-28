@@ -1,5 +1,6 @@
 package com.pm.uploadservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class S3UploadRequestDto {
-  @NotNull(message = "Key is required")
+  @NotBlank(message = "Key is required")
   private String key;
 
   @NotNull(message = "File is required")

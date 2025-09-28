@@ -6,6 +6,10 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import com.pm.uploadservice.dto.MetaRequestDto;
 import com.pm.uploadservice.dto.MetaResponseDto;
+import com.pm.uploadservice.exception.MetaExtractException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -18,6 +22,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Service for extracting metadata from MP3 files using the {@code mp3agic} library.
@@ -39,7 +44,10 @@ import java.util.Objects;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MetadataService {
+
+  private final Validator validator;
 
   /**
    * Builds structured metadata from an uploaded MP3 file.
@@ -55,22 +63,20 @@ public class MetadataService {
    *
    * @param metaRequestDto request wrapper containing the uploaded {@link MultipartFile}.
    * @return a response DTO containing parsed metadata (title, album, artists, duration, image bytes).
-   * @throws IOException             if file transfer or deletion fails.
-   * @throws InvalidDataException    if the MP3 file is invalid.
-   * @throws UnsupportedTagException if tags are unsupported.
+   * @throws MetaExtractException            if any error caused in extraction process
    */
   public MetaResponseDto buildMetadata(MetaRequestDto metaRequestDto)
-          throws IOException, InvalidDataException, UnsupportedTagException {
+          throws MetaExtractException {
 
     MultipartFile file = metaRequestDto.getFile();
     if (file == null || file.isEmpty()) {
       log.error("No file provided");
+      throw new MetaExtractException("No file provided");
     }
+    try {
 
-    Path tmp = Files.createTempFile("upload-", ".mp3");
+      Path tmp = Files.createTempFile("upload-", ".mp3");
 
-    try (InputStream in = Objects.requireNonNull(file).getInputStream()) {
-      // Save MultipartFile to temp file (mp3agic requires a real file handle)
       file.transferTo(tmp);
 
       Mp3File mp3 = new Mp3File(tmp.toFile());
@@ -105,16 +111,14 @@ public class MetadataService {
         log.error("No ID3v2 tag found (album art requires ID3v2)");
       }
 
-      // Fallback: derive title from filename if missing
       if (!StringUtils.hasText(title)) {
         title = baseName(file.getOriginalFilename());
       }
 
-      if(!StringUtils.hasText(album)) {
+      if (!StringUtils.hasText(album)) {
         album = "";
       }
-
-      return MetaResponseDto.builder()
+      MetaResponseDto metaResponseDto = MetaResponseDto.builder()
               .title(title.trim())
               .album(album.trim())
               .artists(artists)
@@ -122,12 +126,25 @@ public class MetadataService {
               .image(image)
               .imageType(imageType)
               .build();
-    } finally {
+
       Files.deleteIfExists(tmp);
+
+      Set<ConstraintViolation<MetaResponseDto>> violations = validator.validate(metaResponseDto);
+
+      if (!violations.isEmpty()) {
+        String message = violations.iterator().next().getMessage();
+        log.error(message);
+        throw new MetaExtractException(message);
+      } else {
+        return metaResponseDto;
+      }
+
+
+    } catch (InvalidDataException | UnsupportedTagException | IOException e) {
+      throw new MetaExtractException(e.getMessage());
     }
   }
 
-  // === Helper methods ===
 
   /**
    * Converts blank or empty strings to {@code null}.

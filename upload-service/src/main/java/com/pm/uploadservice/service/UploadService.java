@@ -1,19 +1,22 @@
 package com.pm.uploadservice.service;
 
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.UnsupportedTagException;
 import com.pm.uploadservice.dto.*;
+import com.pm.uploadservice.exception.KafkaServiceException;
+import com.pm.uploadservice.exception.MetaExtractException;
+import com.pm.uploadservice.exception.S3ServiceException;
+import com.pm.uploadservice.exception.UploadServiceException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Objects;
-import java.security.MessageDigest;
-import java.util.UUID;
+import java.util.Set;
 
 /**
  * Represents metadata for a music track stored in object storage.
@@ -41,47 +44,83 @@ public class UploadService {
   private final MetadataService metadataService;
   private final S3Service s3Service;
   private final KafkaService kafkaService;
+  private final Validator validator;
 
-  public TrackUploadResponseDto uploadTrack(TrackUploadRequestDto trackUploadRequestDto) throws NoSuchAlgorithmException {
+  public TrackUploadResponseDto uploadTrack(TrackUploadRequestDto trackUploadRequestDto) throws UploadServiceException {
     MetaRequestDto metaRequestDto = new MetaRequestDto(trackUploadRequestDto.getFile());
     MetaResponseDto metaResponseDto = null;
     try {
       metaResponseDto = metadataService.buildMetadata(metaRequestDto);
-    } catch (IOException | InvalidDataException | UnsupportedTagException e) {
+    } catch (MetaExtractException e) {
       log.error(e.getMessage());
+      throw new UploadServiceException(e.getMessage());
     }
-    String rawKey = Objects.requireNonNull(metaResponseDto).getArtists().getFirst().trim() + metaResponseDto.getTitle().trim();
+    String baseKey = null;
+    try {
+      String rawKey = Objects.requireNonNull(metaResponseDto).getArtists().getFirst().trim() + metaResponseDto.getTitle().trim();
 
-    MessageDigest md = MessageDigest.getInstance("SHA-256");
-    byte[] digest = md.digest(rawKey.getBytes());
+      MessageDigest md = MessageDigest.getInstance("SHA-256");
+      byte[] digest = md.digest(rawKey.getBytes());
 
-    long value = new BigInteger(1, Arrays.copyOf(digest, 8)).longValue();
-    String baseKey = String.format("%012d", value); // 12 digits
+      long value = new BigInteger(1, Arrays.copyOf(digest, 8)).longValue();
+      baseKey = String.format("%012d", value); // 12 digits
 
-    log.info("baseKey: {}", baseKey);
-    S3UploadRequestDto s3UploadRequestDto = S3UploadRequestDto.builder()
-            .file(trackUploadRequestDto.getFile())
-            .image(metaResponseDto.getImage())
-            .imageType(metaResponseDto.getImageType())
-            .key(baseKey)
-            .build();
-    S3UploadResponseDto s3UploadResponseDto = s3Service.uploadTrack(s3UploadRequestDto);
+      log.info("baseKey: {}", baseKey);
+    } catch (NoSuchAlgorithmException e) {
+      log.error(e.getMessage());
+      throw new UploadServiceException(e.getMessage());
+    }
 
-    CreatedTrackResponseDto createdTrackResponseDto = kafkaService.sendCreatedTrack(CreatedTrackRequestDto.builder()
-            .title(metaResponseDto.getTitle())
-            .album(metaResponseDto.getAlbum())
-            .durationMs(metaResponseDto.getDurationMs())
-            .storageKey(s3UploadResponseDto.getStorageKey())
-            .coverImageKey(s3UploadResponseDto.getCoverImageKey())
-            .artists(metaResponseDto.getArtists()).build());
+    try {
 
-    return TrackUploadResponseDto.builder()
-            .title(metaResponseDto.getTitle())
-            .artists(metaResponseDto.getArtists())
-            .storageKey(s3UploadResponseDto.getStorageKey())
-            .coverImageKey(s3UploadResponseDto.getCoverImageKey())
-            .kafkaStatus(createdTrackResponseDto.getKafkaStatus())
-            .s3Status(s3UploadResponseDto.getStatus())
-            .build();
+      S3UploadRequestDto s3UploadRequestDto = S3UploadRequestDto.builder()
+              .file(trackUploadRequestDto.getFile())
+              .image(metaResponseDto.getImage())
+              .imageType(metaResponseDto.getImageType())
+              .key(baseKey)
+              .build();
+      validator.validate(s3UploadRequestDto);
+      Set<ConstraintViolation<S3UploadRequestDto>> violations = validator.validate(s3UploadRequestDto);
+      if (!violations.isEmpty()) {
+        throw new S3ServiceException(violations.iterator().next().getMessage());
+      }
+
+      S3UploadResponseDto s3UploadResponseDto = s3Service.uploadTrack(s3UploadRequestDto);
+
+      CreatedTrackRequestDto createdTrackRequestDto = CreatedTrackRequestDto.builder()
+              .title(metaResponseDto.getTitle())
+              .album(metaResponseDto.getAlbum())
+              .durationMs(metaResponseDto.getDurationMs())
+              .storageKey(s3UploadResponseDto.getStorageKey())
+              .coverImageKey(s3UploadResponseDto.getCoverImageKey())
+              .artists(metaResponseDto.getArtists()).build();
+
+      validator.validate(createdTrackRequestDto);
+      Set<ConstraintViolation<CreatedTrackRequestDto>> violations2 = validator.validate(createdTrackRequestDto);
+      if (!violations2.isEmpty()) {
+        throw new KafkaServiceException(violations2.iterator().next().getMessage());
+      }
+      CreatedTrackResponseDto createdTrackResponseDto = kafkaService.sendCreatedTrack(createdTrackRequestDto);
+
+
+      TrackUploadResponseDto trackUploadResponseDto = TrackUploadResponseDto.builder()
+              .title(metaResponseDto.getTitle())
+              .artists(metaResponseDto.getArtists())
+              .storageKey(s3UploadResponseDto.getStorageKey())
+              .coverImageKey(s3UploadResponseDto.getCoverImageKey())
+              .kafkaStatus(createdTrackResponseDto.getKafkaStatus())
+              .s3Status(s3UploadResponseDto.getStatus())
+              .build();
+
+      Set<ConstraintViolation<TrackUploadResponseDto>> violations3 = validator.validate(trackUploadResponseDto);
+      if (!violations3.isEmpty()) {
+        throw new UploadServiceException(violations3.iterator().next().getMessage());
+      }
+      return trackUploadResponseDto;
+
+    } catch (S3ServiceException | KafkaServiceException | UploadServiceException e) {
+      log.error(e.getMessage());
+      throw new UploadServiceException(e.getMessage());
+    }
   }
 }

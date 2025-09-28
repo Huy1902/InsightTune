@@ -2,6 +2,9 @@ package com.pm.uploadservice.service;
 
 import com.pm.uploadservice.dto.CreatedTrackRequestDto;
 import com.pm.uploadservice.dto.CreatedTrackResponseDto;
+import com.pm.uploadservice.exception.KafkaServiceException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -11,9 +14,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 import track.events.CreatedTrackEvent;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -22,6 +28,9 @@ class KafkaServiceTest {
 
   @Mock
   KafkaTemplate<String, byte[]> kafkaTemplate;
+
+  @Mock
+  Validator validator;
 
   @InjectMocks
   KafkaService kafkaService;
@@ -41,8 +50,8 @@ class KafkaServiceTest {
   void givenValidRequest_whenSendCreatedTrack_thenBuildsEventSendsToKafkaAndReturnsSuccess() throws Exception {
     // given
     var req = sampleRequest();
-    // We don't need to stub return; service doesn't use the future
-    // when(kafkaTemplate.send(...)).thenReturn(null); // default is fine
+    when(validator.validate(any(CreatedTrackEvent.class))).thenReturn(Collections.emptySet());
+    // No need to stub kafkaTemplate.send default behavior
 
     // when
     CreatedTrackResponseDto resp = kafkaService.sendCreatedTrack(req);
@@ -50,13 +59,11 @@ class KafkaServiceTest {
     // then
     assertThat(resp.getKafkaStatus()).isEqualTo("Successfully sent event");
 
-    // capture the bytes sent to Kafka and parse to verify fields
+    // capture payload
     ArgumentCaptor<byte[]> bytesCaptor = ArgumentCaptor.forClass(byte[].class);
     verify(kafkaTemplate, times(1)).send(eq("created_track"), bytesCaptor.capture());
 
-    byte[] sent = bytesCaptor.getValue();
-    CreatedTrackEvent event = CreatedTrackEvent.parseFrom(sent);
-
+    CreatedTrackEvent event = CreatedTrackEvent.parseFrom(bytesCaptor.getValue());
     assertThat(event.getTitle()).isEqualTo("Love Story");
     assertThat(event.getAlbum()).isEqualTo("Fearless");
     assertThat(event.getArtistsList()).containsExactly("Taylor Swift", "Guest");
@@ -68,18 +75,38 @@ class KafkaServiceTest {
   }
 
   @Test
-  void givenKafkaTemplateThrows_whenSendCreatedTrack_thenReturnsFailure() {
+  void givenKafkaTemplateThrows_whenSendCreatedTrack_thenThrowsKafkaServiceException() {
     // given
     var req = sampleRequest();
+    when(validator.validate(any(CreatedTrackEvent.class))).thenReturn(Collections.emptySet());
     when(kafkaTemplate.send(eq("created_track"), any(byte[].class)))
             .thenThrow(new RuntimeException("boom"));
 
-    // when
-    CreatedTrackResponseDto resp = kafkaService.sendCreatedTrack(req);
+    // when + then
+    assertThatThrownBy(() -> kafkaService.sendCreatedTrack(req))
+            .isInstanceOf(KafkaServiceException.class)
+            .hasMessageContaining("Error sending Track created event: boom");
 
-    // then
-    assertThat(resp.getKafkaStatus()).isEqualTo("Failed to sent event");
     verify(kafkaTemplate, times(1)).send(eq("created_track"), any(byte[].class));
     verifyNoMoreInteractions(kafkaTemplate);
+  }
+
+  @Test
+  void givenValidatorViolation_whenSendCreatedTrack_thenThrowsKafkaServiceExceptionBeforeSend() {
+    // given
+    var req = sampleRequest();
+
+    @SuppressWarnings("unchecked")
+    ConstraintViolation<CreatedTrackEvent> violation = mock(ConstraintViolation.class);
+    when(violation.getMessage()).thenReturn("title must not be blank");
+    when(validator.validate(any(CreatedTrackEvent.class))).thenReturn(Set.of(violation));
+
+    // when + then
+    assertThatThrownBy(() -> kafkaService.sendCreatedTrack(req))
+            .isInstanceOf(KafkaServiceException.class)
+            .hasMessage("title must not be blank");
+
+    // Ensure no send happened
+    verifyNoInteractions(kafkaTemplate);
   }
 }
