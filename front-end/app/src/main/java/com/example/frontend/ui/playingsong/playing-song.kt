@@ -59,10 +59,8 @@ fun Playingasong (viewModel: MusicPlayerViewModel) {
 
     val state by viewModel.playerState.collectAsState()
 
-    val songUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-
+    val songUrl = "https://d6puu73zzo17e.cloudfront.net/tracks/5927151815778178627.mp3?Expires=1759119755&Signature=xwiGfQDjQLxIY5XT2F5JgL8vIbFtoejkB4UDDIs76f67-lmYQr5wKKY3nCOWpnXP9nAkzNqTQII0AHuI0jGCTZYKjNLhsZWruQF6HAzbd3ZKf-XDZDJZQuHPKZtw3rAhMmdHRXiqGgCT-P5fEgxAb3zf8IMyZPylUcdRwDiOw6t38hWJmwdVEyENkZJd6biz0brdNp1JHQ-Pydg2IB-gOkwojUFiBsVJdggx0jtkZI-roLFAXXdDsMsm6CBFflwKdrngBPpTR9mgD5A5Nmb7GCm0lZlEHjgUloJ5-tUHadlthAkuUrBwT-UCcZ~~O~OoWb~cCMHKnbpxLyJaqMplXQ__&Key-Pair-Id=K1W74YMJ2QWWV5"
     LaunchedEffect(key1 = songUrl) {
-
         viewModel.loadAndPlaySong(songUrl)
     }
 
