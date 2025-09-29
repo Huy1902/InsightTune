@@ -21,7 +21,7 @@ public class AwsUrlService {
   @Value("${spotube.aws.cloudfront.keypairId}")
   private String cloudFrontKeyPairId;    // Public key ID from CloudFront (Key Group)
 
-  @Value("${spotube.aws.cloudfront.urlTtlSeconds:120}")
+  @Value("${spotube.aws.cloudfront.urlTtlSeconds:604800}")
   private long urlTtlSeconds;            // default 120s
 
   @Value("${spotube.aws.pvtkeyPath}")
