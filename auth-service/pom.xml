@@ -175,6 +175,19 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <!-- Loại class chính (Spring Boot Application) -->
+                                <exclude>**/AuthServiceApplication.class</exclude>
+
+                                <!-- Loại các DTO nếu muốn -->
+                                <exclude>com/pm/authservice/dto/**</exclude>
+                                <!-- spring configs -->
+                                <exclude>com/pm/authservice/config/**</exclude>
+                                <!-- optional DTOs -->
+                                <!-- <exclude>com/pm/uploadservice/dto/**</exclude> -->
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
