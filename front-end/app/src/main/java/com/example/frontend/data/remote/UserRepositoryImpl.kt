@@ -5,7 +5,9 @@ import com.example.frontend.core.AppPreferences
 import com.example.frontend.data.models.user.AuthResponseDto
 import com.example.frontend.data.models.user.LoginRequest
 import com.example.frontend.data.models.user.RegisterRequest
+import com.example.frontend.data.models.user.UserDto
 import com.example.frontend.domain.repositories.UserRepository
+import okhttp3.MultipartBody
 
 class UserRepositoryImpl(
     private val api: UserApi,
@@ -15,18 +17,17 @@ class UserRepositoryImpl(
     override suspend fun login(email: String, password: String): AuthResponseDto {
         val response = api.login(LoginRequest(email, password))
 
-        Log.d("API_DEBUG", "code=${response.code()}, url=${response.raw().request.url}, error=${response.errorBody()?.string()}")
-
         if (response.isSuccessful) {
-            val body = response.body()
-            if (body != null) {
-                prefs.saveToken(body.token)
-                return body
-            } else {
-                throw Exception("Empty body")
-            }
+            val body = response.body() ?: throw Exception("Empty body")
+            prefs.saveToken(body.token)
+            return body
         } else {
-            throw Exception("Login failed: ${response.code()} ${response.errorBody()?.string()}")
+            val code = response.code()
+            val friendly = when (code) {
+                400, 401 -> "Wrong email or password, please try again."
+                else -> "Login failed ($code). Please try again."
+            }
+            throw Exception(friendly)
         }
     }
 
@@ -53,6 +54,48 @@ class UserRepositoryImpl(
 
     override fun getToken(): String? {
         return prefs.getToken()
+    }
+
+    override suspend fun getUserInfo(): UserDto {
+        val response = api.getUserInfo()
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("Empty body")
+        } else {
+            throw Exception("Get user info failed: ${response.code()} ${response.errorBody()?.string()}")
+        }
+    }
+
+    override suspend fun updateUserName(newName: String): UserDto {
+        val response = api.updateUserName(mapOf("name" to newName))
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("Empty body")
+        } else {
+            throw Exception("Update name failed: ${response.code()} ${response.errorBody()?.string()}")
+        }
+    }
+
+    override suspend fun logout(): Boolean {
+        val response = api.logout()
+        return if (response.isSuccessful) {
+            prefs.clearToken()
+            true
+        } else {
+            false
+        }
+    }
+
+    override suspend fun updateAvatar(avatar: MultipartBody.Part): UserDto {
+        val response = api.updateAvatar(avatar)
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("Empty body")
+        } else {
+            throw Exception("Upload failed: ${response.code()}")
+        }
+    }
+
+
+    override fun clearToken() {
+        prefs.clearToken()
     }
 
 }

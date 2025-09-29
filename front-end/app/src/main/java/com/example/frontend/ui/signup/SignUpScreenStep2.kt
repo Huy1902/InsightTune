@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
-import com.example.app.ui.NavRoutes
+import com.example.frontend.ui.NavRoutes
 import com.example.frontend.R
 import java.nio.file.WatchEvent
 
@@ -60,15 +62,16 @@ fun SignUpScreenStep2(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
-                painter = painterResource(id = R.drawable.back_button),
+                imageVector = Icons.Default.ArrowBackIosNew,
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(start = 16.dp)
-                    .size(32.dp)
+                    .size(25.dp)
                     .clickable {
                         onBack()
-                    }
+                    },
+                tint = Color.White
             )
 
             Text(

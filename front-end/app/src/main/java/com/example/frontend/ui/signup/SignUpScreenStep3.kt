@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -49,15 +51,16 @@ fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
-                painter = painterResource(id = R.drawable.back_button),
+                imageVector = Icons.Default.ArrowBackIosNew,
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(start = 16.dp)
-                    .size(32.dp)
-                    .clickable{
+                    .size(25.dp)
+                    .clickable {
                         onBack()
-                    }
+                    },
+                tint = Color.White
             )
 
             Text(
