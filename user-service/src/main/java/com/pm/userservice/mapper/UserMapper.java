@@ -1,8 +1,8 @@
 package com.pm.userservice.mapper;
 
 import com.pm.userservice.models.User;
-import com.pm.userservice.models.dto.request.CreateUserRequest;
-import com.pm.userservice.models.dto.response.UserResponse;
+import com.pm.userservice.dto.request.CreateUserRequest;
+import com.pm.userservice.dto.response.UserResponse;
 import org.springframework.stereotype.Component;
 
 @Component
