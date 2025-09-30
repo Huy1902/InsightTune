@@ -56,7 +56,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    @Operation(summary = "Refresh accessToken", description = "API refresh")
+    @Operation(summary = "Refresh accessToken", description = "API refresh, need accessToken")
     public ApiResponse<AuthenticationResponse> refresh(@RequestBody RefreshTokenRequest request) throws ParseException, JOSEException {
         return ApiResponse.<AuthenticationResponse>builder()
                 .code(200)
