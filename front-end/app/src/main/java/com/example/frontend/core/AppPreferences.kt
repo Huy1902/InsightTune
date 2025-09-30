@@ -13,7 +13,7 @@ class AppPreferences(context: Context) {
         return prefs.getString(Constants.KEY_TOKEN, null)
     }
 
-    fun clear() {
-        prefs.edit().clear().apply()
+    fun clearToken() {
+        prefs.edit().remove("auth_token").apply()
     }
 }

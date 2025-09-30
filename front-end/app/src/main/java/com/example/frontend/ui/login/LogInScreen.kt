@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -49,21 +52,23 @@ fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
             .fillMaxSize()
             .background(brush = gradient)
             .padding(16.dp)
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
-                painter = painterResource(id = R.drawable.back_button),
+                imageVector = Icons.Default.ArrowBackIosNew,
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(start = 16.dp)
-                    .size(32.dp)
+                    .size(25.dp)
                     .clickable {
                         onBack()
-                    }
+                    },
+                tint = Color.White
             )
 
             Text(
@@ -180,7 +185,7 @@ fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
         if (state is Resource.Error) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                (state as Resource.Error).message ?: "Wrong email or password, please try again.",
+                text = "Wrong email or password, please try again.",
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
@@ -194,7 +199,7 @@ fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
 @Composable
 fun LogInPreview() {
     val navController = rememberNavController()
+    val context = LocalContext.current
 
-
-    //LogInScreen(controller = controller)
+    LogInScreen(vm = AuthViewModel(context), onNext = {}, onBack = {})
 }
