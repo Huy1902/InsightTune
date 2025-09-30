@@ -8,6 +8,7 @@ import com.example.frontend.data.models.user.RegisterRequest
 import com.example.frontend.data.models.user.UserDto
 import com.example.frontend.domain.repositories.UserRepository
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 class UserRepositoryImpl(
     private val api: UserApi,
@@ -32,8 +33,8 @@ class UserRepositoryImpl(
     }
 
 
-    override suspend fun register(username: String, email: String, password: String): AuthResponseDto {
-        val response = api.register(RegisterRequest(username, email, password))
+    override suspend fun register(firstName: String, lastName: String, email: String, password: String): AuthResponseDto {
+        val response = api.register(RegisterRequest(firstName, lastName, email, password))
 
         if (response.isSuccessful) {
             val body = response.body()
@@ -65,8 +66,18 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun updateUserName(newName: String): UserDto {
-        val response = api.updateUserName(mapOf("name" to newName))
+    override suspend fun updateUserFirstName(newName: String): UserDto {
+        val response = api.updateUserFirstName(mapOf("name" to newName))
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("Empty body")
+        } else {
+            throw Exception("Update name failed: ${response.code()} ${response.errorBody()?.string()}")
+        }
+    }
+
+
+    override suspend fun updateUserLastName(newName: String): UserDto {
+        val response = api.updateUserLastName(mapOf("name" to newName))
         if (response.isSuccessful) {
             return response.body() ?: throw Exception("Empty body")
         } else {
@@ -90,6 +101,22 @@ class UserRepositoryImpl(
             return response.body() ?: throw Exception("Empty body")
         } else {
             throw Exception("Upload failed: ${response.code()}")
+        }
+    }
+
+    override suspend fun updateProfile(
+        firstName: RequestBody?,
+        lastName: RequestBody?,
+        phone: RequestBody?,
+        address: RequestBody?,
+        role: RequestBody?,
+        avatar: MultipartBody.Part?
+    ): UserDto {
+        val response = api.updateProfile(firstName, lastName, phone, address, role, avatar)
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("Empty response body")
+        } else {
+            throw Exception("Update profile failed: ${response.code()} ${response.message()}")
         }
     }
 

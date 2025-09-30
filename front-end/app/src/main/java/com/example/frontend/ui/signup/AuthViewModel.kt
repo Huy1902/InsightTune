@@ -30,12 +30,15 @@ class AuthViewModel(context: Context) : ViewModel() {
         private set
     var password by mutableStateOf("")
         private set
-    var username by mutableStateOf("")
+    var firstName by mutableStateOf("")
+        private set
+    var lastName by mutableStateOf("")
         private set
 
     fun onEmailChange(v: String) { email = v }
     fun onPasswordChange(v: String) { password = v }
-    fun onUsernameChange(v: String) { username = v }
+    fun onFirstNameChange(v: String) { firstName = v }
+    fun onLastNameChange(v: String) { lastName = v }
 
     fun login() {
         viewModelScope.launch {
@@ -45,7 +48,7 @@ class AuthViewModel(context: Context) : ViewModel() {
 
     fun register() {
         viewModelScope.launch {
-            registerUser(username, email, password).collect { _state.value = it }
+            registerUser(firstName, lastName, email, password).collect { _state.value = it }
         }
     }
 

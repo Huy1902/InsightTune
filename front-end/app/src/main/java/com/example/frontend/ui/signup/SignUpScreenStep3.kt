@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -31,7 +32,8 @@ import java.nio.file.WatchEvent
 
 @Composable
 fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit) {
-    var name by remember { mutableStateOf("") }
+    var firtsName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
             0.0f to Color(0xFFFF0000),
@@ -83,7 +85,7 @@ fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit)
 
         ) {
             Text(
-                "What's your name?",
+                "Enter your first name",
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
@@ -92,9 +94,31 @@ fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit)
             )
 
             TextField(
-                value = name,
+                value = firtsName,
                 onValueChange = {
-                    name = it
+                    firtsName = it
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .clip(RoundedCornerShape(12.dp))
+            )
+
+            Spacer(modifier = Modifier.size(10.dp))
+
+            Text(
+                "Enter your last name",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.Start)
+            )
+
+            TextField(
+                value = lastName,
+                onValueChange = {
+                    lastName = it
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -103,11 +127,13 @@ fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit)
             )
         }
 
+
         Spacer(modifier = Modifier.size(30.dp))
 
         Button(
             onClick = {
-                vm.onUsernameChange(name)
+                vm.onFirstNameChange(firtsName)
+                vm.onLastNameChange(lastName)
                 onNext()
             },
             colors = ButtonDefaults.buttonColors(
@@ -130,6 +156,7 @@ fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit)
 fun SignUpScreenStep3Preview() {
     val navController = rememberNavController()
     val onFinish = Unit
+    val context = LocalContext.current
 
-   // SignUpScreenStep3(controller = controller)
+    SignUpScreenStep3(vm = AuthViewModel(context), onNext = {  }, onBack = {  } )
 }

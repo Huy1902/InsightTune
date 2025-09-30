@@ -67,35 +67,10 @@ fun ProfileScreen(
 ) {
 
     val uiState by vm.uiState.collectAsState()
-    var showNameDialog by remember { mutableStateOf(false) }
+    var showProfileDialog by remember { mutableStateOf(false) }
     var showPassDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var showAvatarDialog by remember { mutableStateOf(false) }
-
-    val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let { vm.updateAvatar(it, context) }
-    }
-
-    val cameraUri = remember {
-        val contentValues = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, "avatar_${System.currentTimeMillis()}.jpg")
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        }
-        context.contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
-        )
-    }
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success && cameraUri != null) {
-            vm.updateAvatar(cameraUri, context)
-        }
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -159,32 +134,56 @@ fun ProfileScreen(
                                 .size(64.dp)
                                 .clip(RoundedCornerShape(50))
                                 .background(Color.Gray)
-                                .clickable {
-                                    showAvatarDialog = true
-                                }
+                                //.clickable { showAvatarDialog = true }
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = uiState.name.ifBlank { "Your name" },
+                                text = "${uiState.lastName} ${uiState.firstName}".ifBlank { "Your name" },
                                 color = Color.White,
                                 fontFamily = FontFamily.Serif,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp
                             )
+
+                            Text(
+                                text = "Role: ${uiState.role}",
+                                color = Color.White,
+                                fontFamily = FontFamily.Serif,
+                                fontSize = 14.sp
+                            )
+
                             Text(
                                 text = uiState.email,
                                 color = Color.White.copy(alpha = 0.7f),
                                 fontFamily = FontFamily.Serif,
                                 fontSize = 14.sp
                             )
+
+                            if (uiState.phone.isNotBlank()) {
+                                Text(
+                                    text = "Phone: ${uiState.phone}",
+                                    color = Color.White.copy(alpha = 0.7f),
+                                    fontFamily = FontFamily.Serif,
+                                    fontSize = 14.sp
+                                )
+                            }
+
+                            if (uiState.address.isNotBlank()) {
+                                Text(
+                                    text = "Address: ${uiState.address}",
+                                    color = Color.White.copy(alpha = 0.7f),
+                                    fontFamily = FontFamily.Serif,
+                                    fontSize = 14.sp
+                                )
+                            }
                         }
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    ProfileItem("Change your name") {
-                        showNameDialog = true
+                    ProfileItem("Edit your profile") {
+                        showProfileDialog = true
                     }
 
                     ProfileItem("Change your password") {
@@ -195,18 +194,14 @@ fun ProfileScreen(
                         // TODO: Navigate sang HistoryScreen
                     }
                 }
-                if (showAvatarDialog) {
-                    ChangeAvatarDialog(
-                        onDismiss = { showAvatarDialog = false },
-                        onPickGallery = { galleryLauncher.launch("image/*") },
-                        onTakePhoto = { cameraUri?.let { cameraLauncher.launch(it) } }
-                    )
-                }
 
-                if (showNameDialog) {
-                    ChangeNameDialog(
-                        onDismiss = { showNameDialog = false },
-                        onConfirm = { newName -> vm.changeName(newName) }
+                if (showProfileDialog) {
+                    ChangeProfileDialog(
+                        uiState = uiState,
+                        onDismiss = { showProfileDialog  = false },
+                        onConfirm = { firstName, lastName, phone, address, role, avatarUri ->
+                            vm.updateProfile(firstName, lastName, phone, address, role, avatarUri, context)
+                        }
                     )
                 }
 
