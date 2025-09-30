@@ -6,23 +6,22 @@ import com.pm.userservice.exception.AppException;
 import com.pm.userservice.exception.ErrorCode;
 import com.pm.userservice.mapper.UserMapper;
 import com.pm.userservice.models.User;
-import com.pm.userservice.models.dto.request.UpdateRoleRequest;
-import com.pm.userservice.models.dto.request.UserUpdateRequest;
-import com.pm.userservice.models.dto.response.UserResponse;
+import com.pm.userservice.dto.request.UpdateRoleRequest;
+import com.pm.userservice.dto.request.UserUpdateRequest;
+import com.pm.userservice.dto.response.UserResponse;
 import com.pm.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j
 public class UserService {
     @Value("${auth-service.update-role}")
-    private String updateRolePath;
+    String updateRolePath;
     private final RestTemplate restTemplate;
 
 

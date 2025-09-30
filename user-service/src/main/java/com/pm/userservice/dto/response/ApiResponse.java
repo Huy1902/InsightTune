@@ -1,4 +1,4 @@
-package com.pm.userservice.models.dto.response;
+package com.pm.userservice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

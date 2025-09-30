@@ -82,6 +82,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
@@ -131,6 +137,39 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <!-- Loại class chính (Spring Boot Application) -->
+                                <exclude>**/UserServiceApplication.class</exclude>
+
+                                <!-- Loại các DTO nếu muốn -->
+                                <exclude>com/pm/userservice/dto/**</exclude>
+                                <!-- spring configs -->
+                                <exclude>com/pm/userservice/config/**</exclude>
+                                <!-- optional DTOs -->
+                                <!-- <exclude>com/pm/uploadservice/dto/**</exclude> -->
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

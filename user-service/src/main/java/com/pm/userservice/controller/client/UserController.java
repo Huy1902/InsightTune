@@ -3,18 +3,17 @@ package com.pm.userservice.controller.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pm.userservice.mapper.UserMapper;
 import com.pm.userservice.models.User;
-import com.pm.userservice.models.dto.response.ApiResponse;
-import com.pm.userservice.models.dto.request.CreateUserRequest;
-import com.pm.userservice.models.dto.request.UserUpdateRequest;
-import com.pm.userservice.models.dto.response.UserResponse;
+import com.pm.userservice.dto.response.ApiResponse;
+import com.pm.userservice.dto.request.CreateUserRequest;
+import com.pm.userservice.dto.request.UserUpdateRequest;
+import com.pm.userservice.dto.response.UserResponse;
 import com.pm.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.security.Principal;
 
 @Slf4j
 @RestController
@@ -26,7 +25,6 @@ public class UserController {
 
     public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
-
         this.userMapper = userMapper;
     }
 
@@ -52,10 +50,10 @@ public class UserController {
 
     @GetMapping
     @Operation(summary = "Find user by token", description = "Find user by token")
-    public ApiResponse<UserResponse> findById(Authentication authentication) {
+    public ApiResponse<UserResponse> findUser(Principal principal) {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
-                .result(userService.findByEmail(authentication.getName()))
+                .result(userService.findByEmail(principal.getName()))
                 .build();
     }
 
@@ -65,17 +63,17 @@ public class UserController {
     @PutMapping
     @Operation(summary = "Update user profile"
             , description = "Update profile user by token and UserUpdateRequest")
-    public ApiResponse<UserResponse> updateUser(Authentication authentication,
+    public ApiResponse<UserResponse> updateUser(Principal principal,
                                                 @Valid @RequestBody UserUpdateRequest request) throws JsonProcessingException {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
-                .result(userService.updateUserProfile(authentication.getName(), request))
+                .result(userService.updateUserProfile(principal.getName(), request))
                 .build();
     }
 
     @DeleteMapping
     @Operation(summary = "Delete user by token")
-    public void deleteUser(Authentication authentication) {
-        userService.deleteByEmail(authentication.getName());
+    public void deleteUser(Principal principal) {
+        userService.deleteByEmail(principal.getName());
     }
 }

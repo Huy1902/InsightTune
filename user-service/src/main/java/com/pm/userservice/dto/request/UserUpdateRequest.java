@@ -1,4 +1,4 @@
-package com.pm.userservice.models.dto.request;
+package com.pm.userservice.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
