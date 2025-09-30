@@ -101,7 +101,7 @@ fun ChangeProfileDialog(
                 TextField(
                     value = firstName,
                     onValueChange = { firstName = it },
-                    placeholder = { Text("Enter first name") },
+                    placeholder = { Text("Change first name") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
@@ -111,7 +111,7 @@ fun ChangeProfileDialog(
                 TextField(
                     value = lastName,
                     onValueChange = { lastName = it },
-                    placeholder = { Text("Enter last name") },
+                    placeholder = { Text("Change last name") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
@@ -121,7 +121,7 @@ fun ChangeProfileDialog(
                 TextField(
                     value = phone,
                     onValueChange = { phone = it },
-                    placeholder = { Text("Enter phone number") },
+                    placeholder = { Text("Change phone number") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
@@ -131,7 +131,7 @@ fun ChangeProfileDialog(
                 TextField(
                     value = address,
                     onValueChange = { address = it },
-                    placeholder = { Text("Enter address") },
+                    placeholder = { Text("Change address") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
