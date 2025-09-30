@@ -1,8 +1,8 @@
 package com.pm.uploadservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pm.uploadservice.dto.TrackUploadRequestDto;
 import com.pm.uploadservice.dto.TrackUploadResponseDto;
+import com.pm.uploadservice.exception.UploadServiceException;
 import com.pm.uploadservice.service.UploadService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,22 +14,19 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = UploadController.class)
-@AutoConfigureMockMvc(addFilters = false) // keep security filters (if any) out of the slice
+@AutoConfigureMockMvc(addFilters = false)
 class UploadControllerTest {
 
   @Autowired MockMvc mockMvc;
-  @Autowired ObjectMapper objectMapper;
 
   @MockitoBean UploadService uploadService;
 
@@ -61,7 +58,7 @@ class UploadControllerTest {
             .andExpect(jsonPath("$.kafkaStatus").value("SENT"))
             .andExpect(jsonPath("$.s3Status").value("Success"));
 
-    // capture the DTO passed to service to ensure it wraps the same MultipartFile
+    // capture DTO passed to service
     ArgumentCaptor<TrackUploadRequestDto> cap = ArgumentCaptor.forClass(TrackUploadRequestDto.class);
     verify(uploadService).uploadTrack(cap.capture());
     assertThat(cap.getValue().getFile().getOriginalFilename()).isEqualTo("song.mp3");
@@ -69,29 +66,31 @@ class UploadControllerTest {
   }
 
   @Test
-  void givenServiceThrowsNoSuchAlgorithm_whenUpload_then200WithEmptyBody() throws Exception {
+  void givenServiceThrowsUploadServiceException_whenUpload_then200WithEmptyBody() throws Exception {
     // given
     MockMultipartFile file = new MockMultipartFile(
-            "file", "broken.mp3", "audio/mpeg", new byte[]{1,2});
+            "file", "broken.mp3", "audio/mpeg", new byte[]{1, 2});
 
     when(uploadService.uploadTrack(any(TrackUploadRequestDto.class)))
-            .thenThrow(new NoSuchAlgorithmException("SHA-256 not available"));
+            .thenThrow(new UploadServiceException("something failed downstream"));
 
-    // when/then
+    // when/then (controller catches and returns OK with null body)
     mockMvc.perform(multipart("/upload").file(file))
             .andExpect(status().isOk())
-            .andExpect(content().string("")); // controller returns ok().body(null)
+            .andExpect(content().string(""));
 
     verify(uploadService).uploadTrack(any(TrackUploadRequestDto.class));
     verifyNoMoreInteractions(uploadService);
   }
 
   @Test
-  void givenMissingFileParam_whenUpload_then400() throws Exception {
-    // No "file" param at all
-    mockMvc.perform(post("/upload"))
-            .andExpect(status().isBadRequest());
+  void givenMissingFileParam_whenUpload_then400WithAdviceMessage() throws Exception {
+    // no "file" part at all → MissingServletRequestPartException handled by advice
+    mockMvc.perform(multipart("/upload")) // multipart request without a "file" part
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(org.hamcrest.Matchers.startsWith("Invalid upload request:")));
 
     verifyNoInteractions(uploadService);
   }
 }
+

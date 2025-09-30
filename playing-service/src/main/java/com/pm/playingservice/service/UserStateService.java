@@ -6,20 +6,24 @@ import com.pm.playingservice.dto.UserStateUpdateRespondDto;
 import com.pm.playingservice.model.UserState;
 import com.pm.playingservice.repo.UserStateRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class UserStateService {
   private final UserStateRepository userStateRepository;
 
   @Transactional
-  public UserStateUpdateRespondDto upsert(UserStateUpdateRequestDto userStateUpdateRequestDto) {
+  public UserStateUpdateRespondDto upsert(@Valid UserStateUpdateRequestDto userStateUpdateRequestDto) {
     Optional<UserState> userState = userStateRepository.findByEmail(userStateUpdateRequestDto.email());
 
     if (userState.isPresent()) {
@@ -41,7 +45,7 @@ public class UserStateService {
     return new UserStateUpdateRespondDto("Successfully updated user state");
   }
 
-  public UserStateRespondDto getUserState(String email) {
+  public UserStateRespondDto getUserState(@Email String email) {
     Optional<UserState> userState = userStateRepository.findByEmail(email);
     if (userState.isPresent()) {
       UserState existingUserState = userState.get();

@@ -1,4 +1,7 @@
 package com.pm.playingservice.dto;
 
-public record UserStateRespondDto(String trackId, Integer positionMs) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record UserStateRespondDto(@NotBlank String trackId, @NotNull Integer positionMs) {
 }

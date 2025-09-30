@@ -2,6 +2,10 @@ package com.pm.uploadservice.service;
 
 import com.pm.uploadservice.dto.S3UploadRequestDto;
 import com.pm.uploadservice.dto.S3UploadResponseDto;
+import com.pm.uploadservice.exception.S3ServiceException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +18,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * Service class that handles uploading and downloading files (tracks and cover images)
@@ -36,6 +41,7 @@ import java.io.IOException;
 public class S3Service {
 
   private final S3Client s3Client;
+  private final Validator validator;
 
   @Value("${aws.bucket.name}")
   private String bucketName;
@@ -68,7 +74,7 @@ public class S3Service {
       s3UploadResponseDtoBuilder.status("Success");
     } catch (IOException e) {
       log.error("Failed to upload track: {}", e.getMessage());
-      s3UploadResponseDtoBuilder.status("Failed");
+      throw new S3ServiceException("Failed to upload track: " + e.getMessage());
     }
 
     s3UploadResponseDtoBuilder.storageKey(keyTrack);
@@ -85,7 +91,14 @@ public class S3Service {
       s3UploadResponseDtoBuilder.coverImageKey(keyImage);
     }
 
-    return s3UploadResponseDtoBuilder.build();
+    S3UploadResponseDto s3UploadResponseDto = s3UploadResponseDtoBuilder.build();
+
+    Set<ConstraintViolation<S3UploadResponseDto>> violations = validator.validate(s3UploadResponseDto);
+    if (!violations.isEmpty()) {
+      throw new S3ServiceException(violations.iterator().next().getMessage());
+    }
+
+    return s3UploadResponseDto;
   }
 
   /**

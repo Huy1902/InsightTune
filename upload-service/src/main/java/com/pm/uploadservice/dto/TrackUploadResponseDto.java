@@ -1,5 +1,6 @@
 package com.pm.uploadservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,10 +10,20 @@ import java.util.List;
 @Getter @Setter
 @Builder
 public class TrackUploadResponseDto {
-  private String title = "";
+  @NotBlank
+  private String title;
+
+  @NotBlank
   private List<String> artists;
+
+  @NotBlank
   private String storageKey;
+
   private String coverImageKey;
+
+  @NotBlank
   private String kafkaStatus;
+
+  @NotBlank
   private String s3Status;
 }

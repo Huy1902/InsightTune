@@ -2,6 +2,7 @@ package com.pm.uploadservice.controller;
 
 import com.pm.uploadservice.dto.TrackUploadRequestDto;
 import com.pm.uploadservice.dto.TrackUploadResponseDto;
+import com.pm.uploadservice.exception.UploadServiceException;
 import com.pm.uploadservice.service.UploadService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class UploadController {
     TrackUploadResponseDto trackUploadResponseDto = null;
     try {
       trackUploadResponseDto = uploadService.uploadTrack(new TrackUploadRequestDto(file));
-    } catch (NoSuchAlgorithmException e) {
+    } catch (UploadServiceException e) {
       log.error(e.getMessage());
     }
     return ResponseEntity.ok().body(trackUploadResponseDto);
@@ -36,7 +37,6 @@ public class UploadController {
 
   @RestControllerAdvice
   public static class GlobalExceptionHandler {
-
     @ExceptionHandler({MultipartException.class, MissingServletRequestPartException.class})
     public ResponseEntity<String> handleMultipartErrors(Exception e) {
       return ResponseEntity.badRequest().body("Invalid upload request: " + e.getMessage());

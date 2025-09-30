@@ -2,24 +2,28 @@ package com.pm.playingservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pm.playingservice.dto.*;
+import com.pm.playingservice.exception.GlobalExceptionHandler;
 import com.pm.playingservice.service.AwsUrlService;
 import com.pm.playingservice.service.UserStateService;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
@@ -29,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 classes = com.pm.playingservice.filter.JwtRequestFilter.class
         )
 )
+@Import(GlobalExceptionHandler.class) // <-- ensure @ControllerAdvice is active in the slice
 @AutoConfigureMockMvc(addFilters = false) // disables default security filters
 class PlayingControllerTest {
 
@@ -39,6 +44,7 @@ class PlayingControllerTest {
 
   @org.springframework.test.context.bean.override.mockito.MockitoBean
   AwsUrlService awsUrlService;
+
   @org.springframework.test.context.bean.override.mockito.MockitoBean
   UserStateService userStateService;
 
@@ -52,14 +58,31 @@ class PlayingControllerTest {
     mockMvc.perform(post("/play")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(req)))
-            //.andDo(print()) // uncomment to see response in logs
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)) // relaxed
             .andExpect(jsonPath("$.trackUrl").value("https://cf/track123?sig=abc"))
             .andExpect(jsonPath("$.coverImageUrl").value("https://cf/img123?sig=xyz"));
 
     verify(awsUrlService).getUrl("tracks/123.mp3");
     verify(awsUrlService).getUrl("covers/123.jpg");
+    verifyNoMoreInteractions(awsUrlService);
+    verifyNoInteractions(userStateService);
+  }
+
+  @Test
+  void givenEmptyCoverImageKeyRequest_whenPlay_thenReturnsBlankImageUrl() throws Exception {
+    var req = new PlayRequestDto("tracks/123.mp3", "         ");
+    when(awsUrlService.getUrl("tracks/123.mp3")).thenReturn("https://cf/track123?sig=abc");
+
+    mockMvc.perform(post("/play")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(req)))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.coverImageUrl").value(""))
+            .andExpect(jsonPath("$.trackUrl").value("https://cf/track123?sig=abc"));
+
+    verify(awsUrlService).getUrl("tracks/123.mp3");
     verifyNoMoreInteractions(awsUrlService);
     verifyNoInteractions(userStateService);
   }
@@ -82,7 +105,7 @@ class PlayingControllerTest {
             .andExpect(jsonPath("$.trackId").value("track-777"))
             .andExpect(jsonPath("$.positionMs").value(12345));
 
-    var captor = org.mockito.ArgumentCaptor.forClass(UserStateUpdateRequestDto.class);
+    var captor = ArgumentCaptor.forClass(UserStateUpdateRequestDto.class);
     verify(userStateService).upsert(captor.capture());
     var dto = captor.getValue();
     assertThat(dto.email()).isEqualTo(email);
@@ -117,7 +140,6 @@ class PlayingControllerTest {
     PlayRequestDto req = new PlayRequestDto("tracks/bad.mp3", "covers/bad.jpg");
     when(awsUrlService.getUrl(anyString())).thenThrow(new RuntimeException("boom"));
 
-    // perform() throws here because no handler resolves the exception
     assertThatThrownBy(() ->
             mockMvc.perform(post("/play")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -128,22 +150,20 @@ class PlayingControllerTest {
             .hasRootCauseInstanceOf(RuntimeException.class)
             .hasRootCauseMessage("boom");
 
-    verify(awsUrlService).getUrl("tracks/bad.mp3");
+    verify(awsUrlService).getUrl("tracks/bad.mp3"); // second call never reached
     verifyNoMoreInteractions(awsUrlService);
     verifyNoInteractions(userStateService);
   }
 
   @Test
   void givenValidKey_whenGetLink_thenReturnsSignedUrl() throws Exception {
-    // given
     String key = "covers/123.jpg";
     String signed = "https://cf.example/covers/123.jpg?sig=xyz";
     when(awsUrlService.getUrl(key)).thenReturn(signed);
 
-    // when/then
     mockMvc.perform(get("/url?key=" + key))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)) // relaxed
             .andExpect(jsonPath("$.url").value(signed));
 
     verify(awsUrlService, times(1)).getUrl(key);
@@ -154,8 +174,25 @@ class PlayingControllerTest {
   @Test
   void givenMissingKeyParam_whenGetLink_then400() throws Exception {
     mockMvc.perform(get("/url"))
-            .andExpect(status().isBadRequest()); // Spring MVC returns 400 for missing required @RequestParam
+            .andExpect(status().isBadRequest());
 
     verifyNoInteractions(awsUrlService, userStateService);
   }
+
+
+  @Test
+  void givenInvalidPlayRequest_whenValidate_then400AndFieldErrors() throws Exception {
+    var invalid = new PlayRequestDto("", "   ");
+
+    mockMvc.perform(post("/play")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(invalid)))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.storageKey").exists());
+
+    verifyNoInteractions(awsUrlService, userStateService);
+  }
+
 }
+

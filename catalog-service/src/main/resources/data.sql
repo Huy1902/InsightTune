@@ -15,9 +15,9 @@ VALUES
     ('33333333-3333-3333-3333-333333333333',
      'Love Story',
      'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-     'tracks/trk_love_story/original/love_story.mp3',
-     235000,
-     NULL),
+     'tracks/5927151815778178627.mp3',
+     236000,
+     'covers/5927151815778178627.jpeg'),
 
     ('44444444-4444-4444-4444-444444444444',
      'Yellow',
