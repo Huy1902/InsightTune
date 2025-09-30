@@ -10,10 +10,8 @@ import java.time.LocalDateTime;
 public class HistoryMapper {
 
     public History convertHistoryRequestToHistory(HistoryRequest historyRequest){
-        History history = new History();
-        history.setTrackId(historyRequest.getTrackId());
-        history.setPlayedAt(LocalDateTime.now());
-
-        return history;
+      return History.builder()
+              .storageKey(historyRequest.getTrackId())
+              .playedAt(LocalDateTime.now()).build();
     }
 }
