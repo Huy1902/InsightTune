@@ -17,6 +17,7 @@
         <module>catalog-service</module>
         <module>upload-service</module>
         <module>api-gateway</module>
+        <module>history-service</module>
     </modules>
 
     <properties>

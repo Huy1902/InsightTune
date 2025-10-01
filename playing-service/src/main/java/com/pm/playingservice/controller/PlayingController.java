@@ -2,6 +2,7 @@ package com.pm.playingservice.controller;
 
 import com.pm.playingservice.dto.*;
 import com.pm.playingservice.service.AwsUrlService;
+import com.pm.playingservice.service.KafkaService;
 import com.pm.playingservice.service.UserStateService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -11,12 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class PlayingController {
   private final AwsUrlService awsUrlService;
   private final UserStateService userStateService;
+  private final KafkaService kafkaService;
 
   @PostMapping("/play")
   @Operation(summary = "Receive a play request then send back a play response contain a mp3 link and image link")
@@ -27,6 +31,8 @@ public class PlayingController {
     if (!req.coverImageKey().isBlank()) {
       imageUrl = awsUrlService.getUrl(req.coverImageKey());
     }
+
+    kafkaService.sendCreatedTrack(new PlayTrackDto(auth.getName(), req.storageKey(), LocalDateTime.now()));
 
     return ResponseEntity.ok().body(new PlayResponseDto(trackUrl, imageUrl));
   }

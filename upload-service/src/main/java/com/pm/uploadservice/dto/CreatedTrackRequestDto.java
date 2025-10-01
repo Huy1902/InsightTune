@@ -19,8 +19,7 @@ public class CreatedTrackRequestDto {
   @NotBlank
   private String album;
 
-  @NotBlank
-  private List<String> artists;
+  private List<@NotBlank String> artists;
 
   @NotNull
   private Integer durationMs;

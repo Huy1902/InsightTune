@@ -13,8 +13,7 @@ public class TrackUploadResponseDto {
   @NotBlank
   private String title;
 
-  @NotBlank
-  private List<String> artists;
+  private List<@NotBlank String> artists;
 
   @NotBlank
   private String storageKey;
