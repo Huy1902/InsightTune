@@ -1,6 +1,8 @@
 package com.example.frontend.ui
 
 import android.R.attr.duration
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -20,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.ui.home.BottomNavItem
 import com.example.frontend.ui.NavRoutes
@@ -40,7 +43,7 @@ import com.google.accompanist.navigation.animation.composable
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AppNavHost(prefs: AppPreferences) {
+fun AppNavHost(prefs: AppPreferences, navController: NavHostController) {
     val navController = rememberNavController()
     val duration = 600
     val easing = FastOutSlowInEasing
@@ -96,7 +99,14 @@ fun AppNavHost(prefs: AppPreferences) {
             composable(NavRoutes.StartScreen.route) {
                 StartScreen(
                     onNextSignUp = { navController.navigate(NavRoutes.SignUpStep1.route) },
-                    onNextLogIn = { navController.navigate(NavRoutes.Login.route) }
+                    onNextLogIn = { navController.navigate(NavRoutes.Login.route) },
+                    onGoogleLogin = {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("http://10.0.2.2:8080/oauth2/authorization/google")
+                        )
+                        context.startActivity(intent)
+                    }
                 )
             }
 
@@ -125,13 +135,10 @@ fun AppNavHost(prefs: AppPreferences) {
                 LogInScreen(
                     vm,
                     onNext = {
-                        // Khi đăng nhập thành công, đi đến Home và XÓA SẠCH back stack cũ
                         navController.navigate(NavRoutes.Home.route) {
-                            // Xóa tất cả các màn hình trước đó khỏi back stack
                             popUpTo(navController.graph.findStartDestination().id) {
                                 inclusive = true
                             }
-                            // Đảm bảo không tạo thêm bản sao của Home nếu đã có
                             launchSingleTop = true
                         }
                     },
@@ -150,7 +157,7 @@ fun AppNavHost(prefs: AppPreferences) {
                     vm = vm,
                     onNavigateLogin = {
                         navController.navigate(NavRoutes.StartScreen.route) {
-                            popUpTo(0) {
+                            popUpTo(navController.graph.findStartDestination().id) {
                                 inclusive = true
                             }
                             launchSingleTop = true

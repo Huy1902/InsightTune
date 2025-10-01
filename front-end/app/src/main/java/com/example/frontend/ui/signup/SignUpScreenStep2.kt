@@ -201,6 +201,7 @@ fun SignUpScreenStep2(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
                     }
                     else -> {
                         vm.onPasswordChange(password)
+                        vm.onConfirmPasswordChange(passwordCorrect)
                         errorMessage = null
                         onNext()
                     }

@@ -185,7 +185,7 @@ fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
         if (state is Resource.Error) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Wrong email or password, please try again.",
+                text = "Wrong email or password, please try again soon.",
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,

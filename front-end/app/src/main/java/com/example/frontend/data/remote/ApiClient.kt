@@ -1,32 +1,34 @@
 package com.example.frontend.data.remote
 
+import com.example.frontend.core.AppPreferences
+import com.example.frontend.core.AuthInterceptor
 import com.example.frontend.core.Constants
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
 
-    private val logging = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+    private lateinit var prefs: AppPreferences
+
+    fun init(prefs: AppPreferences) {
+        this.prefs = prefs
     }
 
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .addInterceptor { chain ->
-            val request = chain.request().newBuilder()
-                .addHeader("x-api-key", "reqres-free-v1")
-                .build()
-            chain.proceed(request)
-        }
-        .build()
+    private val client by lazy {
+        okhttp3.OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor(prefs))
+            .build()
+    }
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(Constants.BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .client(client)
-        .build()
+    private val retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
-    val userApi: UserApi = retrofit.create(UserApi::class.java)
+    val userApi: UserApi by lazy {
+        retrofit.create(UserApi::class.java)
+    }
 }

@@ -134,6 +134,7 @@ fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit)
             onClick = {
                 vm.onFirstNameChange(firtsName)
                 vm.onLastNameChange(lastName)
+                vm.register()
                 onNext()
             },
             colors = ButtonDefaults.buttonColors(

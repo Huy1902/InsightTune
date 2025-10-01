@@ -240,7 +240,10 @@ fun ProfileScreen(
                         }
 
                         Button(
-                            onClick = { vm.logout { onNavigateLogin() } },
+                            onClick = {
+                                val refreshToken = vm.getRefreshToken() ?: ""
+                                vm.logout(refreshToken) { onNavigateLogin() }
+                            },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                             modifier = Modifier
                                 .wrapContentWidth()
@@ -254,6 +257,7 @@ fun ProfileScreen(
                                 color = Color.Black
                             )
                         }
+
                     }
                 }
             }

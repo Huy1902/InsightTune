@@ -14,6 +14,22 @@ class AppPreferences(context: Context) {
     }
 
     fun clearToken() {
-        prefs.edit().remove("auth_token").apply()
+        prefs.edit().remove(Constants.KEY_TOKEN).apply()
+    }
+
+    fun saveRefreshToken(refreshToken: String) {
+        prefs.edit().putString(Constants.KEY_REFRESH_TOKEN, refreshToken).apply()
+    }
+
+    fun getRefreshToken(): String? {
+        return prefs.getString(Constants.KEY_REFRESH_TOKEN, null)
+    }
+
+    fun clearRefreshToken() {
+        prefs.edit().remove(Constants.KEY_REFRESH_TOKEN).apply()
+    }
+
+    fun clearAll() {
+        prefs.edit().clear().apply()
     }
 }
