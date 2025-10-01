@@ -1,5 +1,6 @@
 package com.pm.authservice.service;
 
+import com.pm.authservice.dto.request.ChangePasswordRequest;
 import com.pm.authservice.dto.request.UpdateRoleRequest;
 import com.pm.authservice.exception.AppException;
 import com.pm.authservice.exception.ErrorCode;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -28,6 +30,9 @@ public class UserServiceTest {
 
     @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     // Test 1: Role không tồn tại
     @Test
@@ -62,7 +67,8 @@ public class UserServiceTest {
 
     // Test 3: Role hợp lệ → changeRoleByEmail thành công
     @Test
-    void updateRole_whenValidRole_thenReturnSuccess() {
+    void updateRole_whenValidRole_thenSuccess() {
+        // given
         UpdateRoleRequest request = new UpdateRoleRequest();
         request.setEmail("test@example.com");
         request.setRole("ADMIN");
@@ -70,12 +76,60 @@ public class UserServiceTest {
         Role adminRole = new Role();
         adminRole.setName("ADMIN");
 
-        when(roleRepository.findByName("ADMIN")).thenReturn(Optional.of(adminRole));
-        when(userRepository.changeRoleByEmail("test@example.com", adminRole)).thenReturn(1);
+        when(roleRepository.findByName("ADMIN"))
+                .thenReturn(Optional.of(adminRole));
 
-        int result = userService.updateRole(request);
+        // when
+        userService.updateRole(request);
 
-        assertEquals(1, result);
+        // then
+        verify(roleRepository, times(1)).findByName("ADMIN");
         verify(userRepository, times(1)).changeRoleByEmail("test@example.com", adminRole);
+    }
+
+
+    @Test
+    void testChangePassword_success() {
+        // Prepare
+        String email = "test@example.com";
+        ChangePasswordRequest request = new ChangePasswordRequest();
+        request.setOldPassword("oldPass123");
+        request.setNewPassword("newPass456");
+
+        String encodedOldPassword = "$2a$10$encodedOldPassword"; // giả lập hashed password
+
+        when(userRepository.getPasswordByEmail(email)).thenReturn(encodedOldPassword);
+        when(passwordEncoder.matches("oldPass123", encodedOldPassword)).thenReturn(true);
+        when(passwordEncoder.encode("newPass456")).thenReturn("$2a$10$encodedNewPassword");
+
+        // Call method
+        userService.changePassword(request, email);
+
+        // Verify
+        verify(userRepository).changePasswordByEmail(email, "$2a$10$encodedNewPassword");
+    }
+
+    @Test
+    void testChangePassword_wrongOldPassword() {
+        // Prepare
+        String email = "test@example.com";
+        ChangePasswordRequest request = new ChangePasswordRequest();
+        request.setOldPassword("wrongOldPass");
+        request.setNewPassword("newPass456");
+
+        String encodedOldPassword = "$2a$10$encodedOldPassword";
+
+        when(userRepository.getPasswordByEmail(email)).thenReturn(encodedOldPassword);
+        when(passwordEncoder.matches("wrongOldPass", encodedOldPassword)).thenReturn(false);
+
+        // Call method and assert exception
+        AppException exception = assertThrows(AppException.class, () -> {
+            userService.changePassword(request, email);
+        });
+
+        assertEquals(ErrorCode.PASSWORD_NOT_TRUE, exception.getError());
+
+        // Verify repository method never called
+        verify(userRepository, never()).changePasswordByEmail(anyString(), anyString());
     }
 }
