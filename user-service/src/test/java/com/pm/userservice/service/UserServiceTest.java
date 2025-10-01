@@ -154,4 +154,17 @@ class UserServiceTest {
 
         verify(userRepository).deleteByEmail("test@example.com");
     }
+
+    @Test
+    void changeAvatar_shouldCallRepository() {
+        // Given
+        String email = "test@example.com";
+        String avatar = "https://example.com/avatar.png";
+
+        // When
+        userService.changeAvatar(email, avatar);
+
+        // Then → kiểm tra repository được gọi đúng tham số
+        verify(userRepository).changeAvatarByEmail(email, avatar);
+    }
 }

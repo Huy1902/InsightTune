@@ -22,6 +22,9 @@ import org.springframework.web.client.RestTemplate;
 public class UserService {
     @Value("${auth-service.update-role}")
     String updateRolePath;
+
+    @Value("${avatar.url}")
+    String avatarURL;
     private final RestTemplate restTemplate;
 
 
@@ -35,6 +38,7 @@ public class UserService {
     }
 
     public UserResponse save(User user) {
+        user.setAvatar(avatarURL);
         userRepository.save(user);
         return userMapper.UserToUserResponse(user);
     }
@@ -75,5 +79,9 @@ public class UserService {
 
     public void deleteByEmail(String email) {
         userRepository.deleteByEmail(email);
+    }
+
+    public void changeAvatar(String email, String avatar) {
+        userRepository.changeAvatarByEmail(email, avatar);
     }
 }

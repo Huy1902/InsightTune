@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User {
+
 
     @Id
     Long id;
@@ -34,4 +36,6 @@ public class User {
     String phone;
 
     String role;
+
+    String avatar;
 }

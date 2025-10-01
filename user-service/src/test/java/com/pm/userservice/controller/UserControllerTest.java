@@ -2,6 +2,7 @@ package com.pm.userservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pm.userservice.controller.client.UserController;
+import com.pm.userservice.dto.request.UpdateAvatarRequest;
 import com.pm.userservice.mapper.UserMapper;
 import com.pm.userservice.models.User;
 import com.pm.userservice.dto.request.CreateUserRequest;
@@ -10,6 +11,7 @@ import com.pm.userservice.dto.response.UserResponse;
 import com.pm.userservice.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -124,5 +126,24 @@ public class UserControllerTest {
         mockMvc.perform(delete("/users")
                         .principal(() -> "test@example.com"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void testChangeAvatar() throws Exception {
+        // given
+        UpdateAvatarRequest req = new UpdateAvatarRequest();
+        req.setAvatar("https://example.com/default.png");
+
+        // when & then
+        mockMvc.perform(put("/users/avatar")
+                        .principal(() -> "test@example.com") // fake Principal
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("Change user avatar successfully"));
+
+        // verify service được gọi với đúng tham số
+        verify(userService).changeAvatar("test@example.com", "https://example.com/default.png");
     }
 }
