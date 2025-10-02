@@ -2,6 +2,7 @@ package com.example.frontend.ui.profile
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frontend.core.AppPreferences
@@ -110,20 +111,18 @@ class ProfileViewModel(context: Context) : ViewModel() {
 
 
 
-    fun logout(onSuccess: () -> Unit) {
+    fun logout(refreshToken: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
             try {
-                val ok = repo.logout()
-                if (ok) {
-                    onSuccess()
-                } else {
-                    _uiState.value = _uiState.value.copy(error = "Logout failed")
-                }
+                val res = repo.logout(refreshToken)
+                Log.d("LOGOUT_VM", "Logout response: code=${res.code}, message=${res.message}")
+                onSuccess()
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message)
+                _uiState.value = _uiState.value.copy(error = e.message ?: "Unknown error")
             }
         }
     }
+
 
     fun updateAvatar(uri: Uri, context: Context) {
         viewModelScope.launch {
@@ -154,6 +153,10 @@ class ProfileViewModel(context: Context) : ViewModel() {
                 _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
             }
         }
+    }
+
+    fun getRefreshToken(): String? {
+        return repo.getRefreshToken()
     }
 
 }

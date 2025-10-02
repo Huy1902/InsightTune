@@ -14,7 +14,7 @@ class LoginUser(private val repo: UserRepository) {
             emit(Resource.Success(res))
         } catch (e: Exception) {
             val msg = if (e.message?.contains("401") == true) {
-                "Wrong email or password, please try again."
+                "Wrong email or password, please try again later."
             } else {
                 e.message ?: "Unexpected error"
             }

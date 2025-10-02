@@ -106,6 +106,7 @@ fun SignUpScreenStep1(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
                 value = email,
                 onValueChange = {
                     email = it
+                    vm.onEmailChange(it)
                     errorMessage = null
                 },
                 modifier = Modifier

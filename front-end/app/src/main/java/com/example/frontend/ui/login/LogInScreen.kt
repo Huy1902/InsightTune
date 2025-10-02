@@ -46,6 +46,15 @@ fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
             0.6f to Color(0xFF000000)
         )
     )
+    LaunchedEffect(Unit) {
+        vm.resetState()
+    }
+
+    LaunchedEffect(state) {
+        if (state is Resource.Success) {
+            onNext()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -176,16 +185,12 @@ fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
             }
         }
 
-        LaunchedEffect(state) {
-            if (state is Resource.Success) {
-                onNext()
-            }
-        }
+
 
         if (state is Resource.Error) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Wrong email or password, please try again.",
+                text = "Wrong email or password, please try again soon.",
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,

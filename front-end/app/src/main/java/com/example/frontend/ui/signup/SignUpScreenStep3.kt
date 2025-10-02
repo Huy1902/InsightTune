@@ -1,5 +1,6 @@
 package com.example.frontend.ui.signup
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -134,7 +135,8 @@ fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit)
             onClick = {
                 vm.onFirstNameChange(firtsName)
                 vm.onLastNameChange(lastName)
-                onNext()
+                Log.d("REGISTER_UI", "email=${vm.email}, pass=${vm.password}")
+                vm.register { onNext() }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White

@@ -1,6 +1,8 @@
 package com.example.frontend.ui
 
 import android.R.attr.duration
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -13,13 +15,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.ui.home.BottomNavItem
 import com.example.frontend.ui.NavRoutes
@@ -30,6 +37,7 @@ import com.example.frontend.ui.profile.ProfileScreen
 import com.example.frontend.ui.profile.ProfileViewModel
 import com.example.frontend.ui.profile.ProfileViewModelFactory
 import com.example.frontend.ui.signup.AuthViewModel
+import com.example.frontend.ui.signup.AuthViewModelFactory
 import com.example.frontend.ui.signup.SignUpScreenStep1
 import com.example.frontend.ui.signup.SignUpScreenStep2
 import com.example.frontend.ui.signup.SignUpScreenStep3
@@ -37,20 +45,21 @@ import com.example.frontend.ui.start.StartScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 
+object AppGraph {
+    const val AUTH = "auth_graph"
+    const val MAIN = "main_graph"
+}
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AppNavHost(prefs: AppPreferences) {
+fun AppNavHost(prefs: AppPreferences, navController: NavHostController) {
     val navController = rememberNavController()
     val duration = 600
     val easing = FastOutSlowInEasing
     val context = LocalContext.current
-    val vm = remember { AuthViewModel(context) }
-    val startDestination = if (prefs.getToken() != null) {
-        NavRoutes.Home.route
-    } else {
-        NavRoutes.StartScreen.route
-    }
+    val startDestination = if (prefs.getToken() != null) AppGraph.MAIN else AppGraph.AUTH
+
+    val isLoggedIn = !prefs.getToken().isNullOrEmpty()
 
     Box(
         modifier = Modifier
@@ -93,72 +102,90 @@ fun AppNavHost(prefs: AppPreferences) {
                 ) + fadeOut(animationSpec = tween(durationMillis = duration))
             }
         ) {
-            composable(NavRoutes.StartScreen.route) {
-                StartScreen(
-                    onNextSignUp = { navController.navigate(NavRoutes.SignUpStep1.route) },
-                    onNextLogIn = { navController.navigate(NavRoutes.Login.route) }
-                )
-            }
-
-            composable(NavRoutes.SignUpStep1.route) {
-                SignUpScreenStep1(
-                    vm,
-                    onNext = { navController.navigate(NavRoutes.SignUpStep2.route) },
-                    onBack = { navController.popBackStack() }
-                )
-            }
-            composable(NavRoutes.SignUpStep2.route) {
-                SignUpScreenStep2(
-                    vm,
-                    onNext = { navController.navigate(NavRoutes.SignUpStep3.route) },
-                    onBack = { navController.popBackStack() }
-                )
-            }
-            composable(NavRoutes.SignUpStep3.route) {
-                SignUpScreenStep3(
-                    vm,
-                    onNext = { navController.navigate(NavRoutes.Login.route) },
-                    onBack = { navController.popBackStack() }
-                )
-            }
-            composable(NavRoutes.Login.route) {
-                LogInScreen(
-                    vm,
-                    onNext = {
-                        // Khi đăng nhập thành công, đi đến Home và XÓA SẠCH back stack cũ
-                        navController.navigate(NavRoutes.Home.route) {
-                            // Xóa tất cả các màn hình trước đó khỏi back stack
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                inclusive = true
-                            }
-                            // Đảm bảo không tạo thêm bản sao của Home nếu đã có
-                            launchSingleTop = true
-                        }
-                    },
-                    onBack = { navController.popBackStack() }
-                )
-            }
-            composable(NavRoutes.Home.route) {
-                HomeScreen(navController)
-            }
-            composable(NavRoutes.Profile.route) {
-                val context = LocalContext.current
-                val vm: ProfileViewModel = viewModel(
-                    factory = ProfileViewModelFactory(context)
-                )
-                ProfileScreen(
-                    vm = vm,
-                    onNavigateLogin = {
-                        navController.navigate(NavRoutes.StartScreen.route) {
-                            popUpTo(0) {
-                                inclusive = true
-                            }
-                            launchSingleTop = true
-                        }
-                    },
-                    onBack = { navController.popBackStack() }
-                )
-            }
+            authGraph(navController)
+            mainGraph(navController)
         }
     }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+private fun NavGraphBuilder.authGraph(navController: NavHostController) {
+    navigation(
+        startDestination = NavRoutes.StartScreen.route,
+        route = AppGraph.AUTH
+    ) {
+
+
+
+        composable(NavRoutes.StartScreen.route) {
+            StartScreen(
+                onNextSignUp = { navController.navigate(NavRoutes.SignUpStep1.route) },
+                onNextLogIn = { navController.navigate(NavRoutes.Login.route) },
+                onGoogleLogin = {
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("http://10.0.2.2:8080/oauth2/authorization/google")
+                    )
+                   // context.startActivity(intent)
+                }
+            )
+        }
+        composable(NavRoutes.SignUpStep1.route) { navBackStackEntry ->
+            val vm = navBackStackEntry.sharedAuthViewModel(navController = navController)
+            SignUpScreenStep1(vm, onNext = { navController.navigate(NavRoutes.SignUpStep2.route) }, onBack = { navController.popBackStack() })
+        }
+
+        composable(NavRoutes.SignUpStep2.route) { navBackStackEntry ->
+            val vm = navBackStackEntry.sharedAuthViewModel(navController = navController)
+            SignUpScreenStep2(vm, onNext = { navController.navigate(NavRoutes.SignUpStep3.route) }, onBack = { navController.popBackStack() })
+        }
+
+        composable(NavRoutes.SignUpStep3.route) { navBackStackEntry ->
+            val vm = navBackStackEntry.sharedAuthViewModel(navController = navController)
+            SignUpScreenStep3(vm, onNext = { navController.navigate(NavRoutes.Login.route) }, onBack = { navController.popBackStack() })
+        }
+
+        composable(NavRoutes.Login.route) { navBackStackEntry ->
+            val vm = navBackStackEntry.sharedAuthViewModel(navController = navController)
+            LogInScreen(
+                vm = vm,
+                onNext = {
+                    navController.navigate(AppGraph.MAIN) { popUpTo(AppGraph.AUTH) { inclusive = true } }
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+private fun NavGraphBuilder.mainGraph(navController: NavHostController) {
+    navigation(
+        startDestination = NavRoutes.Home.route,
+        route = AppGraph.MAIN
+    ) {
+        composable(NavRoutes.Home.route) {
+            HomeScreen(appNavController = navController)
+        }
+        composable(NavRoutes.Profile.route) {
+            val vm: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(LocalContext.current))
+            ProfileScreen(
+                vm = vm,
+                onNavigateLogin = {
+                    navController.navigate(AppGraph.AUTH) { popUpTo(AppGraph.MAIN) { inclusive = true } }
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+    }
+}
+
+@Composable
+fun NavBackStackEntry.sharedAuthViewModel(navController: NavHostController): AuthViewModel {
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(AppGraph.AUTH)
+    }
+    val context = LocalContext.current
+
+    return viewModel(viewModelStoreOwner = parentEntry, factory = AuthViewModelFactory(context))
 }

@@ -3,8 +3,14 @@ package com.example.frontend.data.remote
 import android.util.Log
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.data.models.user.AuthResponseDto
+import com.example.frontend.data.models.user.LogOutRequest
 import com.example.frontend.data.models.user.LoginRequest
+import com.example.frontend.data.models.user.LogoutResponseDto
+import com.example.frontend.data.models.user.LogoutResult
+import com.example.frontend.data.models.user.RefreshRequest
+import com.example.frontend.data.models.user.RefreshResponseDto
 import com.example.frontend.data.models.user.RegisterRequest
+import com.example.frontend.data.models.user.RegisterResponseDto
 import com.example.frontend.data.models.user.UserDto
 import com.example.frontend.domain.repositories.UserRepository
 import okhttp3.MultipartBody
@@ -17,15 +23,16 @@ class UserRepositoryImpl(
 
     override suspend fun login(email: String, password: String): AuthResponseDto {
         val response = api.login(LoginRequest(email, password))
-
+        Log.d("LOGIN", "response=${response.code()} body=${response.body()} error=${response.errorBody()?.string()}")
         if (response.isSuccessful) {
             val body = response.body() ?: throw Exception("Empty body")
-            prefs.saveToken(body.token)
+            prefs.saveToken(body.result.token)
+            prefs.saveRefreshToken(body.result.refreshToken)
             return body
         } else {
             val code = response.code()
             val friendly = when (code) {
-                400, 401 -> "Wrong email or password, please try again."
+                0 -> "No internet connection"
                 else -> "Login failed ($code). Please try again."
             }
             throw Exception(friendly)
@@ -33,21 +40,45 @@ class UserRepositoryImpl(
     }
 
 
-    override suspend fun register(firstName: String, lastName: String, email: String, password: String): AuthResponseDto {
-        val response = api.register(RegisterRequest(firstName, lastName, email, password))
+    override suspend fun register(
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String,
+        confirmPassword: String
+    ): RegisterResponseDto {
+        Log.d("REGISTER", "Sending register request: firstName=$firstName, lastName=$lastName, email=$email")
+
+        val response = api.register(
+            RegisterRequest(firstName, lastName, email, password, confirmPassword)
+        )
+
+        Log.d("REGISTER", "Response code=${response.code()}")
 
         if (response.isSuccessful) {
             val body = response.body()
-            if (body != null) {
-                prefs.saveToken(body.token)
-                return body
-            } else {
-                throw Exception("Empty body")
-            }
+            Log.d("REGISTER", "Response body=$body")
+            return body ?: throw Exception("Empty body")
         } else {
-            throw Exception("Register failed: ${response.code()} ${response.errorBody()?.string()}")
+            val errorBody = response.errorBody()?.string()
+            Log.e("REGISTER", "Register failed: code=${response.code()} error=$errorBody")
+            throw Exception("Register failed: ${response.code()} $errorBody")
         }
     }
+
+    override suspend fun refreshToken(refreshToken: String): RefreshResponseDto {
+        val response = api.refresh(RefreshRequest(refreshToken))
+        if (response.isSuccessful) {
+            val body = response.body() ?: throw Exception("Empty body")
+            // Lưu token mới
+            prefs.saveToken(body.result.token)
+            prefs.saveRefreshToken(body.result.refreshToken)
+            return body
+        } else {
+            throw Exception("Refresh failed: ${response.code()} ${response.errorBody()?.string()}")
+        }
+    }
+
 
     override suspend fun checkEmail(email: String): Boolean {
         return api.checkEmail(email).exists
@@ -85,15 +116,25 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun logout(): Boolean {
-        val response = api.logout()
-        return if (response.isSuccessful) {
+    override suspend fun logout(refreshToken: String): LogoutResponseDto {
+        val response = api.logout(LogOutRequest(refreshToken))
+        if (response.isSuccessful) {
+            val body = response.body()
             prefs.clearToken()
-            true
+            prefs.clearRefreshToken()
+            Log.d("LOGOUT", "Tokens cleared on logout")
+            return body ?: LogoutResponseDto(200, "No body", LogoutResult("", "", "", false))
         } else {
-            false
+            throw Exception("Logout failed: ${response.code()} ${response.errorBody()?.string()}")
         }
     }
+
+
+
+
+
+
+
 
     override suspend fun updateAvatar(avatar: MultipartBody.Part): UserDto {
         val response = api.updateAvatar(avatar)
@@ -120,6 +161,9 @@ class UserRepositoryImpl(
         }
     }
 
+    override fun getRefreshToken(): String? {
+        return prefs.getRefreshToken()
+    }
 
     override fun clearToken() {
         prefs.clearToken()

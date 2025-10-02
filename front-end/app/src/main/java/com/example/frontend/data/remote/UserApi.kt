@@ -2,8 +2,13 @@ package com.example.frontend.data.remote
 
 import com.example.frontend.data.models.user.AuthResponseDto
 import com.example.frontend.data.models.user.CheckEmailResponse
+import com.example.frontend.data.models.user.LogOutRequest
 import com.example.frontend.data.models.user.LoginRequest
+import com.example.frontend.data.models.user.LogoutResponseDto
+import com.example.frontend.data.models.user.RefreshRequest
+import com.example.frontend.data.models.user.RefreshResponseDto
 import com.example.frontend.data.models.user.RegisterRequest
+import com.example.frontend.data.models.user.RegisterResponseDto
 import com.example.frontend.data.models.user.UserDto
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -17,12 +22,11 @@ import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface UserApi {
-    @POST("api/login")
+    @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<AuthResponseDto>
 
-    @POST("api/register")
-    suspend fun register(@Body request: RegisterRequest): Response<AuthResponseDto>
-
+    @POST("auth/register")
+    suspend fun register(@Body request: RegisterRequest): Response<RegisterResponseDto>
     @GET("api/auth/check-email")
     suspend fun checkEmail(@Query("email") email: String): CheckEmailResponse
 
@@ -35,8 +39,11 @@ interface UserApi {
     @POST("api/user/update-name")
     suspend fun updateUserLastName(@Body body: Map<String, String>): Response<UserDto>
 
-    @POST("api/logout")
-    suspend fun logout(): Response<Unit>
+    @POST("auth/logout")
+    suspend fun logout(@Body request: LogOutRequest): Response<LogoutResponseDto>
+
+    @POST("auth/refresh")
+    suspend fun refresh(@Body request: RefreshRequest): Response<RefreshResponseDto>
 
     @Multipart
     @PUT("user/profile")
