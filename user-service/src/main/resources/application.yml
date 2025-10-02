@@ -35,3 +35,6 @@ jwt:
 auth-service:
   update-role: http://auth-service/user/updateRole
 
+avatar:
+  url: https://static.vecteezy.com/system/resources/previews/013/360/247/non_2x/default-avatar-photo-icon-social-media-profile-sign-symbol-vector.jpg
+

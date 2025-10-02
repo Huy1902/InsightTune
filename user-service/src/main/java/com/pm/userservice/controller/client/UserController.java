@@ -1,6 +1,7 @@
 package com.pm.userservice.controller.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.pm.userservice.dto.request.UpdateAvatarRequest;
 import com.pm.userservice.mapper.UserMapper;
 import com.pm.userservice.models.User;
 import com.pm.userservice.dto.response.ApiResponse;
@@ -75,5 +76,15 @@ public class UserController {
     @Operation(summary = "Delete user by token")
     public void deleteUser(Principal principal) {
         userService.deleteByEmail(principal.getName());
+    }
+
+    @PutMapping("/avatar")
+    @Operation(summary = "Change user avatar")
+    public ApiResponse<String> changeAvatar(Principal principal, @RequestBody UpdateAvatarRequest req) {
+        userService.changeAvatar(principal.getName(), req.getAvatar());
+        return ApiResponse.<String>builder()
+                .code(200)
+                .message("Change user avatar successfully")
+                .build();
     }
 }
