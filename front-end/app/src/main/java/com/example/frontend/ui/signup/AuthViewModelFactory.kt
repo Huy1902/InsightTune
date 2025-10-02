@@ -1,4 +1,3 @@
-// File: app/src/main/java/com/example/frontend/ui/signup/AuthViewModelFactory.kt
 package com.example.frontend.ui.signup
 
 import android.content.Context

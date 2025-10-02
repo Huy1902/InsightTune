@@ -182,35 +182,10 @@ private fun NavGraphBuilder.mainGraph(navController: NavHostController) {
 
 @Composable
 fun NavBackStackEntry.sharedAuthViewModel(navController: NavHostController): AuthViewModel {
-    // 1. Tìm đến "phạm vi" của biểu đồ cha (auth_graph)
     val parentEntry = remember(this) {
         navController.getBackStackEntry(AppGraph.AUTH)
     }
     val context = LocalContext.current
 
-    // 2. Tạo hoặc lấy ViewModel thuộc về phạm vi đó.
     return viewModel(viewModelStoreOwner = parentEntry, factory = AuthViewModelFactory(context))
 }
-//
-
-//composable(NavRoutes.Home.route) {
-//    HomeScreen(navController)
-//}
-//composable(NavRoutes.Profile.route) {
-//    val context = LocalContext.current
-//    val vm: ProfileViewModel = viewModel(
-//        factory = ProfileViewModelFactory(context)
-//    )
-//    ProfileScreen(
-//        vm = vm,
-//        onNavigateLogin = {
-//            navController.navigate(NavRoutes.StartScreen.route) {
-//                popUpTo(navController.graph.findStartDestination().id) {
-//                    inclusive = true
-//                }
-//                launchSingleTop = true
-//            }
-//        },
-//        onBack = { navController.popBackStack() }
-//    )
-//}
