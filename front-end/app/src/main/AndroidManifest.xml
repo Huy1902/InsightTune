@@ -16,20 +16,25 @@
         <activity
             android:name=".AppMainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="SpoTube"
             android:theme="@style/Theme.FrontEnd">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="myapp"
-                    android:host="oauth2"
-                    android:path="/callback" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                    android:scheme="com.example.frontend"
+                    android:host="oauth2redirect" />
             </intent-filter>
         </activity>
+
+
     </application>
 
 </manifest>

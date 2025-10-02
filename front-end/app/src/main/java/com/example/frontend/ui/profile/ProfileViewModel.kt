@@ -116,19 +116,12 @@ class ProfileViewModel(context: Context) : ViewModel() {
             try {
                 val res = repo.logout(refreshToken)
                 Log.d("LOGOUT_VM", "Logout response: code=${res.code}, message=${res.message}")
-
-                if (res.code == 0 || res.code == 200) {
-                    onSuccess()
-                } else {
-                    _uiState.value = _uiState.value.copy(error = res.message ?: "Logout failed")
-                }
+                onSuccess()
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(error = e.message ?: "Unknown error")
             }
         }
     }
-
-
 
 
     fun updateAvatar(uri: Uri, context: Context) {

@@ -1,6 +1,7 @@
 package com.example.frontend
 
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,18 +15,23 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.navigation.NavHostController
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.ui.AppNavHost
 import com.example.frontend.ui.NavRoutes
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @OptIn(ExperimentalAnimationApi::class)
 class AppMainActivity : ComponentActivity() {
-    lateinit var prefs: AppPreferences
-    lateinit var navController: NavHostController
+    private lateinit var prefs: AppPreferences
+    private lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +44,7 @@ class AppMainActivity : ComponentActivity() {
             AppNavHost(prefs = prefs, navController = navController)
         }
 
-        handleDeepLink(intent)
+        handleDeepLink(intent) // xử lý khi app được mở bằng deep link
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -47,16 +53,28 @@ class AppMainActivity : ComponentActivity() {
     }
 
     private fun handleDeepLink(intent: Intent?) {
-        val data = intent?.data ?: return
-        if (data.scheme == "myapp" && data.host == "oauth2" && data.path == "/callback") {
-            val token = data.getQueryParameter("token")
-            if (token != null) {
-                prefs.saveToken(token)
-                navController.navigate(NavRoutes.Home.route) {
-                    popUpTo(NavRoutes.StartScreen.route) { inclusive = true }
-                    launchSingleTop = true
+        val data: Uri = intent?.data ?: return
+
+        if (data.scheme == "com.example.frontend" && data.host == "oauth2redirect") {
+            val code = data.getQueryParameter("code")
+            if (code != null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val jwt = ApiClient.loginWithGoogleCode(code)
+                        prefs.saveToken(jwt)
+                        withContext(Dispatchers.Main) {
+                            navController.navigate(NavRoutes.Home.route) {
+                                popUpTo(NavRoutes.StartScreen.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("OAUTH2", "Google login failed: ${e.message}")
+                    }
                 }
             }
         }
     }
+
 }
+

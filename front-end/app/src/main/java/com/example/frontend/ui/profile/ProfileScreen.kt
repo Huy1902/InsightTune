@@ -242,7 +242,9 @@ fun ProfileScreen(
                         Button(
                             onClick = {
                                 val refreshToken = vm.getRefreshToken() ?: ""
-                                vm.logout(refreshToken) { onNavigateLogin() }
+                                vm.logout(refreshToken) {
+                                    onNavigateLogin()
+                                }
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                             modifier = Modifier

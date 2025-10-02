@@ -67,14 +67,24 @@ class AuthViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun register() {
+    fun register(onSuccess: () -> Unit) {
         viewModelScope.launch {
-            Log.d("REGISTER_VM", "Starting register with email=$email")
-            registerUser(firstName, lastName, email, password, confirmPassword).collect {
-                _registerState.value = it
-                Log.d("REGISTER_VM", "Register state=$it")
+            registerUser(firstName, lastName, email, password, confirmPassword).collect { res ->
+                _registerState.value = res
+                if (res is Resource.Success) {
+                    if (res.data?.code == 200) {
+                        onSuccess()
+                    }
+                }
             }
         }
+    }
+
+    fun resetState() {
+        _state.value = Resource.Idle
+        // nếu mày có lưu email/pass trong ViewModel cũng nên clear luôn
+        email = ""
+        password = ""
     }
 
     fun refreshAccessToken(onSuccess: () -> Unit) {
@@ -83,7 +93,7 @@ class AuthViewModel(context: Context) : ViewModel() {
             if (refreshToken != null) {
                 try {
                     val res = repo.refreshToken(refreshToken)
-                    if (res.code == 0) {
+                    if (res.code == 200) {
                         onSuccess()
                     } else {
                         _state.value = Resource.Error("Refresh failed: ${res.message}")

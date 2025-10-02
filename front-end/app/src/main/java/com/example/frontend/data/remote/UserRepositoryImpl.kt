@@ -6,6 +6,7 @@ import com.example.frontend.data.models.user.AuthResponseDto
 import com.example.frontend.data.models.user.LogOutRequest
 import com.example.frontend.data.models.user.LoginRequest
 import com.example.frontend.data.models.user.LogoutResponseDto
+import com.example.frontend.data.models.user.LogoutResult
 import com.example.frontend.data.models.user.RefreshRequest
 import com.example.frontend.data.models.user.RefreshResponseDto
 import com.example.frontend.data.models.user.RegisterRequest
@@ -117,30 +118,17 @@ class UserRepositoryImpl(
 
     override suspend fun logout(refreshToken: String): LogoutResponseDto {
         val response = api.logout(LogOutRequest(refreshToken))
-        val errorBody = response.errorBody()?.string()
-
-        Log.d("LOGOUT", "API called with refreshToken=$refreshToken")
-        Log.d("LOGOUT", "Response code=${response.code()} error=$errorBody")
-
         if (response.isSuccessful) {
             val body = response.body()
-            Log.d("LOGOUT", "Response body=$body")
-
-            if (body != null) {
-                prefs.clearToken()
-                prefs.clearRefreshToken()
-                Log.d("LOGOUT", "Tokens cleared on logout")
-
-                return body
-            } else {
-                Log.e("LOGOUT", "Logout failed: Empty body")
-                throw Exception("Empty body")
-            }
+            prefs.clearToken()
+            prefs.clearRefreshToken()
+            Log.d("LOGOUT", "Tokens cleared on logout")
+            return body ?: LogoutResponseDto(200, "No body", LogoutResult("", "", "", false))
         } else {
-            Log.e("LOGOUT", "Logout failed: code=${response.code()} error=$errorBody")
-            throw Exception("Logout failed: ${response.code()} $errorBody")
+            throw Exception("Logout failed: ${response.code()} ${response.errorBody()?.string()}")
         }
     }
+
 
 
 
