@@ -47,7 +47,8 @@ public class UserService {
     public UserResponse updateUserProfile(String email, UserUpdateRequest request) throws JsonProcessingException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
 
-        user.setFullName(request.getFirstname() + " " + request.getLastname());
+        user.setFirstName(request.getFirstname());
+        user.setLastName(request.getLastname());
         user.setAddress(request.getAddress());
         user.setPhone(request.getPhone());
 

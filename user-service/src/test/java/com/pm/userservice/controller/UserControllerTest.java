@@ -48,12 +48,14 @@ public class UserControllerTest {
         user = new User();
         user.setId(1L);
         user.setEmail("test@example.com");
-        user.setFullName("Test User");
+        user.setFirstName("Test");
+        user.setLastName("user");
 
         userResponse = new UserResponse();
         userResponse.setId(1L);
         userResponse.setEmail("test@example.com");
-        userResponse.setFullName("Test User");
+        userResponse.setFirstName("Test");
+        userResponse.setLastName("user");
     }
 
     @Test
@@ -98,7 +100,9 @@ public class UserControllerTest {
                         .principal(() -> "test@example.com"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.email").value("test@example.com"))
-                .andExpect(jsonPath("$.result.fullName").value("Test User"));
+                .andExpect(jsonPath("$.result.firstName").value("Test"))
+                .andExpect(jsonPath("$.result.lastName").value("user"));
+
     }
 
     @Test
