@@ -48,7 +48,8 @@ class UserServiceTest {
         user = new User();
         user.setId(1L);
         user.setEmail("test@example.com");
-        user.setFullName("Test User");
+        user.setFirstName("Test");
+        user.setLastName("user");
         user.setRole("USER");
         user.setAddress("123 Street");
         user.setPhone("0123456789");
@@ -63,7 +64,8 @@ class UserServiceTest {
         userResponse = new UserResponse();
         userResponse.setId(user.getId());
         userResponse.setEmail(user.getEmail());
-        userResponse.setFullName(user.getFullName());
+        userResponse.setFirstName(user.getFirstName());
+        userResponse.setLastName(user.getLastName());
         userResponse.setRole(user.getRole());
         userResponse.setAddress(user.getAddress());
         userResponse.setPhone(user.getPhone());
@@ -91,7 +93,8 @@ class UserServiceTest {
 
         assertEquals(userResponse, result);
         assertEquals("ADMIN", user.getRole());
-        assertEquals("New Name", user.getFullName());
+        assertEquals("New", user.getFirstName());
+        assertEquals("Name", user.getLastName());
         verify(restTemplate).put(anyString(), any(UpdateRoleRequest.class));
         verify(userRepository).save(user);
     }

@@ -22,9 +22,11 @@ public class User {
     @NotBlank
     String email;
 
-    @NotBlank
-    @Size(min = 3, max = 15, message = "FullName phải có tối thiểu 3 ký tự")
-    String fullName;
+    @NotBlank(message = "NOT_BLANK")
+    String firstName;
+
+    @NotBlank(message = "NOT_BLANK")
+    String lastName;
 
     String address;
 
