@@ -5,18 +5,33 @@ import com.pm.playingservice.dto.UserStateUpdateRequestDto;
 import com.pm.playingservice.dto.UserStateUpdateRespondDto;
 import com.pm.playingservice.model.UserState;
 import com.pm.playingservice.repo.UserStateRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests (Mockito) + validation tests (nested Spring context).
+ * Keep the class name and original tests; add @Valid coverage below.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserStateServiceTest {
 
@@ -123,5 +138,76 @@ class UserStateServiceTest {
 
     verify(userStateRepository, times(1)).findByEmail("nobody@example.com");
     verifyNoMoreInteractions(userStateRepository);
+  }
+
+  /**
+   * Nested validation tests that go through a Spring proxy to trigger method-parameter validation.
+   * Requires:
+   *  - spring-boot-starter-validation on classpath
+   *  - @Validated on UserStateService
+   * No @MockBean, no @EnableMethodValidation.
+   */
+  @Nested
+  @SpringJUnitConfig(classes = MethodValidation.MethodValidationConfig.class)
+  class MethodValidation {
+
+    @Configuration
+    static class MethodValidationConfig {
+      @Bean LocalValidatorFactoryBean validator() { return new LocalValidatorFactoryBean(); }
+      @Bean MethodValidationPostProcessor methodValidationPostProcessor(LocalValidatorFactoryBean validator) {
+        var p = new MethodValidationPostProcessor();
+        p.setValidator(validator);
+        return p;
+      }
+      @Bean UserStateRepository userStateRepository() { return Mockito.mock(UserStateRepository.class); }
+      @Bean UserStateService userStateService(UserStateRepository repo) { return new UserStateService(repo); }
+    }
+
+    @Autowired private UserStateService userStateService;
+    @Autowired private UserStateRepository userStateRepository;
+
+    @Test
+    void upsert_withValidDto_doesNotThrow() {
+      var dto = new UserStateUpdateRequestDto("alice@example.com", "track-123", 1000);
+      assertThatNoException().isThrownBy(() -> userStateService.upsert(dto));
+    }
+
+    @Test
+    void upsert_withBadEmail_throws_andRepoNotTouched() {
+      var dto = new UserStateUpdateRequestDto("bad-email", "track-123", 1000);
+      assertThatThrownBy(() -> userStateService.upsert(dto))
+              .isInstanceOf(ConstraintViolationException.class)
+              .hasMessageContaining("email");
+      verifyNoInteractions(userStateRepository);
+    }
+
+    @Test
+    void upsert_withBlankTrackId_throws() {
+      var dto = new UserStateUpdateRequestDto("bob@example.com", "   ", 1000);
+      assertThatThrownBy(() -> userStateService.upsert(dto))
+              .isInstanceOf(ConstraintViolationException.class)
+              .hasMessageContaining("trackId");
+    }
+
+    @Test
+    void upsert_withNullPositionMs_throws() {
+      var dto = new UserStateUpdateRequestDto("bob@example.com", "track-999", null);
+      assertThatThrownBy(() -> userStateService.upsert(dto))
+              .isInstanceOf(ConstraintViolationException.class)
+              .hasMessageContaining("positionMs");
+    }
+
+    @Test
+    void getUserState_withBadEmail_throws_andRepoNotTouched() {
+      assertThatThrownBy(() -> userStateService.getUserState("oops"))
+              .isInstanceOf(ConstraintViolationException.class)
+              .hasMessageContaining("email");
+      verifyNoInteractions(userStateRepository);
+    }
+
+    @Test
+    void getUserState_withValidEmail_doesNotThrow() {
+      assertThatNoException().isThrownBy(() -> userStateService.getUserState("carol@example.com"));
+    }
   }
 }

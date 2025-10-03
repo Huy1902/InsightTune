@@ -1,4 +1,4 @@
-package com.example.app.ui
+package com.example.frontend.ui
 
 sealed class NavRoutes(val route: String) {
     object StartScreen : NavRoutes("start_screen")
@@ -8,5 +8,6 @@ sealed class NavRoutes(val route: String) {
     object Login : NavRoutes("login")
     object Home : NavRoutes("home")
 
-    object PlayingSong : NavRoutes("playing-song")
+    object Profile : NavRoutes("profile")
+
 }

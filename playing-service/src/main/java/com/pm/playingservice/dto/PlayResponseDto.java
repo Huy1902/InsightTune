@@ -1,4 +1,6 @@
 package com.pm.playingservice.dto;
 
-public record PlayResponseDto (String trackUrl, String coverImageUrl) {
+import jakarta.validation.constraints.NotBlank;
+
+public record PlayResponseDto (@NotBlank String trackUrl, String coverImageUrl) {
 }

@@ -1,6 +1,6 @@
 package com.pm.userservice.exception;
 
-import com.pm.userservice.models.dto.request.ApiResponse;
+import com.pm.userservice.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,8 +12,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Object>> handleRuntimeException(RuntimeException ex){
         ApiResponse<Object> response = new ApiResponse<>();
-        response.setCode(ErrorCode.UNCATEGORIZED_ERROR.getCode());
-        response.setMessage(ErrorCode.UNCATEGORIZED_ERROR.getMessage());
+        response.setCode(500);
+        response.setMessage(ex.getMessage());
         return ResponseEntity.badRequest().body(response);
     }
 

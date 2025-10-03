@@ -1,6 +1,8 @@
+package com.example.frontend.ui.home
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -22,12 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LibraryMusic
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,10 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -48,53 +40,45 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.*
-import com.example.frontend.ui.home.BottomNavItem
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.frontend.R
+import com.example.frontend.ui.NavRoutes
+
 
 @Composable
-fun HomeScreen() {
-    val navController = rememberNavController()
+fun HomeScreen(appNavController: NavController) {
+    val bottomNavController = rememberNavController()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-//                Brush.verticalGradient(
-//                    colorStops = arrayOf(
-//                        0.0f to Color(0xFFFF0000),
-//                        0.3f to Color(0xFF8B0000),
-//                        0.6f to Color(0xFF000000)
-//                    )
-//                )
-//            )
     ) {
         Scaffold(
             containerColor = Color.Transparent,
-            bottomBar = { BottomNavigationBar(navController) }
-
+            bottomBar = {
+                BottomNavigationBar(bottomNavController)
+            }
         ) { innerPadding ->
-            NavHost(
-                navController,
-                startDestination = "home",
+            androidx.navigation.compose.NavHost(
+                navController = bottomNavController,
+                startDestination = BottomNavItem.Home.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(BottomNavItem.Home.route) {
-                    HomeScreenContent()
+                    HomeScreenContent(appNavController)
                 }
-                composable(BottomNavItem.Search.route) {
-
-                }
-                composable(BottomNavItem.Playlist.route) {
-
-                }
-                composable(BottomNavItem.ChatBot.route) {
-
-                }
+                composable(BottomNavItem.Search.route) { /* TODO */ }
+                composable(BottomNavItem.Playlist.route) { /* TODO */ }
+                composable(BottomNavItem.ChatBot.route) { /* TODO */ }
             }
         }
     }
 }
+
 
 @Composable
 fun SongCard(
@@ -146,7 +130,7 @@ fun SongCard(
 }
 
 @Composable
-fun HomeScreenContent() {
+fun HomeScreenContent(appNavController: NavController) {
     var text by remember { mutableStateOf("") }
     val songs = listOf(
         Triple(R.drawable.spotube, "Shape of You", "Ed Sheeran"),
@@ -183,7 +167,7 @@ fun HomeScreenContent() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
                 color = Color.Red,
-                )
+            )
 
             Row(
                 modifier = Modifier
@@ -197,40 +181,24 @@ fun HomeScreenContent() {
                     tint = Color.Red,
                     modifier = Modifier
                         .size(50.dp)
+                        .clickable {
+                            appNavController.navigate(NavRoutes.Profile.route)
+                        }
                 )
             }
-
         }
-
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        Row(
+        Text(
+            "Recently played",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.Serif,
+            color = Color(255, 255, 255),
             modifier = Modifier
-                .padding(start = 8.dp, end = 8.dp)
-        ) {
-            Text(
-                "Recently played",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Serif,
-                color = Color(255, 255, 255)
-            )
-
-//            Row(
-//                horizontalArrangement = Arrangement.End,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Default.History,
-//                    contentDescription = null,
-//                    tint = Color(255, 255, 255)
-//                )
-//
-//                Spacer(modifier = Modifier.size(8.dp))
-//            }
-        }
+                .padding(start = 8.dp)
+        )
 
         LazyRow(
             modifier = Modifier
@@ -271,9 +239,7 @@ fun HomeScreenContent() {
                 )
             }
         }
-
     }
-
 }
 
 @Composable
@@ -314,8 +280,10 @@ fun BottomNavigationBar(navController: NavController) {
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewHomeScreen() {
-    HomeScreen()
+    val navController = rememberNavController()
+    HomeScreen(navController)
 }

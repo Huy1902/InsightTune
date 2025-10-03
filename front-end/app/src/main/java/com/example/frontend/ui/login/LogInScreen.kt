@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -27,13 +30,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import java.nio.file.WatchEvent
 import com.example.frontend.R
+import com.example.frontend.core.Resource
+import com.example.frontend.ui.signup.AuthViewModel
 
 @Composable
-fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
+fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var isValid by remember { mutableStateOf(true) }
     var isVisible by remember { mutableStateOf(false) }
+    val state by vm.state.collectAsState()
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
             0.0f to Color(0xFFFF0000),
@@ -41,27 +46,38 @@ fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
             0.6f to Color(0xFF000000)
         )
     )
+    LaunchedEffect(Unit) {
+        vm.resetState()
+    }
+
+    LaunchedEffect(state) {
+        if (state is Resource.Success) {
+            onNext()
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = gradient)
             .padding(16.dp)
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
-                painter = painterResource(id = R.drawable.back_button),
+                imageVector = Icons.Default.ArrowBackIosNew,
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(start = 16.dp)
-                    .size(32.dp)
+                    .size(25.dp)
                     .clickable {
                         onBack()
-                    }
+                    },
+                tint = Color.White
             )
 
             Text(
@@ -93,10 +109,8 @@ fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
             )
 
             TextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                },
+                value = vm.email,
+                onValueChange = vm::onEmailChange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(45.dp)
@@ -115,11 +129,8 @@ fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
             )
 
             TextField(
-                value = password,
-                onValueChange = {
-                    password = it
-                    isValid = true
-                },
+                value = vm.password,
+                onValueChange = vm::onPasswordChange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(45.dp)
@@ -149,28 +160,41 @@ fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
 
         Button(
             onClick = {
-                onNext()
+                vm.login()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White
             )
         ) {
-            Text(
-                "Log in",
-                fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = Color.Black,
-            )
+            if (state is Resource.Loading) {
+                CircularProgressIndicator(
+                    color = Color.Black,
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Logging in...", color = Color.Black)
+            } else {
+                Text(
+                    "Log in",
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
+            }
         }
 
-        if(!isValid) {
+
+
+        if (state is Resource.Error) {
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
-                "Wrong email or password, please try again.",
+                text = "Wrong email or password, please try again soon.",
                 fontFamily = FontFamily.Serif,
-               fontWeight = FontWeight.Bold,
-               fontSize = 10.sp,
-                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = Color.White
             )
         }
     }
@@ -180,7 +204,7 @@ fun LogInScreen(onNext: () -> Unit, onBack: () -> Unit) {
 @Composable
 fun LogInPreview() {
     val navController = rememberNavController()
+    val context = LocalContext.current
 
-
-    //LogInScreen(controller = controller)
+    LogInScreen(vm = AuthViewModel(context), onNext = {}, onBack = {})
 }

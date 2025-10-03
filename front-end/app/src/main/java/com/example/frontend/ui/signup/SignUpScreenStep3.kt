@@ -1,5 +1,6 @@
 package com.example.frontend.ui.signup
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,6 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -28,8 +32,9 @@ import java.nio.file.WatchEvent
 
 
 @Composable
-fun SignUpScreenStep3(onNext: () -> Unit, onBack: () -> Unit) {
-    var name by remember { mutableStateOf("") }
+fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit) {
+    var firtsName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
             0.0f to Color(0xFFFF0000),
@@ -49,15 +54,16 @@ fun SignUpScreenStep3(onNext: () -> Unit, onBack: () -> Unit) {
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
-                painter = painterResource(id = R.drawable.back_button),
+                imageVector = Icons.Default.ArrowBackIosNew,
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(start = 16.dp)
-                    .size(32.dp)
-                    .clickable{
+                    .size(25.dp)
+                    .clickable {
                         onBack()
-                    }
+                    },
+                tint = Color.White
             )
 
             Text(
@@ -80,7 +86,7 @@ fun SignUpScreenStep3(onNext: () -> Unit, onBack: () -> Unit) {
 
         ) {
             Text(
-                "What's your name?",
+                "Enter your first name",
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
@@ -89,9 +95,31 @@ fun SignUpScreenStep3(onNext: () -> Unit, onBack: () -> Unit) {
             )
 
             TextField(
-                value = name,
+                value = firtsName,
                 onValueChange = {
-                    name = it
+                    firtsName = it
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .clip(RoundedCornerShape(12.dp))
+            )
+
+            Spacer(modifier = Modifier.size(10.dp))
+
+            Text(
+                "Enter your last name",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.Start)
+            )
+
+            TextField(
+                value = lastName,
+                onValueChange = {
+                    lastName = it
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -100,11 +128,15 @@ fun SignUpScreenStep3(onNext: () -> Unit, onBack: () -> Unit) {
             )
         }
 
+
         Spacer(modifier = Modifier.size(30.dp))
 
         Button(
             onClick = {
-                onNext()
+                vm.onFirstNameChange(firtsName)
+                vm.onLastNameChange(lastName)
+                Log.d("REGISTER_UI", "email=${vm.email}, pass=${vm.password}")
+                vm.register { onNext() }
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White
@@ -126,6 +158,7 @@ fun SignUpScreenStep3(onNext: () -> Unit, onBack: () -> Unit) {
 fun SignUpScreenStep3Preview() {
     val navController = rememberNavController()
     val onFinish = Unit
+    val context = LocalContext.current
 
-   // SignUpScreenStep3(controller = controller)
+    SignUpScreenStep3(vm = AuthViewModel(context), onNext = {  }, onBack = {  } )
 }

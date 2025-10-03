@@ -56,7 +56,12 @@ public class CustomTokenService {
 
     // generate access token
     public String generateAccessToken(User user) {
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+
+        if (user.getEmail() == null) {
+            throw new RuntimeException("Cant generate access token because email is null");
+        }
+
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getEmail())

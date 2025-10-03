@@ -5,10 +5,6 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -17,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User {
+
 
     @Id
     Long id;
@@ -33,14 +30,7 @@ public class User {
 
     String phone;
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
-    }
+    String role;
 
+    String avatar;
 }

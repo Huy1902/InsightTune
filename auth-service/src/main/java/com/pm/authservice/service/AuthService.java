@@ -23,9 +23,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 public class AuthService {
-    @NonFinal
-    @Value("${jwt.signerKey}")
-    String SIGNER_KEY;
 
     @Value("${user-service.create-path}")
     private String createUserPath;
@@ -66,9 +63,10 @@ public class AuthService {
                 .orElseThrow(()-> new AppException(ErrorCode.USER_NOTFOUND));
 
         // authenticate password
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        boolean authenticate = passwordEncoder.matches(authenticationRequest.getPassword()
-                , user.getPassword());
+        boolean authenticate = this.passwordEncoder.matches(
+                authenticationRequest.getPassword(),
+                user.getPassword()
+        );
         if (!authenticate) {
             throw new AppException(ErrorCode.PASSWORD_NOT_TRUE);
         }
@@ -111,6 +109,7 @@ public class AuthService {
         userProfileResponse.setFullName(registerRequest.getFirstname()
                 + " " + registerRequest.getLastname());
         userProfileResponse.setEmail(registerRequest.getEmail());
+        userProfileResponse.setRole("USER");
 
         try {
             String url = createUserPath;

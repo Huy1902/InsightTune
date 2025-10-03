@@ -21,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.crypto.spec.SecretKeySpec;
 
+import static org.springframework.web.servlet.function.RequestPredicates.headers;
+
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
 @ComponentScan(basePackages = "com.pm.authservice")
@@ -49,12 +51,16 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // tạm thời tắt CSRF cho API
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll() // cho phép public
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers("/h2-console/**", "/user/updateRole").permitAll()// cho phép public
                         .anyRequest().authenticated()
                         // các endpoint khác cần login
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers(headers -> headers
+                .frameOptions(frame -> frame.disable())
+        );
         http.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt
                         .decoder(jwtDecoder())
@@ -73,10 +79,10 @@ public class SecurityConfig {
 
     @Bean
     JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS256");
         return NimbusJwtDecoder
                 .withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
+                .macAlgorithm(MacAlgorithm.HS256)
                 .build();
     };
 

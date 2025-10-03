@@ -23,7 +23,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.frontend.R
 
 @Composable
-fun StartScreen(onNextSignUp: () -> Unit, onNextLogIn: () -> Unit) {
+fun StartScreen(
+    onNextSignUp: () -> Unit,
+    onNextLogIn: () -> Unit,
+    onGoogleLogin: () -> Unit
+) {
 
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
@@ -107,7 +111,9 @@ fun StartScreen(onNextSignUp: () -> Unit, onNextLogIn: () -> Unit) {
 
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
-                onClick = {},
+                onClick = {
+                    onGoogleLogin()
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
                 ),
@@ -193,5 +199,5 @@ fun StartScreen(onNextSignUp: () -> Unit, onNextLogIn: () -> Unit) {
 fun StartScreenPreview() {
     val navController = rememberNavController()
 
-   // StartScreen(controller = controller)
+    StartScreen(onNextSignUp = {}, onNextLogIn = {}, onGoogleLogin = {})
 }

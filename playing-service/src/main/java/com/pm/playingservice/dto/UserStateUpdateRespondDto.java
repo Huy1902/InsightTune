@@ -1,4 +1,6 @@
 package com.pm.playingservice.dto;
 
-public record UserStateUpdateRespondDto(String status) {
+import jakarta.validation.constraints.NotBlank;
+
+public record UserStateUpdateRespondDto(@NotBlank String status) {
 }

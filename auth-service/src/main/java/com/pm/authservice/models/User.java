@@ -7,9 +7,6 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
-
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -37,15 +34,5 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     List<RefreshToken> refreshTokens;
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                '}';
-    }
 
 }
