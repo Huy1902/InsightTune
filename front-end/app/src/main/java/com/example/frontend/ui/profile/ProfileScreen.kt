@@ -35,6 +35,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +58,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.frontend.R
+import com.example.frontend.core.SessionManager
 
 
 @Composable
@@ -70,7 +72,38 @@ fun ProfileScreen(
     var showProfileDialog by remember { mutableStateOf(false) }
     var showPassDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var avatarUri by remember { mutableStateOf<Uri?>(null) }
     var showAvatarDialog by remember { mutableStateOf(false) }
+    // Gallery launcher
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            avatarUri = it
+            vm.updateAvatar(it.toString())
+        }
+    }
+
+    // Camera launcher
+    val cameraUri = remember {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "avatar_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        }
+        context.contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+    }
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success && cameraUri != null) {
+            avatarUri = cameraUri
+            vm.updateAvatar(cameraUri.toString())
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -134,12 +167,12 @@ fun ProfileScreen(
                                 .size(64.dp)
                                 .clip(RoundedCornerShape(50))
                                 .background(Color.Gray)
-                                //.clickable { showAvatarDialog = true }
+                                .clickable { showAvatarDialog = true }
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "${uiState.lastName} ${uiState.firstName}".ifBlank { "Your name" },
+                                text = "${uiState.fullName}".ifBlank { "Your name" },
                                 color = Color.White,
                                 fontFamily = FontFamily.Serif,
                                 fontWeight = FontWeight.Bold,
@@ -195,12 +228,20 @@ fun ProfileScreen(
                     }
                 }
 
+                if (showAvatarDialog) {
+                    ChangeAvatarDialog(
+                        onDismiss = { showAvatarDialog = false },
+                        onPickGallery = { galleryLauncher.launch("image/*") },
+                        onTakePhoto = { cameraUri?.let { cameraLauncher.launch(it) } }
+                    )
+                }
+
                 if (showProfileDialog) {
                     ChangeProfileDialog(
                         uiState = uiState,
                         onDismiss = { showProfileDialog  = false },
-                        onConfirm = { firstName, lastName, phone, address, role, avatarUri ->
-                            vm.updateProfile(firstName, lastName, phone, address, role, avatarUri, context)
+                        onConfirm = { firstName, lastName, phone, address, role ->
+                            vm.updateProfile(firstName, lastName, address, phone, role)
                         }
                     )
                 }
@@ -209,7 +250,7 @@ fun ProfileScreen(
                     ChangePasswordDialog(
                         onDismiss = { showPassDialog = false },
                         onConfirm = { oldPass, newPass ->
-                            // TODO: call vm.changePassword(oldPass, newPass)
+                            vm.changePassword(oldPass, newPass)
                         }
                     )
                 }
@@ -231,12 +272,16 @@ fun ProfileScreen(
 
                         if (uiState.error != null) {
                             Text(
-                                text = uiState.error ?: "Error",
+                                text = uiState.error!!,
                                 color = Color.White,
                                 fontFamily = FontFamily.Serif,
                                 fontSize = 12.sp
                             )
                             Spacer(Modifier.height(12.dp))
+                        } else {
+                            Text(
+                                ""
+                            )
                         }
 
                         Button(

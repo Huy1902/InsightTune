@@ -3,6 +3,8 @@ package com.example.frontend.ui
 import android.R.attr.duration
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -15,22 +17,30 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.ui.home.BottomNavItem
 import com.example.frontend.ui.NavRoutes
 import com.example.frontend.core.AppPreferences
+import com.example.frontend.core.SessionManager
 import com.example.frontend.ui.home.HomeScreen
 import com.example.frontend.ui.login.LogInScreen
 import com.example.frontend.ui.profile.ProfileScreen
@@ -59,7 +69,18 @@ fun AppNavHost(prefs: AppPreferences, navController: NavHostController) {
     val context = LocalContext.current
     val startDestination = if (prefs.getToken() != null) AppGraph.MAIN else AppGraph.AUTH
 
-    val isLoggedIn = !prefs.getToken().isNullOrEmpty()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(key1 = lifecycleOwner, key2 = navController) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            SessionManager.logoutEvents.collect {
+                if (navController.currentDestination?.parent?.route == AppGraph.MAIN) {
+                    navController.navigate(AppGraph.AUTH) {
+                        popUpTo(AppGraph.MAIN) { inclusive = true }
+                    }
+                }
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -114,9 +135,6 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController) {
         startDestination = NavRoutes.StartScreen.route,
         route = AppGraph.AUTH
     ) {
-
-
-
         composable(NavRoutes.StartScreen.route) {
             StartScreen(
                 onNextSignUp = { navController.navigate(NavRoutes.SignUpStep1.route) },
@@ -164,9 +182,11 @@ private fun NavGraphBuilder.mainGraph(navController: NavHostController) {
         startDestination = NavRoutes.Home.route,
         route = AppGraph.MAIN
     ) {
+
         composable(NavRoutes.Home.route) {
             HomeScreen(appNavController = navController)
         }
+
         composable(NavRoutes.Profile.route) {
             val vm: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(LocalContext.current))
             ProfileScreen(

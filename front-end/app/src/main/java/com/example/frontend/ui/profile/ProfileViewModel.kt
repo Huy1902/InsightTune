@@ -14,13 +14,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
 class ProfileViewModel(context: Context) : ViewModel() {
 
     private val repo: UserRepository =
-        UserRepositoryImpl(ApiClient.userApi, AppPreferences(context))
+        UserRepositoryImpl(ApiClient.authApi, ApiClient.userApi, AppPreferences(context))
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState
@@ -30,17 +29,17 @@ class ProfileViewModel(context: Context) : ViewModel() {
     }
 
     fun loadUserInfo() {
+        Log.d("PROFILE_VM", "Bắt đầu gọi API getUserInfo...")
         viewModelScope.launch {
             try {
                 val user = repo.getUserInfo()
                 _uiState.value = ProfileUiState(
-                    firstName = user.firstName,
-                    lastName = user.lastName,
+                    fullName = user.fullName,
                     email = user.email,
                     address = user.address ?: "",
                     phone = user.phone ?: "",
-                    avatarUrl = user.avatarUrl,
-                    role = user.role // 👈 gán role
+                    avatarUrl = user.avatar,
+                    role = user.role
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(error = e.message)
@@ -50,66 +49,34 @@ class ProfileViewModel(context: Context) : ViewModel() {
 
 
     fun updateProfile(
-        firstName: String,
-        lastName: String,
-        phone: String,
+        firstname: String,
+        lastname: String,
         address: String,
-        role: String,
-        avatarUri: Uri?,
-        context: Context
+        phone: String,
+        role: String
     ) {
         viewModelScope.launch {
-            val current = _uiState.value
-
-            fun String.toPartOrNull(): RequestBody? =
-                if (this.isBlank()) null else this.toRequestBody("text/plain".toMediaTypeOrNull())
-
-            val firstNamePart = firstName.toPartOrNull()
-            val lastNamePart = lastName.toPartOrNull()
-            val phonePart = phone.toPartOrNull()
-            val addressPart = address.toPartOrNull()
-            val rolePart = role.toPartOrNull()
-
-            var avatarPart: MultipartBody.Part? = null
-            if (avatarUri != null) {
-                val inputStream = context.contentResolver.openInputStream(avatarUri)
-                val bytes = inputStream?.readBytes()
-                if (bytes != null) {
-                    val requestFile = bytes.toRequestBody("image/*".toMediaTypeOrNull())
-                    avatarPart = MultipartBody.Part.createFormData(
-                        "avatar",
-                        "avatar_${System.currentTimeMillis()}.jpg",
-                        requestFile
-                    )
-                }
-            }
-
+            _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val updatedUser = repo.updateProfile(
-                    firstNamePart,
-                    lastNamePart,
-                    phonePart,
-                    addressPart,
-                    rolePart,
-                    avatarPart
-                )
+                val updatedUser = repo.updateProfile(firstname, lastname, address, phone, role)
 
                 _uiState.value = _uiState.value.copy(
-                    firstName = updatedUser.firstName,
-                    lastName = updatedUser.lastName,
-                    phone = updatedUser.phone ?: current.phone,
-                    address = updatedUser.address ?: current.address,
+                    fullName = updatedUser.fullName,
+                    phone = updatedUser.phone,
+                    address = updatedUser.address,
                     role = updatedUser.role,
-                    avatarUrl = updatedUser.avatarUrl ?: current.avatarUrl,
+                    //avatarUrl = updatedUser.avatar,
+                    isLoading = false,
                     error = null
                 )
             } catch (e: Exception) {
-                _uiState.value = current.copy(error = e.message)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = e.message
+                )
             }
         }
     }
-
-
 
     fun logout(refreshToken: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
@@ -124,33 +91,44 @@ class ProfileViewModel(context: Context) : ViewModel() {
     }
 
 
-    fun updateAvatar(uri: Uri, context: Context) {
+    fun updateAvatar(newAvatar: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val inputStream = context.contentResolver.openInputStream(uri)
-                val bytes = inputStream?.readBytes()
-                if (bytes == null) {
-                    _uiState.value = _uiState.value.copy(isLoading = false, error = "File not found")
-                    return@launch
-                }
+                repo.updateAvatar(newAvatar)
 
-                val requestFile = bytes.toRequestBody("image/*".toMediaTypeOrNull())
-                val body = MultipartBody.Part.createFormData(
-                    "avatar", "avatar_${System.currentTimeMillis()}.jpg", requestFile
-                )
-
-                val response = repo.updateAvatar(body)
+                val user = repo.getUserInfo()
 
                 _uiState.value = _uiState.value.copy(
-                    //avatarUrl = response.avatarUrl,
-                    avatarUrl = uri.toString(),
+                    firstName = user.fullName.substringAfterLast(" "),
+                    lastName = user.fullName.substringBeforeLast(" "),
+                    phone = user.phone,
+                    address = user.address,
+                    role = user.role,
+                    avatarUrl = user.avatar,
                     isLoading = false,
                     error = null
                 )
-
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = e.message
+                )
+            }
+        }
+    }
+
+
+    fun changePassword(oldPass: String, newPass: String) {
+        viewModelScope.launch {
+            try {
+                val result = repo.changePassword(oldPass, newPass)
+                //  emit successMessage.value = "Password updated!"
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = e.message
+                )
             }
         }
     }

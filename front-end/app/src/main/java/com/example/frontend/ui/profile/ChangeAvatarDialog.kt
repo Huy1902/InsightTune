@@ -69,6 +69,6 @@ fun ChangeAvatarDialog(
                 Text("Cancel", color = Color.White, fontFamily = FontFamily.Serif)
             }
         },
-        containerColor = Color(0xFF121212) // nền tối giống mấy dialog kia
+        containerColor = Color(0xFF121212)
     )
 }
