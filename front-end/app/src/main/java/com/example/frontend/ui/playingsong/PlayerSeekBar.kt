@@ -1,80 +1,130 @@
-package com.example.frontend.ui.playingsong
-
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
+import com.example.frontend.ui.playingsong.PlayerState
 import java.util.concurrent.TimeUnit
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerSeekBar(
     playerState: PlayerState,
     onSeek: (Long) -> Unit
 ) {
-    var isUserSeeking by remember {mutableStateOf(false)}
-    var currentSliderPosition by remember { mutableStateOf(0L) }
+
+    var userSeekPosition by remember { mutableStateOf<Float?>(null) }
+
+    val sliderValue = userSeekPosition ?: playerState.currentPosition.toFloat()
+    val totalDuration = playerState.totalDuration.toFloat().coerceAtLeast(0f)
+
+    val sliderValueRange = 0f..totalDuration
 
     LaunchedEffect(playerState.currentPosition) {
-        if (!isUserSeeking) {
-            currentSliderPosition = playerState.currentPosition
+        userSeekPosition?.let { target ->
+             userSeekPosition = null
         }
     }
 
 
-    var sliderPosition by remember { mutableStateOf<Float?>(null) }
-    val currentPosition = sliderPosition ?: playerState.currentPosition.toFloat()
-    val totalDuration = playerState.totalDuration.toFloat().coerceAtLeast(0f)
 
+    Column(modifier = Modifier.fillMaxWidth()) {
 
-
-
-    Column (modifier = Modifier.fillMaxWidth()) {
+        val trackHeight: Dp = 3.dp
+        val thumbDiameter: Dp = 16.dp
+        val activeTrackColor: Color = Color.White
+        val inactiveTrackColor: Color = Color(0xFF888888)
+        val thumbColor: Color = Color.White
 
         Slider(
-            value = currentPosition,
-            onValueChange = {
-                newPosition -> sliderPosition = newPosition
+            value = sliderValue,
+            onValueChange = { newPosition ->
+                userSeekPosition = newPosition
             },
-            valueRange = 0f..(totalDuration),
+            valueRange = 0f..totalDuration,
             onValueChangeFinished = {
-                sliderPosition?.toLong()?.let {
-                    onSeek(it)
-                }
-                isUserSeeking = false
-                sliderPosition = null
+                userSeekPosition?.toLong()?.let { onSeek(it) }
 
             },
-
             colors = SliderDefaults.colors(
-                thumbColor = Color.White,
-                activeTrackColor = Color.White.copy(alpha = 0.7f),
-                inactiveTrackColor = Color.White.copy(alpha = 0.3f)
-            )
+                thumbColor = Color.Transparent,
+                activeTrackColor = Color.Transparent,
+                inactiveTrackColor = Color.Transparent
+            ),
+            track = { sliderPositions ->
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(trackHeight)
+                ) {
+                    val trackStart = Offset(0f, center.y)
+                    val trackEnd = Offset(size.width, center.y)
+
+                    val totalRange = sliderValueRange.endInclusive - sliderValueRange.start
+                    val progress = (sliderValue - sliderValueRange.start) / totalRange
+                    val fraction = if (totalRange > 0) progress.coerceIn(0f, 1f) else 0f
+
+                    val activeTrackEnd = Offset(
+                        x = lerp(trackStart.x, trackEnd.x, fraction),
+                        y = center.y
+                    )
+
+                    drawLine(
+                        color = inactiveTrackColor,
+                        start = activeTrackEnd,
+                        end = trackEnd,
+                        strokeWidth = trackHeight.toPx(),
+                        cap = StrokeCap.Round
+                    )
+
+                    drawLine(
+                        color = activeTrackColor,
+                        start = trackStart,
+                        end = activeTrackEnd,
+                        strokeWidth = trackHeight.toPx(),
+                        cap = StrokeCap.Round
+                    )
+                }
+            },
+            thumb = {
+                Canvas(modifier = Modifier.size(thumbDiameter)) {
+                    drawCircle(
+                        color = thumbColor,
+                        radius = size.minDimension / 2
+                    )
+                }
+            }
         )
 
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(top = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = formatTime(currentPosition.toLong()), color = Color.White)
-            Text(text = formatTime(playerState.totalDuration), color = Color.White)
+            Text(
+                text = formatTime(sliderValue.toLong()),
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 12.sp
+            )
+            Text(
+                text = formatTime(playerState.totalDuration),
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 12.sp
+            )
         }
-
     }
 }
 

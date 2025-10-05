@@ -1,7 +1,5 @@
-package com.example.playingasong.view
-
-import android.widget.SeekBar
-import androidx.compose.material3.Slider
+package com.example.frontend.ui.playingsong
+import PlayerSeekBar
 import androidx.compose.foundation.Image
 import com.example.frontend.R
 import androidx.compose.foundation.background
@@ -31,23 +29,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.media3.common.MediaMetadata
-import androidx.media3.exoplayer.ExoPlayer
-import com.example.app.ui.NavRoutes
-import com.example.frontend.ui.playingsong.PlayerSeekBar
-import com.example.frontend.ui.playingsong.PlayerState
-import com.example.frontend.ui.theme.FrontEndTheme
-
 @Composable
-fun Playingasong (viewModel: MusicPlayerViewModel) {
+fun MusicPlayer(
+    viewModel: MusicPlayerViewModel
+) {
 
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
@@ -59,7 +44,9 @@ fun Playingasong (viewModel: MusicPlayerViewModel) {
 
     val state by viewModel.playerState.collectAsState()
 
-    val songUrl = "https://d6puu73zzo17e.cloudfront.net/tracks/5927151815778178627.mp3?Expires=1759119755&Signature=xwiGfQDjQLxIY5XT2F5JgL8vIbFtoejkB4UDDIs76f67-lmYQr5wKKY3nCOWpnXP9nAkzNqTQII0AHuI0jGCTZYKjNLhsZWruQF6HAzbd3ZKf-XDZDJZQuHPKZtw3rAhMmdHRXiqGgCT-P5fEgxAb3zf8IMyZPylUcdRwDiOw6t38hWJmwdVEyENkZJd6biz0brdNp1JHQ-Pydg2IB-gOkwojUFiBsVJdggx0jtkZI-roLFAXXdDsMsm6CBFflwKdrngBPpTR9mgD5A5Nmb7GCm0lZlEHjgUloJ5-tUHadlthAkuUrBwT-UCcZ~~O~OoWb~cCMHKnbpxLyJaqMplXQ__&Key-Pair-Id=K1W74YMJ2QWWV5"
+//    val songUrl = "https://d6puu73zzo17e.cloudfront.net/tracks/5927151815778178627.mp3?Expires=1759119755&Signature=xwiGfQDjQLxIY5XT2F5JgL8vIbFtoejkB4UDDIs76f67-lmYQr5wKKY3nCOWpnXP9nAkzNqTQII0AHuI0jGCTZYKjNLhsZWruQF6HAzbd3ZKf-XDZDJZQuHPKZtw3rAhMmdHRXiqGgCT-P5fEgxAb3zf8IMyZPylUcdRwDiOw6t38hWJmwdVEyENkZJd6biz0brdNp1JHQ-Pydg2IB-gOkwojUFiBsVJdggx0jtkZI-roLFAXXdDsMsm6CBFflwKdrngBPpTR9mgD5A5Nmb7GCm0lZlEHjgUloJ5-tUHadlthAkuUrBwT-UCcZ~~O~OoWb~cCMHKnbpxLyJaqMplXQ__&Key-Pair-Id=K1W74YMJ2QWWV5"
+    val songUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+
     LaunchedEffect(key1 = songUrl) {
         viewModel.loadAndPlaySong(songUrl)
     }

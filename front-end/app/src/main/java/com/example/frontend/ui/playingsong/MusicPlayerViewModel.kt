@@ -20,7 +20,9 @@ data class PlayerState(
     val mediaMetadata: MediaMetadata = MediaMetadata.EMPTY
 )
 
-class MusicPlayerViewModel(private val exoPlayer: ExoPlayer) : ViewModel() {
+class MusicPlayerViewModel (
+    private val exoPlayer: ExoPlayer
+) : ViewModel() {
 
     private val _playerState = MutableStateFlow(PlayerState())
 

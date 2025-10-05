@@ -15,9 +15,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.exoplayer.ExoPlayer
+import com.example.frontend.ui.playingsong.MusicPlayer
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import com.example.frontend.ui.theme.FrontEndTheme
-import com.example.playingasong.view.Playingasong
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
 //                    )
 //                }
                 val musicPlayerViewModel: MusicPlayerViewModel = viewModel(factory = viewModelFactory)
-                Playingasong(viewModel = musicPlayerViewModel)
+                MusicPlayer(viewModel = musicPlayerViewModel)
             }
         }
     }
