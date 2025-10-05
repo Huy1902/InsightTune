@@ -42,6 +42,8 @@ import com.example.frontend.ui.NavRoutes
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.core.SessionManager
 import com.example.frontend.ui.home.HomeScreen
+import com.example.frontend.ui.home.HomeViewModel
+import com.example.frontend.ui.home.HomeViewModelFactory
 import com.example.frontend.ui.login.LogInScreen
 import com.example.frontend.ui.profile.ProfileScreen
 import com.example.frontend.ui.profile.ProfileViewModel
@@ -185,7 +187,8 @@ private fun NavGraphBuilder.mainGraph(navController: NavHostController) {
     ) {
 
         composable(NavRoutes.Home.route) {
-            HomeScreen(appNavController = navController)
+            val vm: HomeViewModel = viewModel(factory = HomeViewModelFactory(LocalContext.current))
+            HomeScreen(vm, appNavController = navController)
         }
 
         composable(NavRoutes.Profile.route) {

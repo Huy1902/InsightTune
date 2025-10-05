@@ -50,27 +50,30 @@ object ApiClient {
     }
 
 
-    // AuthApi dùng cho các request thông thường (login, register...)
     val authApi: AuthApi by lazy {
         gatewayRetrofit.create(AuthApi::class.java)
     }
-
-    // AuthApi "sạch" chỉ để cung cấp cho Interceptor
     private val refreshAuthApi: AuthApi by lazy {
         refreshRetrofit.create(AuthApi::class.java)
     }
 
-    // Các Api khác của bạn giữ nguyên, nhưng đảm bảo chúng dùng mainClient
     val userApi: UserApi by lazy {
         Retrofit.Builder()
             .baseUrl(Constants.USER_SERVICE_BASE_URL)
-            .client(mainClient) // Đảm bảo dùng client chính
+            .client(mainClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(UserApi::class.java)
     }
 
-    // Hàm init của bạn không cần thay đổi nhiều
+    val trackApi: TrackApi by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.TRACK_SERVICE_BASE_URL)
+            .client(mainClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(TrackApi::class.java)
+    }
     fun init(prefs: AppPreferences) {
         this.prefs = prefs
     }
