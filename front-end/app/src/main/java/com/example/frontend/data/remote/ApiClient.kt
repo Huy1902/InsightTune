@@ -14,31 +14,25 @@ import retrofit2.http.POST
 object ApiClient {
 
     private lateinit var prefs: AppPreferences
-
-    // --- Client chính, CÓ AuthInterceptor ---
     private val mainClient by lazy {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
         OkHttpClient.Builder()
-            // AuthInterceptor sẽ dùng một AuthApi "sạch" để tránh vòng lặp
             .addInterceptor(AuthInterceptor(prefs) { refreshAuthApi }) // Sửa ở đây
             .addInterceptor(logging)
             .build()
     }
 
-    // --- Client phụ, KHÔNG CÓ AuthInterceptor, chỉ để refresh token ---
     private val refreshClient by lazy {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
         OkHttpClient.Builder()
-            // KHÔNG ADD AUTHINTERCEPTOR VÀO ĐÂY
             .addInterceptor(logging)
             .build()
     }
 
-    // Retrofit chính dùng client chính
     private val gatewayRetrofit by lazy {
         Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
@@ -47,7 +41,6 @@ object ApiClient {
             .build()
     }
 
-    // Retrofit phụ dùng client phụ (chỉ để refresh)
     private val refreshRetrofit by lazy {
         Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
@@ -56,7 +49,6 @@ object ApiClient {
             .build()
     }
 
-    // --- Các API instance ---
 
     // AuthApi dùng cho các request thông thường (login, register...)
     val authApi: AuthApi by lazy {

@@ -20,12 +20,13 @@ interface UserApi {
         @Body request: UpdateUserRequest
     ): Response<UserDto>
 
-    @PUT("users/avatar")
-    suspend fun changeAvatar(
-        @Body request: UpdateAvatarRequest
-    ): Response<ChangeAvatarResponse>
-
     @GET("users")
     suspend fun getUserInfo(): Response<UserDto>
+
+    @Multipart
+    @PUT("users/avatar")
+    suspend fun changeAvatar(
+        @Part file: MultipartBody.Part
+    ): Response<ChangeAvatarResponse>
 
 }

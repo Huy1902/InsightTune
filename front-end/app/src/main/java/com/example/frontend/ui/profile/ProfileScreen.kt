@@ -78,10 +78,7 @@ fun ProfileScreen(
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
-        uri?.let {
-            avatarUri = it
-            vm.updateAvatar(it.toString())
-        }
+        uri?.let { vm.updateAvatar(it, context) }
     }
 
     // Camera launcher
@@ -99,8 +96,7 @@ fun ProfileScreen(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success && cameraUri != null) {
-            avatarUri = cameraUri
-            vm.updateAvatar(cameraUri.toString())
+            vm.updateAvatar(cameraUri!!, context)   // ✅ Gửi Uri, không toString()
         }
     }
 
@@ -287,9 +283,12 @@ fun ProfileScreen(
                         Button(
                             onClick = {
                                 val refreshToken = vm.getRefreshToken() ?: ""
-                                vm.logout(refreshToken) {
-                                    onNavigateLogin()
+                                if (refreshToken.isNotBlank()) {
+                                    vm.logout(refreshToken) {
+                                    }
                                 }
+                                vm.clearLocalTokens()
+                                onNavigateLogin()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                             modifier = Modifier

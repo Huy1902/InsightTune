@@ -136,6 +136,7 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController) {
         route = AppGraph.AUTH
     ) {
         composable(NavRoutes.StartScreen.route) {
+            val context = LocalContext.current
             StartScreen(
                 onNextSignUp = { navController.navigate(NavRoutes.SignUpStep1.route) },
                 onNextLogIn = { navController.navigate(NavRoutes.Login.route) },
@@ -144,7 +145,7 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController) {
                         Intent.ACTION_VIEW,
                         Uri.parse("http://10.0.2.2:8080/oauth2/authorization/google")
                     )
-                   // context.startActivity(intent)
+                    context.startActivity(intent)
                 }
             )
         }

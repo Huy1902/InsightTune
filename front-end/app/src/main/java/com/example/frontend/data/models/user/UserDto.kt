@@ -9,7 +9,8 @@ data class UserDto(
 data class UserResult(
     val id: Int,
     val email: String,
-    val fullName: String,
+    val firstName: String,
+    val lastName: String,
     val address: String,
     val phone: String,
     val role: String,

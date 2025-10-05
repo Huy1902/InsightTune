@@ -1,5 +1,7 @@
 package com.example.frontend.domain.repositories
 
+import android.content.Context
+import android.net.Uri
 import com.example.frontend.data.models.user.AuthResponseDto
 import com.example.frontend.data.models.user.ChangeAvatarResponse
 import com.example.frontend.data.models.user.ChangePasswordRequest
@@ -29,7 +31,7 @@ interface UserRepository {
     suspend fun getUserInfo(): UserResult
     suspend fun logout(refreshToken: String): LogoutResponseDto
 
-    suspend fun updateAvatar(avatar: String): ChangeAvatarResponse
+    suspend fun updateAvatar(context: Context, uri: Uri): ChangeAvatarResponse
     suspend fun updateProfile(
         firstname: String,
         lastname: String,

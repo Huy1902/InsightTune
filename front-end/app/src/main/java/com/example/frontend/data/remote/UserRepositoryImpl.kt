@@ -1,5 +1,7 @@
 package com.example.frontend.data.remote
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.data.models.user.AuthResponseDto
@@ -18,8 +20,11 @@ import com.example.frontend.data.models.user.UpdateAvatarRequest
 import com.example.frontend.data.models.user.UpdateUserRequest
 import com.example.frontend.data.models.user.UserDto
 import com.example.frontend.data.models.user.UserResult
+import com.example.frontend.data.remote.ApiClient.userApi
 import com.example.frontend.domain.repositories.UserRepository
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
 class UserRepositoryImpl(
@@ -38,7 +43,6 @@ class UserRepositoryImpl(
         )
         if (response.isSuccessful) {
             val body = response.body() ?: throw Exception("Empty body")
-            // *** THÊM LOG KIỂM TRA Ở ĐÂY ***
             Log.d("LOGIN_DEBUG", "Access Token nhận được: ${body.result.token}")
             Log.d("LOGIN_DEBUG", "Refresh Token nhận được: ${body.result.refreshToken}")
             prefs.saveToken(body.result.token)
@@ -123,17 +127,29 @@ class UserRepositoryImpl(
     }
 
 
-    override suspend fun updateAvatar(avatar: String): ChangeAvatarResponse {
-        val response = userAPI.changeAvatar(UpdateAvatarRequest(avatar))
+    override suspend fun updateAvatar(context: Context, uri: Uri): ChangeAvatarResponse {
+        val inputStream = context.contentResolver.openInputStream(uri)
+            ?: throw Exception("Cannot open file")
+
+        val bytes = inputStream.readBytes()
+        val requestFile = bytes.toRequestBody("image/*".toMediaTypeOrNull())
+        val filePart = MultipartBody.Part.createFormData(
+            name = "file", // hoặc "avatar" nếu backend yêu cầu key đó
+            filename = "avatar_${System.currentTimeMillis()}.jpg",
+            body = requestFile
+        )
+
+        val response = userApi.changeAvatar(filePart)
         if (response.isSuccessful) {
             val body = response.body() ?: throw Exception("Empty response")
-            if (body.code != 200) {
+            if (body.code == 200) {
+                Log.d("AVATAR", "✅ Upload success: ${body.result}")
+                return body
+            } else {
                 throw Exception("API error: ${body.message}")
             }
-            return body ?: ChangeAvatarResponse(200, "No body", "No result")
-
         } else {
-            throw Exception("HTTP ${response.code()}")
+            throw Exception("HTTP ${response.code()}: ${response.message()}")
         }
     }
 

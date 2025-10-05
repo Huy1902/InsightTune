@@ -34,7 +34,9 @@ class ProfileViewModel(context: Context) : ViewModel() {
             try {
                 val user = repo.getUserInfo()
                 _uiState.value = ProfileUiState(
-                    fullName = user.fullName,
+                    fullName = user.firstName + " " + user.lastName,
+                    firstName = user.firstName,
+                    lastName = user.lastName,
                     email = user.email,
                     address = user.address ?: "",
                     phone = user.phone ?: "",
@@ -61,7 +63,9 @@ class ProfileViewModel(context: Context) : ViewModel() {
                 val updatedUser = repo.updateProfile(firstname, lastname, address, phone, role)
 
                 _uiState.value = _uiState.value.copy(
-                    fullName = updatedUser.fullName,
+                    fullName = updatedUser.firstName + " " + updatedUser.lastName,
+                    firstName = updatedUser.firstName,
+                    lastName = updatedUser.lastName,
                     phone = updatedUser.phone,
                     address = updatedUser.address,
                     role = updatedUser.role,
@@ -91,22 +95,14 @@ class ProfileViewModel(context: Context) : ViewModel() {
     }
 
 
-    fun updateAvatar(newAvatar: String) {
+    fun updateAvatar(uri: Uri, context: Context) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                repo.updateAvatar(newAvatar)
-
-                val user = repo.getUserInfo()
-
+                val user = repo.updateAvatar(context, uri)
                 _uiState.value = _uiState.value.copy(
-                    firstName = user.fullName.substringAfterLast(" "),
-                    lastName = user.fullName.substringBeforeLast(" "),
-                    phone = user.phone,
-                    address = user.address,
-                    role = user.role,
-                    avatarUrl = user.avatar,
                     isLoading = false,
+                    avatarUrl = user.result,
                     error = null
                 )
             } catch (e: Exception) {
@@ -137,4 +133,7 @@ class ProfileViewModel(context: Context) : ViewModel() {
         return repo.getRefreshToken()
     }
 
+    fun clearLocalTokens() {
+        repo.clearToken()
+    }
 }
