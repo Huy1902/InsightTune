@@ -1,6 +1,7 @@
 package com.pm.userservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pm.userservice.config.CloudinaryConfig;
 import com.pm.userservice.controller.client.UserController;
 import com.pm.userservice.dto.request.UpdateAvatarRequest;
 import com.pm.userservice.mapper.UserMapper;
@@ -15,9 +16,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -59,7 +65,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void testRegister_success() throws Exception {
+    void givenValidInput_whenRegister_then200andReturnJson() throws Exception {
         CreateUserRequest req = new CreateUserRequest();
         req.setEmail("test@example.com");
 
@@ -76,7 +82,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void testRegister_fail() throws Exception {
+    void givenInValidInput_whenRegister_then400andThrowException() throws Exception {
         CreateUserRequest req = new CreateUserRequest();
         req.setEmail("fail@example.com");
 
@@ -93,7 +99,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void testFindUser_success() throws Exception {
+    void givenValidToken_whenFindUser_then200andReturnJson() throws Exception {
         when(userService.findByEmail("test@example.com")).thenReturn(userResponse);
 
         mockMvc.perform(get("/users")
@@ -106,7 +112,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void testUpdateUser_success() throws Exception {
+    void givenValidInput_whenUpdateUserProfile_then200andReturnJson() throws Exception {
         UserUpdateRequest req = new UserUpdateRequest();
         req.setFirstname("John");
         req.setLastname("Doe");
@@ -126,7 +132,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void testDeleteUser_success() throws Exception {
+    void givenValidToken_whenDelete_then200() throws Exception {
         mockMvc.perform(delete("/users")
                         .principal(() -> "test@example.com"))
                 .andExpect(status().isOk());
@@ -134,20 +140,28 @@ public class UserControllerTest {
 
     @Test
     void testChangeAvatar() throws Exception {
-        // given
-        UpdateAvatarRequest req = new UpdateAvatarRequest();
-        req.setAvatar("https://example.com/default.png");
+        // Tạo file giả lập
+        MockMultipartFile file = new MockMultipartFile(
+                "avatar",
+                "avatar.png",
+                "image/png",
+                "fake-image-content".getBytes()
+        );
 
-        // when & then
-        mockMvc.perform(put("/users/avatar")
-                        .principal(() -> "test@example.com") // fake Principal
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
+        // Mock service trả về URL
+        when(userService.changeAvatar("testUser", file)).thenReturn("avatar-url.png");
+
+        mockMvc.perform(multipart("/users/avatar")
+                        .file(file)
+                        .principal(() -> "testUser") // gán Principal trực tiếp
+                        .with(request -> {
+                            request.setMethod("PUT"); // chuyển POST -> PUT
+                            return request;
+                        })
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.message").value("Change user avatar successfully"));
-
-        // verify service được gọi với đúng tham số
-        verify(userService).changeAvatar("test@example.com", "https://example.com/default.png");
+                .andExpect(jsonPath("$.message").value("Change user avatar successfully"))
+                .andExpect(jsonPath("$.result").value("avatar-url.png")); // bây giờ sẽ có result
     }
 }

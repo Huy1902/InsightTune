@@ -7,9 +7,10 @@ public enum ErrorCode {
     USER_NOTFOUND(404, "User not found"),
     UNCATEGORIZED_ERROR(999, "Uncategorized error"),
     INVALID_KEY(1008, "Invalid key"),
-    NOT_BLANK(400, "Không được để trống phần này"),
-    CANT_CONNECT_AUTHSERVICE(500, "Cant connect auth-service"),
-    CANT_CHANGE_ROLE(400, "Không thể đổi role thành USER"),
+    NOT_BLANK(400, "This field cannot be empty"),
+    CANT_CONNECT_AUTHSERVICE(500, "Cannot connect to auth-service"),
+    CANT_CHANGE_ROLE(400, "Cannot change role to USER"),
+    CANT_UPLOAD_AVATAR(400, "Cannot upload file to cloud"),
     ;
 
     ErrorCode(int code, String message) {

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 
@@ -80,11 +81,11 @@ public class UserController {
 
     @PutMapping("/avatar")
     @Operation(summary = "Change user avatar")
-    public ApiResponse<String> changeAvatar(Principal principal, @RequestBody UpdateAvatarRequest req) {
-        userService.changeAvatar(principal.getName(), req.getAvatar());
+    public ApiResponse<String> changeAvatar(Principal principal, @RequestPart("avatar") MultipartFile avatar) {
         return ApiResponse.<String>builder()
                 .code(200)
                 .message("Change user avatar successfully")
+                .result(userService.changeAvatar(principal.getName(), avatar))
                 .build();
     }
 }

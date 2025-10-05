@@ -1,5 +1,8 @@
 package com.pm.userservice.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.Uploader;
+import com.pm.userservice.config.CloudinaryConfig;
 import com.pm.userservice.exception.AppException;
 import com.pm.userservice.exception.ErrorCode;
 import com.pm.userservice.mapper.UserMapper;
@@ -14,10 +17,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,6 +43,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private CloudinaryService cloudinaryService;
 
     @Mock
     private UserMapper userMapper;
@@ -73,8 +87,9 @@ class UserServiceTest {
         userService.updateRolePath = "http://auth-service/update-role";
     }
 
+
     @Test
-    void testSave_success() {
+    void givenValidInput_whenSave_then200AndReturnJson() {
         when(userMapper.UserToUserResponse(user)).thenReturn(userResponse);
 
         UserResponse result = userService.save(user);
@@ -84,7 +99,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testUpdateUserProfile_roleChanged_success() throws Exception {
+    void givenValidInput_whenUpdateUserProfileRoleChanged_then200AndReturnJson() throws Exception {
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
         doNothing().when(restTemplate).put(anyString(), any(UpdateRoleRequest.class));
         when(userMapper.UserToUserResponse(any())).thenReturn(userResponse);
@@ -100,7 +115,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testUpdateUserProfile_roleNotChanged_success() throws Exception {
+    void givenValidInput_whenUpdateUserProfileRoleNotChanged_then200AndReturnJson() throws Exception {
         updateRequest.setRole("USER"); // same as current role
 
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
@@ -115,7 +130,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testUpdateUserProfile_httpClientErrorException() throws Exception {
+    void givenValidInput_whenUpdateUserProfileRoleChanged_throwHttpClientErrorException() throws Exception {
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
         doThrow(HttpClientErrorException.create(
                 HttpStatus.BAD_REQUEST, "Bad Request", null, "{\"message\":\"Invalid role\"}".getBytes(), null
@@ -129,7 +144,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testFindByEmail_success() {
+    void givenValidInput_whenFindByEmail_then200AndReturnJson() {
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
         when(userMapper.UserToUserResponse(user)).thenReturn(userResponse);
 
@@ -139,7 +154,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testFindByEmail_userNotFound() {
+    void givenInValidToken_whenFindByEmail_then400AndUserNotFound() {
         when(userRepository.findByEmail("unknown@example.com")).thenReturn(Optional.empty());
 
         AppException exception = assertThrows(AppException.class, () -> {
@@ -159,15 +174,29 @@ class UserServiceTest {
     }
 
     @Test
-    void changeAvatar_shouldCallRepository() {
-        // Given
-        String email = "test@example.com";
-        String avatar = "https://example.com/avatar.png";
+    void givenValidInput_whenChangeAvatar_then200AndUploadAndUpdateSuccessfully() throws Exception {
+        MockMultipartFile avatar = new MockMultipartFile(
+                "avatar", "avatar.png", "image/png", "fake".getBytes());
+        String fakeUrl = "https://fake.url/avatar.png";
 
-        // When
-        userService.changeAvatar(email, avatar);
+        when(cloudinaryService.uploadFile(avatar)).thenReturn(fakeUrl);
 
-        // Then → kiểm tra repository được gọi đúng tham số
-        verify(userRepository).changeAvatarByEmail(email, avatar);
+        userService.changeAvatar("user@example.com", avatar);
+
+        verify(cloudinaryService).uploadFile(avatar);
+        verify(userRepository).changeAvatarByEmail("user@example.com", fakeUrl);
+    }
+
+    @Test
+    void givenInvalidInputOrUploadFail_whenChangeAvatar_then400AndThrowException() throws Exception {
+        MockMultipartFile avatar = new MockMultipartFile(
+                "avatar", "avatar.png", "image/png", "fake".getBytes());
+
+        when(cloudinaryService.uploadFile(avatar)).thenThrow(new IOException("Upload failed"));
+
+        AppException ex = assertThrows(AppException.class, () -> userService.changeAvatar("user@example.com", avatar));
+
+        assertEquals(ErrorCode.CANT_UPLOAD_AVATAR, ex.getError());
+        verify(userRepository, never()).changeAvatarByEmail(any(), any());
     }
 }

@@ -3,7 +3,6 @@ package com.pm.authservice.config;
 import com.pm.authservice.config.oauth2.handlers.CustomOAuth2SuccessHandler;
 import com.pm.authservice.entrypoint.CustomAuthEntryPoint;
 import com.pm.authservice.service.CustomOAuth2UserService;
-import com.pm.authservice.service.CustomTokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,8 +19,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.crypto.spec.SecretKeySpec;
-
-import static org.springframework.web.servlet.function.RequestPredicates.headers;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
