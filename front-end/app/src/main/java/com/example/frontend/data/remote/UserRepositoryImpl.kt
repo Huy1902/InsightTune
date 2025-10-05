@@ -134,7 +134,7 @@ class UserRepositoryImpl(
         val bytes = inputStream.readBytes()
         val requestFile = bytes.toRequestBody("image/*".toMediaTypeOrNull())
         val filePart = MultipartBody.Part.createFormData(
-            name = "file", // hoặc "avatar" nếu backend yêu cầu key đó
+            name = "avatar",
             filename = "avatar_${System.currentTimeMillis()}.jpg",
             body = requestFile
         )
