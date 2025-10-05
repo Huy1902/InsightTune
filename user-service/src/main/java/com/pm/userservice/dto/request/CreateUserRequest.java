@@ -13,7 +13,8 @@ import lombok.experimental.FieldDefaults;
 public class CreateUserRequest {
     Long id;
     String email;
-    String fullName;
+    String firstName;
+    String lastName;
     String address;
     String phone;
     String role;

@@ -3,6 +3,8 @@ package com.example.frontend.data.remote
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.core.AuthInterceptor
 import com.example.frontend.core.Constants
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,33 +14,69 @@ import retrofit2.http.POST
 object ApiClient {
 
     private lateinit var prefs: AppPreferences
-
-    fun init(prefs: AppPreferences) {
-        this.prefs = prefs
-    }
-
-    private val client by lazy {
-        okhttp3.OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(prefs))
+    private val mainClient by lazy {
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor(prefs) { refreshAuthApi }) // Sửa ở đây
+            .addInterceptor(logging)
             .build()
     }
 
-    private val retrofit by lazy {
+    private val refreshClient by lazy {
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .build()
+    }
+
+    private val gatewayRetrofit by lazy {
         Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
-            .client(client)
+            .client(mainClient) // Dùng mainClient
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
+    private val refreshRetrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .client(refreshClient) // Dùng refreshClient
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+
+    val authApi: AuthApi by lazy {
+        gatewayRetrofit.create(AuthApi::class.java)
+    }
+    private val refreshAuthApi: AuthApi by lazy {
+        refreshRetrofit.create(AuthApi::class.java)
+    }
+
     val userApi: UserApi by lazy {
-        retrofit.create(UserApi::class.java)
+        Retrofit.Builder()
+            .baseUrl(Constants.USER_SERVICE_BASE_URL)
+            .client(mainClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(UserApi::class.java)
     }
 
-    private val googleAuthApi: GoogleAuthApi by lazy {
-        retrofit.create(GoogleAuthApi::class.java)
+    val trackApi: TrackApi by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.TRACK_SERVICE_BASE_URL)
+            .client(mainClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(TrackApi::class.java)
     }
-
+    fun init(prefs: AppPreferences) {
+        this.prefs = prefs
+    }
     suspend fun loginWithGoogleCode(code: String): String {
         val response = googleAuthApi.exchangeCode(mapOf("code" to code))
         if (response.isSuccessful) {
@@ -46,6 +84,9 @@ object ApiClient {
         } else {
             throw Exception("Backend error ${response.code()}")
         }
+    }
+    val googleAuthApi: GoogleAuthApi by lazy {
+        gatewayRetrofit.create(GoogleAuthApi::class.java)
     }
 }
 

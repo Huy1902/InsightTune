@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(context: Context) : ViewModel() {
 
-    private val repo = UserRepositoryImpl(ApiClient.userApi, AppPreferences(context))
+    private val repo = UserRepositoryImpl(ApiClient.authApi, ApiClient.userApi, AppPreferences(context))
     private val loginUser = LoginUser(repo)
     private val registerUser = RegisterUser(repo)
 
@@ -82,31 +82,9 @@ class AuthViewModel(context: Context) : ViewModel() {
 
     fun resetState() {
         _state.value = Resource.Idle
-        // nếu mày có lưu email/pass trong ViewModel cũng nên clear luôn
         email = ""
         password = ""
     }
-
-    fun refreshAccessToken(onSuccess: () -> Unit) {
-        viewModelScope.launch {
-            val refreshToken = repo.getRefreshToken()
-            if (refreshToken != null) {
-                try {
-                    val res = repo.refreshToken(refreshToken)
-                    if (res.code == 200) {
-                        onSuccess()
-                    } else {
-                        _state.value = Resource.Error("Refresh failed: ${res.message}")
-                    }
-                } catch (e: Exception) {
-                    _state.value = Resource.Error(e.message ?: "Unknown error")
-                }
-            }
-        }
-    }
-
-
-
 
     fun checkEmail(email: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {

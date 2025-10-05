@@ -133,7 +133,8 @@ public class AuthServiceTest {
 
         UserProfileResponse response = authService.createUser(request);
 
-        assertEquals("John Doe", response.getFullName());
+        assertEquals("John", response.getFirstName());
+        assertEquals("Doe", response.getLastName());
         assertEquals("test@example.com", response.getEmail());
         assertEquals("USER", response.getRole());
         assertEquals(1L, response.getId());

@@ -104,12 +104,14 @@ public class AuthService {
         save(user);
 
         // lay thong tin userprofile
-        UserProfileResponse userProfileResponse = new UserProfileResponse();
-        userProfileResponse.setId(findByEmail(registerRequest.getEmail()).getId());
-        userProfileResponse.setFullName(registerRequest.getFirstname()
-                + " " + registerRequest.getLastname());
-        userProfileResponse.setEmail(registerRequest.getEmail());
-        userProfileResponse.setRole("USER");
+        UserProfileResponse userProfileResponse = UserProfileResponse.builder()
+                .id(findByEmail(registerRequest.getEmail()).getId())
+                .email(registerRequest.getEmail())
+                .firstName(registerRequest.getFirstname())
+                .lastName(registerRequest.getLastname())
+                .role("USER")
+                .build();
+
 
         try {
             String url = createUserPath;

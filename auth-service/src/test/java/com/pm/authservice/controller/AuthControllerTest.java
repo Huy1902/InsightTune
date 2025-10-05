@@ -67,7 +67,8 @@ public class AuthControllerTest {
                                             .id(1L)
                                             .email("test@example.com")
                                             .role("USER")
-                                            .fullName("Tran Dinh")
+                                            .firstName("Tran")
+                                            .lastName("Dinh")
                                             .build();
 
         when(authService.createUser(any(RegisterRequest.class))).thenReturn(mockResponse);
@@ -78,7 +79,8 @@ public class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.email").value("test@example.com"))
                 .andExpect(jsonPath("$.result.role").value("USER"))
-                .andExpect(jsonPath("$.result.fullName").value("Tran Dinh"))
+                .andExpect(jsonPath("$.result.firstName").value("Tran"))
+                .andExpect(jsonPath("$.result.lastName").value("Dinh"))
                 .andExpect(jsonPath("$.result.id").value(1L));
 
     }

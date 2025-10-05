@@ -33,7 +33,6 @@ fun ChangeProfileDialog(
         String, // phone
         String, // address
         String, // role
-        Uri?    // avatarUri
     ) -> Unit
 ) {
     var firstName by remember { mutableStateOf(uiState.firstName) }
@@ -45,32 +44,6 @@ fun ChangeProfileDialog(
 
     val context = LocalContext.current
     var showAvatarOptions by remember { mutableStateOf(false) }
-
-    // Gallery launcher
-    val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        avatarUri = uri
-    }
-
-    // Camera launcher
-    val cameraUri = remember {
-        val contentValues = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, "avatar_${System.currentTimeMillis()}.jpg")
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        }
-        context.contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
-        )
-    }
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success && cameraUri != null) {
-            avatarUri = cameraUri
-        }
-    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -86,16 +59,6 @@ fun ChangeProfileDialog(
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Avatar
-                AsyncImage(
-                    model = avatarUri ?: uiState.avatarUrl,
-                    contentDescription = "Avatar",
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray)
-                        .clickable { showAvatarOptions = true }
-                )
 
                 // First name
                 TextField(
@@ -163,17 +126,17 @@ fun ChangeProfileDialog(
                         containerColor = Color(0xFF121212)
                     ) {
                         DropdownMenuItem(
-                            text = { Text("user", color = Color.White) },
+                            text = { Text("USER", color = Color.White) },
                             onClick = {
-                                role = "user"
+                                role = "USER"
                                 expanded = false
                             },
-                            enabled = uiState.role != "admin"
+                            enabled = uiState.role != "ADMIN"
                         )
                         DropdownMenuItem(
-                            text = { Text("admin", color = Color.White) },
+                            text = { Text("ADMIN", color = Color.White) },
                             onClick = {
-                                role = "admin"
+                                role = "ADMIN"
                                 expanded = false
                             }
                         )
@@ -183,7 +146,7 @@ fun ChangeProfileDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                onConfirm(firstName, lastName, phone, address, role, avatarUri)
+                onConfirm(firstName, lastName, phone, address, role)
                 onDismiss()
             }) {
                 Text("Save", color = Color.Red, fontFamily = FontFamily.Serif)
@@ -196,12 +159,4 @@ fun ChangeProfileDialog(
         },
         containerColor = Color(0xFF121212)
     )
-
-    if (showAvatarOptions) {
-        ChangeAvatarDialog(
-            onDismiss = { showAvatarOptions = false },
-            onPickGallery = { galleryLauncher.launch("image/*") },
-            onTakePhoto = { cameraUri?.let { cameraLauncher.launch(it) } }
-        )
-    }
 }
