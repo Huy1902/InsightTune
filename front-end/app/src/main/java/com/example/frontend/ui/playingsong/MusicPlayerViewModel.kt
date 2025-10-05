@@ -67,6 +67,11 @@ class MusicPlayerViewModel (
         Log.d("PlayerDebug", "Nút Play/Pause đã được ấn")
     }
 
+    fun onPlayNextSong() {
+        exoPlayer.seekToNext()
+        exoPlayer.play()
+    }
+
     fun seekToPosition(position : Long) {
         exoPlayer.seekTo(position)
     }

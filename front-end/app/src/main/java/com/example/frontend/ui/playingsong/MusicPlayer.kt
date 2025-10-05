@@ -1,5 +1,6 @@
 package com.example.frontend.ui.playingsong
 import PlayerSeekBar
+import android.R.attr.onClick
 import androidx.compose.foundation.Image
 import com.example.frontend.R
 import androidx.compose.foundation.background
@@ -146,23 +147,27 @@ fun MusicPlayer(
                     contentDescription = null,
                     modifier = Modifier.size(20.dp)
                 )
-                Image (
-                    painter = painterResource(R.drawable.previoussong),
-                    contentDescription = null,
-                    modifier = Modifier.size(30.dp)
-                )
+                IconButton(onClick = { /*TODO*/ }) {
+                    Image(
+                        painter = painterResource(R.drawable.previoussong),
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
                 IconButton (onClick = {viewModel.onPlayPauseClick() }) {
-                    Image (
+                    Image(
                         painter = painterResource(if (state.isPlaying) R.drawable.pausesong else R.drawable.playing),
                         contentDescription = null,
                         modifier = Modifier.size(50.dp)
                     )
-        }
-                Image (
-                    painter = painterResource(R.drawable.nextsong),
-                    contentDescription = null,
-                    modifier = Modifier.size(23.dp)
-                )
+                }
+                IconButton(onClick = {viewModel.onPlayNextSong() } ) {
+                    Image(
+                        painter = painterResource(R.drawable.nextsong),
+                        contentDescription = null,
+                        modifier = Modifier.size(23.dp)
+                    )
+                }
                 Image (
                     painter = painterResource(R.drawable.like),
                     contentDescription = null,
