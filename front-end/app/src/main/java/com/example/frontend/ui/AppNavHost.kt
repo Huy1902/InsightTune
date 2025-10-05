@@ -33,10 +33,13 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.frontend.ui.home.BottomNavItem
 import com.example.frontend.ui.NavRoutes
 import com.example.frontend.core.AppPreferences
@@ -45,6 +48,9 @@ import com.example.frontend.ui.home.HomeScreen
 import com.example.frontend.ui.home.HomeViewModel
 import com.example.frontend.ui.home.HomeViewModelFactory
 import com.example.frontend.ui.login.LogInScreen
+import com.example.frontend.ui.playingsong.MusicPlayer
+import com.example.frontend.ui.playingsong.MusicPlayerViewModel
+import com.example.frontend.ui.playingsong.MusicPlayerViewModelFactory
 import com.example.frontend.ui.profile.ProfileScreen
 import com.example.frontend.ui.profile.ProfileViewModel
 import com.example.frontend.ui.profile.ProfileViewModelFactory
@@ -200,6 +206,29 @@ private fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 },
                 onBack = { navController.popBackStack() }
             )
+        }
+
+        composable (
+            NavRoutes.Track.route,
+            arguments = listOf(
+                navArgument("url") {type = NavType.StringType},
+                navArgument("title") {type = NavType.StringType},
+                navArgument("artist") {type = NavType.StringType},
+                navArgument("imageUrl") {type = NavType.StringType},
+            )
+            ) {
+                backStackEntry  ->
+                val context = LocalContext.current
+                val url = backStackEntry.arguments?.getString("url") ?: ""
+                val title = backStackEntry.arguments?.getString("title") ?: ""
+                val artist = backStackEntry.arguments?.getString("artist") ?: ""
+                val imageUrl = backStackEntry.arguments?.getString("imageUrl") ?: ""
+
+            val vm: MusicPlayerViewModel = viewModel(
+                factory = MusicPlayerViewModelFactory(url, title, artist, imageUrl, context)
+            )
+            MusicPlayer(vm)
+
         }
     }
 }

@@ -30,6 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import androidx.compose.runtime.LaunchedEffect
+import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.remote.ApiClient
+import com.example.frontend.data.remote.TrackRepositoryImpl
+import com.example.frontend.domain.repositories.TrackRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
 @Composable
 fun MusicPlayer(
     viewModel: MusicPlayerViewModel
@@ -45,11 +52,12 @@ fun MusicPlayer(
 
     val state by viewModel.playerState.collectAsState()
 
-//    val songUrl = "https://d6puu73zzo17e.cloudfront.net/tracks/5927151815778178627.mp3?Expires=1759119755&Signature=xwiGfQDjQLxIY5XT2F5JgL8vIbFtoejkB4UDDIs76f67-lmYQr5wKKY3nCOWpnXP9nAkzNqTQII0AHuI0jGCTZYKjNLhsZWruQF6HAzbd3ZKf-XDZDJZQuHPKZtw3rAhMmdHRXiqGgCT-P5fEgxAb3zf8IMyZPylUcdRwDiOw6t38hWJmwdVEyENkZJd6biz0brdNp1JHQ-Pydg2IB-gOkwojUFiBsVJdggx0jtkZI-roLFAXXdDsMsm6CBFflwKdrngBPpTR9mgD5A5Nmb7GCm0lZlEHjgUloJ5-tUHadlthAkuUrBwT-UCcZ~~O~OoWb~cCMHKnbpxLyJaqMplXQ__&Key-Pair-Id=K1W74YMJ2QWWV5"
-    val songUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
 
-    LaunchedEffect(key1 = songUrl) {
-        viewModel.loadAndPlaySong(songUrl)
+//    val songUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+
+
+    LaunchedEffect(Unit) {
+        viewModel.loadAndPlaySong()
     }
 
     Box(
@@ -108,7 +116,7 @@ fun MusicPlayer(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = "From Me to You - Mono/Remast",
+                    text = viewModel.getTitle(),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(12.dp, 40.dp, 12.dp, 0.dp),
@@ -120,7 +128,7 @@ fun MusicPlayer(
             }
             Row () {
                 Text(
-                    text = "The Beatles",
+                    text = viewModel.getArtist(),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(12.dp, 6.dp),
