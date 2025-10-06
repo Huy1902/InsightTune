@@ -16,7 +16,10 @@ public class UserUpdateRequest {
     @NotBlank(message = "NOT_BLANK")
     String lastname;
 
+    @NotBlank(message = "NOT_BLANK")
     String address;
+
+    @NotBlank(message = "NOT_BLANK")
     String phone;
 
     @NotBlank(message = "NOT_BLANK")

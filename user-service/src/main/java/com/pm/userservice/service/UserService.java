@@ -11,11 +11,15 @@ import com.pm.userservice.dto.request.UserUpdateRequest;
 import com.pm.userservice.dto.response.UserResponse;
 import com.pm.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @Slf4j
@@ -27,14 +31,15 @@ public class UserService {
     String avatarURL;
     private final RestTemplate restTemplate;
 
-
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final CloudinaryService cloudinaryService;
 
-    public UserService(RestTemplate restTemplate, UserRepository userRepository, UserMapper userMapper) {
+    public UserService(RestTemplate restTemplate, UserRepository userRepository, UserMapper userMapper, CloudinaryService cloudinaryService) {
         this.restTemplate = restTemplate;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public UserResponse save(User user) {
@@ -52,9 +57,10 @@ public class UserService {
         user.setAddress(request.getAddress());
         user.setPhone(request.getPhone());
 
-        UpdateRoleRequest updateRoleRequest = new UpdateRoleRequest();
-        updateRoleRequest.setRole(request.getRole());
-        updateRoleRequest.setEmail(email);
+        UpdateRoleRequest updateRoleRequest = UpdateRoleRequest.builder()
+                        .role(request.getRole())
+                        .email(email)
+                        .build();
 
         if (!user.getRole().equals(request.getRole())) {
             try {
@@ -82,7 +88,13 @@ public class UserService {
         userRepository.deleteByEmail(email);
     }
 
-    public void changeAvatar(String email, String avatar) {
-        userRepository.changeAvatarByEmail(email, avatar);
+    public String changeAvatar(String email, MultipartFile avatar) {
+        try {
+            String avatarUrl = cloudinaryService.uploadFile(avatar);
+            userRepository.changeAvatarByEmail(email, avatarUrl);
+            return avatarUrl;
+        } catch (IOException ex) {
+            throw new AppException(ErrorCode.CANT_UPLOAD_AVATAR);
+        }
     }
 }
