@@ -27,8 +27,6 @@ public class UserService {
     @Value("${auth-service.update-role}")
     String updateRolePath;
 
-    @Value("${avatar.url}")
-    String avatarURL;
     private final RestTemplate restTemplate;
 
     private final UserRepository userRepository;
@@ -43,11 +41,21 @@ public class UserService {
     }
 
     public UserResponse save(User user) {
-        user.setAvatar(avatarURL);
         userRepository.save(user);
         return userMapper.UserToUserResponse(user);
     }
 
+    /**
+     * Cập nhật thông tin profile user.
+     * <p>
+     * Endpoint này được bảo vệ bởi PostAuthorize, chỉ cho phép cập nhật user trùng với token.
+     * </p>
+     *
+     * @param email email của user (lấy từ token)
+     * @param request request chứa thông tin cập nhật
+     * @return UserResponse chứa thông tin user sau khi update
+     * @throws JsonProcessingException nếu có lỗi khi parse JSON từ response
+     */
     @PostAuthorize("returnObject.email == authentication.name")
     public UserResponse updateUserProfile(String email, UserUpdateRequest request) throws JsonProcessingException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
@@ -78,7 +86,12 @@ public class UserService {
         return save(user);
     }
 
-
+    /**
+     * Tìm user theo email.
+     *
+     * @param email email của user
+     * @return UserResponse chứa thông tin user
+     */
     public UserResponse findByEmail(String email) {
         return userMapper.UserToUserResponse(userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND)));
@@ -88,6 +101,13 @@ public class UserService {
         userRepository.deleteByEmail(email);
     }
 
+    /**
+     * Thay đổi avatar của user.
+     *
+     * @param email email của user
+     * @param avatar file ảnh upload
+     * @return URL công khai của avatar mới
+     */
     public String changeAvatar(String email, MultipartFile avatar) {
         try {
             String avatarUrl = cloudinaryService.uploadFile(avatar);

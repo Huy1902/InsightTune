@@ -30,13 +30,11 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
-    /*
-    Create client profile.
-    Long id;
-    String email;
-    String fullName;
-    String address;
-    String phone;
+    /**
+     * Tạo client profile mới.
+     *
+     * @param req request chứa thông tin email, password và các field cần thiết
+     * @return ApiResponse chứa thông tin user vừa tạo
      */
     @PostMapping("/create")
     @Operation(summary = "Create user", description = "Receive email and password to create user")
@@ -50,6 +48,12 @@ public class UserController {
 
     }
 
+    /**
+     * Lấy thông tin user dựa trên access token.
+     *
+     * @param principal principal chứa thông tin email từ token
+     * @return ApiResponse chứa thông tin user
+     */
     @GetMapping
     @Operation(summary = "Find user by token", description = "Find user by token")
     public ApiResponse<UserResponse> findUser(Principal principal) {
@@ -59,8 +63,13 @@ public class UserController {
                 .build();
     }
 
-    /*
-    Update user profile.
+    /**
+     * Cập nhật thông tin user.
+     *
+     * @param principal principal chứa email từ token
+     * @param request request chứa thông tin cập nhật
+     * @return ApiResponse chứa thông tin user sau khi update
+     * @throws JsonProcessingException nếu có lỗi khi xử lý JSON
      */
     @PutMapping
     @Operation(summary = "Update user profile"
@@ -73,12 +82,24 @@ public class UserController {
                 .build();
     }
 
+    /**
+     * Xóa user dựa trên token.
+     *
+     * @param principal principal chứa email từ token
+     */
     @DeleteMapping
     @Operation(summary = "Delete user by token")
     public void deleteUser(Principal principal) {
         userService.deleteByEmail(principal.getName());
     }
 
+    /**
+     * Thay đổi avatar của user.
+     *
+     * @param principal principal chứa email từ token
+     * @param avatar file ảnh upload
+     * @return ApiResponse với message thành công và link avatar mới
+     */
     @PutMapping("/avatar")
     @Operation(summary = "Change user avatar")
     public ApiResponse<String> changeAvatar(Principal principal, @RequestPart("avatar") MultipartFile avatar) {

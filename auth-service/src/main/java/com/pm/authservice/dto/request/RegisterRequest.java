@@ -15,16 +15,18 @@ import lombok.experimental.FieldDefaults;
 public class RegisterRequest {
 
     @NotBlank(message = "NOT_BLANK")
-    private String firstname ;
+    String firstname ;
 
     @NotBlank(message = "NOT_BLANK")
-    private String lastname;
+    String lastname;
 
     @Email(message = "EMAIL_INVALID", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
-    private String email;
+    String email;
 
     @Size(min = 6, message = "PASSWORD_INVALID")
-    private String password;
+    String password;
 
-    private String confirmPassword;
+    String confirmPassword;
+
+    String avatar;
 }

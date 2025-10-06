@@ -14,7 +14,6 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "users")
 public class User {
 
-
     @Id
     Long id;
 
