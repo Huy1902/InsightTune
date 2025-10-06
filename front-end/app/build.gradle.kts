@@ -10,7 +10,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.app"
+        applicationId = "com.example.frontend"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -62,6 +62,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     // Accompanist Navigation Animation
     implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
