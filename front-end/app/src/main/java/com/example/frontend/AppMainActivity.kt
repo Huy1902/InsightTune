@@ -43,37 +43,6 @@ class AppMainActivity : ComponentActivity() {
             navController = rememberNavController()
             AppNavHost(prefs = prefs, navController = navController)
         }
-
-        handleDeepLink(intent) // xử lý khi app được mở bằng deep link
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        handleDeepLink(intent)
-    }
-
-    private fun handleDeepLink(intent: Intent?) {
-        val data: Uri = intent?.data ?: return
-
-        if (data.scheme == "com.example.frontend" && data.host == "oauth2redirect") {
-            val code = data.getQueryParameter("code")
-            if (code != null) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val jwt = ApiClient.loginWithGoogleCode(code)
-                        prefs.saveToken(jwt)
-                        withContext(Dispatchers.Main) {
-                            navController.navigate(NavRoutes.Home.route) {
-                                popUpTo(NavRoutes.StartScreen.route) { inclusive = true }
-                                launchSingleTop = true
-                            }
-                        }
-                    } catch (e: Exception) {
-                        Log.e("OAUTH2", "Google login failed: ${e.message}")
-                    }
-                }
-            }
-        }
     }
 
 }

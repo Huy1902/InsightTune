@@ -1,5 +1,7 @@
 package com.example.frontend.ui.start
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -21,13 +24,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.R
+import com.example.frontend.core.AppPreferences
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 @Composable
 fun StartScreen(
     onNextSignUp: () -> Unit,
     onNextLogIn: () -> Unit,
-    onGoogleLogin: () -> Unit
+    onGoogleLogin: () -> Unit,
+    prefs: AppPreferences
 ) {
+    val context = LocalContext.current
+    val signInWithGoogle = rememberGoogleSignInManager(
+        onLoginSuccess = { jwt ->
+            Log.d("LoginScreen", "Got system JWT: $jwt")
+            prefs.saveToken(jwt)
+            onGoogleLogin()
+        },
+        onLoginFailure = { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+        }
+    )
 
     val gradient = Brush.verticalGradient(
         colorStops = arrayOf(
@@ -112,7 +129,7 @@ fun StartScreen(
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
                 onClick = {
-                    onGoogleLogin()
+                    signInWithGoogle()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black
@@ -199,5 +216,5 @@ fun StartScreen(
 fun StartScreenPreview() {
     val navController = rememberNavController()
 
-    StartScreen(onNextSignUp = {}, onNextLogIn = {}, onGoogleLogin = {})
+    //StartScreen(onNextSignUp = {}, onNextLogIn = {}, onGoogleLogin = {})
 }

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "707539669485",
+    "project_id": "spotube-aa580",
+    "storage_bucket": "spotube-aa580.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707539669485:android:d11e84fa3d608cb51257e4",
+        "android_client_info": {
+          "package_name": "com.example.frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707539669485-klhvrele6n7vrdod4herm5g67mpc4ohl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.frontend",
+            "certificate_hash": "744cd9b31c3ace734db0da014245bf924c4461bd"
+          }
+        },
+        {
+          "client_id": "707539669485-hvb782jf95k54qogpjmcalbjiiec9nrd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBfEGX5HPwXX7JWXuw_PSBeuYpe6sfuBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "707539669485-hvb782jf95k54qogpjmcalbjiiec9nrd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

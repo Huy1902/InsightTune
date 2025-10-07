@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.ui.NavRoutes
 import com.example.frontend.R
+import com.example.frontend.ui.home.HomeViewModel
 import java.nio.file.WatchEvent
 
 val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$".toRegex()
@@ -184,12 +186,15 @@ fun SignUpScreenStep1(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SignUpScreenStep1Preview() {
-    val navController = rememberNavController()
-   // val vm = AuthViewModel(context = Context)
+    // Fake ViewModel — không cần context, không có logic
+    val fakeVm = object {
+        fun onEmailChange(email: String) {}
+        fun checkEmail(email: String, callback: (Boolean) -> Unit) {}
+    }
 
-//    SignUpScreenStep1(
-//        vm,
-//        onNext = { navController.navigate(NavRoutes.SignUpStep2.route) },
-//        onBack = { navController.popBackStack() }
-//    )
+    SignUpScreenStep1(
+        vm = fakeVm as AuthViewModel,
+        onNext = {},
+        onBack = {}
+    )
 }

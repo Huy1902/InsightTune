@@ -77,21 +77,23 @@ object ApiClient {
     fun init(prefs: AppPreferences) {
         this.prefs = prefs
     }
-    suspend fun loginWithGoogleCode(code: String): String {
-        val response = googleAuthApi.exchangeCode(mapOf("code" to code))
-        if (response.isSuccessful) {
-            return response.body()?.get("token") ?: throw Exception("Don't get JWT")
+    suspend fun loginWithGoogleIdToken(idToken: String): String {
+        val response = googleAuthApi.verifyIdToken(mapOf("idToken" to idToken))
+
+        if (response.isSuccessful && response.body() != null) {
+            val apiResponse = response.body()!!
+            if (apiResponse.code == 200 && apiResponse.result?.token != null) {
+                return apiResponse.result.token
+            } else {
+                throw Exception(apiResponse.message ?: "Backend returned a successful status but with an error.")
+            }
         } else {
-            throw Exception("Backend error ${response.code()}")
+            val errorBody = response.errorBody()?.string()
+            throw Exception("Backend error ${response.code()}: $errorBody")
         }
     }
     val googleAuthApi: GoogleAuthApi by lazy {
         gatewayRetrofit.create(GoogleAuthApi::class.java)
     }
-}
-
-interface GoogleAuthApi {
-    @POST("auth/google/callback")
-    suspend fun exchangeCode(@Body body: Map<String, String>): Response<Map<String, String>>
 }
 
