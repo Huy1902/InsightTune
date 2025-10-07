@@ -11,12 +11,10 @@ import com.pm.authservice.exception.ErrorCode;
 import com.pm.authservice.models.RefreshToken;
 import com.pm.authservice.models.User;
 import com.pm.authservice.repository.RefreshTokenRepository;
-import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.repository.UserRepository;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +24,19 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * Service xử lý các nghiệp vụ liên quan đến JWT và refresh token.
+ * <p>
+ * Bao gồm các chức năng:
+ * <ul>
+ *     <li>Generate access token</li>
+ *     <li>Generate refresh token</li>
+ *     <li>Refresh access token từ refresh token</li>
+ *     <li>Verify token và lấy email từ token</li>
+ * </ul>
+ * </p>
+ */
 @Service
 @Slf4j
 public class CustomTokenService {
@@ -45,6 +54,13 @@ public class CustomTokenService {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
+
+    /**
+     * Xây dựng scope cho user dựa trên role.
+     *
+     * @param user user cần tạo scope
+     * @return scope dạng chuỗi, phân tách bởi khoảng trắng
+     */
     private String buildScope(User user) {
         StringJoiner scope = new StringJoiner(" ");
         if (user.getRole() != null) {
@@ -54,7 +70,13 @@ public class CustomTokenService {
         return scope.toString();
     }
 
-    // generate access token
+
+    /**
+     * Tạo access token cho user.
+     *
+     * @param user user cần tạo token
+     * @return access token dạng JWT
+     */
     public String generateAccessToken(User user) {
 
         if (user.getEmail() == null) {
@@ -85,7 +107,12 @@ public class CustomTokenService {
         }
     }
 
-    //generate refresh token
+    /**
+     * Tạo refresh token cho user và lưu vào database.
+     *
+     * @param user user cần tạo refresh token
+     * @return refresh token dạng chuỗi
+     */
     public String generateRefreshToken(User user) {
         RefreshToken token = new RefreshToken();
         token.setUser(user);
@@ -95,6 +122,13 @@ public class CustomTokenService {
         return refreshTokenRepository.save(token).getToken();
     }
 
+    /**
+     * Tạo access token mới từ refresh token.
+     *
+     * @param refreshTokenValue refresh token hiện tại
+     * @return AuthenticationResponse chứa access token mới và thông tin user
+     * @throws AppException nếu refresh token không hợp lệ hoặc đã hết hạn
+     */
     @PostAuthorize("returnObject.email == authentication.name")
     public AuthenticationResponse refreshAccessToken(String refreshTokenValue) {
         // check if refreshToken is overdue
@@ -118,7 +152,14 @@ public class CustomTokenService {
                 .build();
     }
 
-    // verify token
+    /**
+     * Xác thực token JWT.
+     *
+     * @param token access token cần verify
+     * @return true nếu token hợp lệ và chưa hết hạn, false nếu không hợp lệ
+     * @throws JOSEException  nếu có lỗi khi verify
+     * @throws ParseException nếu token không hợp lệ
+     */
     public boolean verifyToken(String token) throws JOSEException, ParseException {
 
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
@@ -132,6 +173,15 @@ public class CustomTokenService {
         return verifiedJWT && expirationTime.after(new Date());
     }
 
+    /**
+     * Lấy email (subject) từ access token JWT.
+     *
+     * @param token access token hợp lệ
+     * @return email của user
+     * @throws ParseException  nếu token không hợp lệ
+     * @throws JOSEException   nếu token không hợp lệ
+     * @throws RuntimeException nếu token không hợp lệ hoặc đã hết hạn
+     */
     public String getEmailFromToken(String token) throws ParseException, JOSEException {
         if (!verifyToken(token)) {
             throw new RuntimeException("Token is not valid");

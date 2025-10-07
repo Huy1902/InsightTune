@@ -24,6 +24,15 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Cập nhật role của user theo email.
+     * <p>
+     * Không cho phép chuyển role về "USER".
+     * </p>
+     *
+     * @param updateRoleRequest chứa email và role mới
+     * @throws AppException nếu role không tồn tại hoặc không thể thay đổi
+     */
     public void updateRole(UpdateRoleRequest updateRoleRequest) {
         String email = updateRoleRequest.getEmail();
         String roleRequest = updateRoleRequest.getRole();
@@ -38,6 +47,16 @@ public class UserService {
         userRepository.changeRoleByEmail(email, role);
     }
 
+    /**
+     * Thay đổi mật khẩu user.
+     * <p>
+     * Xác thực mật khẩu cũ trước khi thay đổi. Mật khẩu mới sẽ được mã hóa trước khi lưu vào database.
+     * </p>
+     *
+     * @param changePasswordRequest chứa mật khẩu cũ và mật khẩu mới
+     * @param email email của user cần thay đổi mật khẩu
+     * @throws AppException nếu mật khẩu cũ không đúng
+     */
     public void changePassword(ChangePasswordRequest changePasswordRequest, String email) {
         String oldPassword = changePasswordRequest.getOldPassword();
         String userPassword = userRepository.getPasswordByEmail(email);

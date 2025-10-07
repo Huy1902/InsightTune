@@ -1,9 +1,7 @@
 package com.pm.authservice.service;
 
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -11,11 +9,10 @@ import com.pm.authservice.dto.response.AuthenticationResponse;
 import com.pm.authservice.exception.AppException;
 import com.pm.authservice.exception.ErrorCode;
 import com.pm.authservice.models.RefreshToken;
-import com.pm.authservice.models.Role;
 import com.pm.authservice.models.User;
 import com.pm.authservice.repository.RefreshTokenRepository;
 import com.pm.authservice.repository.UserRepository;
-import jakarta.validation.Payload;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

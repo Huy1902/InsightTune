@@ -19,6 +19,7 @@ public enum ErrorCode {
     PASSWORD_NOT_TRUE(400, "Incorrect password"),
     CANT_CONNECT_USERSERVICE(500, "Cannot connect to user-service"),
     CANT_CHANGE_ROLE(400, "Cannot change role to USER"),
+    IDTOKEN_NULL(401, "Token is null"),
     ;
 
     ErrorCode(int code, String message) {
