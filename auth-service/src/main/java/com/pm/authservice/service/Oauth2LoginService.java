@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -93,7 +94,10 @@ public class Oauth2LoginService {
         if (!checkUser) {
             // Tách chuỗi thành mảng từ, bỏ bớt khoảng trắng thừa
             String[] parts = (name != null ? name.trim().split("\\s+") : new String[0]);
-            String firstName = parts.length > 0 ? parts[0] : "Google";
+
+            String firstName = parts.length > 1
+                    ? String.join(" ", Arrays.copyOf(parts, parts.length - 1))
+                    : "Google";
             String lastName = parts.length > 1 ? parts[parts.length - 1] : "User";
 
             RegisterRequest registerRequest = RegisterRequest.builder()
