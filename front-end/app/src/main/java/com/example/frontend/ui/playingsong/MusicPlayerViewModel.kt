@@ -24,7 +24,8 @@ data class PlayerState(
     val isPlaying: Boolean = false,
     val currentPosition: Long = 0L,
     val totalDuration: Long = 0L,
-    val mediaMetadata: MediaMetadata = MediaMetadata.EMPTY
+    val mediaMetadata: MediaMetadata = MediaMetadata.EMPTY,
+    val currentTrack: GetTracksResponse? = null
 )
 
 class MusicPlayerViewModel (
@@ -78,6 +79,10 @@ class MusicPlayerViewModel (
 
     fun getTitle(): String {
         return title
+    }
+
+    fun getImage(): String {
+        return imageUrl
     }
 
     fun getArtist(): String {
