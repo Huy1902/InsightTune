@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
-import com.example.frontend.ui.theme.FrontEndTheme
+import com.example.frontend.ui.theme.AppTheme
 import com.example.playingasong.view.Playingasong
 
 class MainActivity : ComponentActivity() {
@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            FrontEndTheme {
+            AppTheme {
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 //                    Greeting(
 //                        name = "Android",
@@ -55,7 +55,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    FrontEndTheme {
+    AppTheme {
         Greeting("Android")
     }
 }

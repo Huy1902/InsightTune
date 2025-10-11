@@ -4,29 +4,28 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.example.frontend.R
 import com.example.frontend.core.AppPreferences
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.example.frontend.ui.theme.AppTheme
 
+// Stateful Composable (chứa logic)
 @Composable
 fun StartScreen(
     onNextSignUp: () -> Unit,
@@ -38,7 +37,8 @@ fun StartScreen(
     val signInWithGoogle = rememberGoogleSignInManager(
         onLoginSuccess = { jwt ->
             Log.d("LoginScreen", "Got system JWT: $jwt")
-            prefs.saveToken(jwt)
+            prefs.saveToken(jwt.token)
+            prefs.saveRefreshToken(jwt.refreshToken)
             onGoogleLogin()
         },
         onLoginFailure = { errorMessage ->
@@ -46,175 +46,153 @@ fun StartScreen(
         }
     )
 
-    val gradient = Brush.verticalGradient(
-        colorStops = arrayOf(
-            0.0f to Color(0xFFFF0000),
-            0.3f to Color(0xFF8B0000),
-            0.6f to Color(0xFF000000)
-        )
+    StartScreenContent(
+        onSignUpClick = onNextSignUp,
+        onLoginClick = onNextLogIn,
+        onGoogleClick = {
+            signInWithGoogle()
+        },
+        onFacebookClick = {
+            Toast.makeText(context, "Facebook Login is not implemented yet.", Toast.LENGTH_SHORT)
+                .show()
+        }
     )
+}
 
-    Box(
+@Composable
+fun StartScreenContent(
+    onSignUpClick: () -> Unit,
+    onLoginClick: () -> Unit,
+    onGoogleClick: () -> Unit,
+    onFacebookClick: () -> Unit
+) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = gradient)
-            .padding(16.dp)
+            .padding(horizontal = AppTheme.spacing().M),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier.weight(1f),
+            contentAlignment = Alignment.Center
         ) {
-            Box(
-
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.spotube),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(0.dp, 0.dp)
-                        .size(320.dp)
+                    painter = painterResource(id = R.drawable.spotube_cropped),
+                    contentDescription = "App logo",
+                    modifier = Modifier.size(160.dp)
                 )
                 Text(
-                    "SpoTube",
-                    style = TextStyle(
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Red,
-                        fontFamily = FontFamily.Serif
-                    ),
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(60.dp)
+                    stringResource(R.string.slogan_1),
+                    style = AppTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    stringResource(R.string.slogan_2),
+                    style = AppTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
-            Text(
-                "Stream the beat,",
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color =  Color.White,
-                    fontFamily = FontFamily.Serif
-                )
-            )
-            Text(
-                "feel the heat.",
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color =  Color.White,
-                    fontFamily = FontFamily.Serif
-                )
-            )
-            Spacer(Modifier.height(50.dp))
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Button(
-                onClick = {
-                    onNextSignUp()
-                },
+                onClick = onSignUpClick,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red
+                    containerColor = AppTheme.color().Primary
                 ),
-                modifier = Modifier
-                    .width(250.dp)
+                modifier = Modifier.width(250.dp)
             ) {
                 Text(
-                    "Sign up free",
-                    color = Color.Black,
+                    stringResource(R.string.sign_up),
+                    color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
                 )
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(AppTheme.spacing().S))
             OutlinedButton(
-                onClick = {
-                    signInWithGoogle()
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black
+                onClick = onGoogleClick,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = MaterialTheme.colorScheme.background
                 ),
-                modifier = Modifier
-                    .width(250.dp),
-                border = BorderStroke(2.dp, Color.White)
+                modifier = Modifier.width(250.dp),
+                border = BorderStroke(2.dp, Color.Gray)
             ) {
-                Row (
+                Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
                         painter = painterResource(R.drawable.google),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .padding(start = 0.dp)
+                        contentDescription = "Google icon",
+                        modifier = Modifier.size(24.dp)
                     )
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
                     Text(
-                        text = "Continue with Google",
+                        stringResource(R.string.Google),
                         modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-
-                    Spacer(modifier = Modifier.width(30.dp))
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(AppTheme.spacing().S))
             OutlinedButton(
-                onClick = {},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black
+                onClick = onFacebookClick,
+                modifier = Modifier.width(250.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = MaterialTheme.colorScheme.background
                 ),
-                modifier = Modifier
-                    .width(250.dp),
-                border = BorderStroke(2.dp, Color.White)
+                border = BorderStroke(2.dp, Color.Gray)
             ) {
-                Row (
+                Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
                         painter = painterResource(R.drawable.facebook),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .padding(start = 0.dp)
+                        contentDescription = "Facebook icon",
+                        modifier = Modifier.size(24.dp)
                     )
-
-                    Spacer(modifier = Modifier.width(0.dp))
-
                     Text(
-                        text = "Continue with Facebook",
+                        stringResource(R.string.Facebook),
                         modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-
-                  //  Spacer(modifier = Modifier.width(20.dp))
                 }
             }
-            Spacer(modifier = Modifier.width(16.dp))
-            TextButton(
-                onClick = {
-                    onNextLogIn()
-                }
-            ) {
+            Spacer(Modifier.height(AppTheme.spacing().XS))
+            TextButton(onClick = onLoginClick) {
                 Text(
-                    text ="Log in",
-                    color = Color.White
+                    stringResource(R.string.Log_in),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
 
+        Spacer(modifier = Modifier.height(AppTheme.spacing().L))
     }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun StartScreenPreview() {
-    val navController = rememberNavController()
-
-    //StartScreen(onNextSignUp = {}, onNextLogIn = {}, onGoogleLogin = {})
+    AppTheme {
+        StartScreenContent(
+            onSignUpClick = {},
+            onLoginClick = {},
+            onGoogleClick = {},
+            onFacebookClick = {}
+        )
+    }
 }

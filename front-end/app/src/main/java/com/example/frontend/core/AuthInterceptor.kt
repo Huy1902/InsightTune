@@ -10,99 +10,86 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import org.json.JSONObject
 
-
 class AuthInterceptor(
     private val prefs: AppPreferences,
     private val authApiProvider: () -> AuthApi
 ) : Interceptor {
 
-    private val lock = Any()
-
     override fun intercept(chain: Interceptor.Chain): Response {
-        val original = chain.request()
-        val currentToken = prefs.getToken()
+        synchronized(this) {
+            val originalRequest = chain.request()
+            val currentToken = prefs.getToken()
 
-        if (!currentToken.isNullOrBlank()) {
-            val exp = getExpiryTime(currentToken)
-            val now = System.currentTimeMillis()
-
-            if (exp != null && exp - now <= 2 * 60 * 1000) {
-                refreshTokenIfNeeded(currentToken)
-            }
-        }
-
-        val requestBuilder = original.newBuilder()
-        prefs.getToken()?.let {
-            requestBuilder.header("Authorization", "Bearer $it")
-        }
-        val request = requestBuilder.build()
-
-        val response = chain.proceed(request)
-
-        if (response.code == 401) {
-            response.close()
-
-            val newToken = refreshTokenIfNeeded(currentToken)
-
-            if (newToken != null) {
-                val newRequest = request.newBuilder()
-                    .header("Authorization", "Bearer $newToken")
-                    .build()
-                return chain.proceed(newRequest)
+            val tokenToUse = if (currentToken != null && isTokenAboutToExpire(currentToken)) {
+                Log.d("AUTH", "⏳ Token is about to expire. Proactively refreshing...")
+                performRefresh(currentToken) ?: currentToken // Nếu refresh thất bại, thử dùng lại token cũ
             } else {
+                currentToken
+            }
+
+            if (tokenToUse.isNullOrBlank()) {
+                return chain.proceed(originalRequest)
+            }
+
+            val newRequest = originalRequest.newBuilder()
+                .header("Authorization", "Bearer $tokenToUse")
+                .build()
+
+            val response = chain.proceed(newRequest)
+
+            if (response.code == 401) {
+                Log.w("AUTH", "Received 401 despite proactive checks. Session might be invalid.")
                 SessionManager.sendLogout()
             }
-        }
 
-        return response
+            return response
+        }
     }
 
-    private fun refreshTokenIfNeeded(tokenUsedInCall: String?): String? {
-        synchronized(lock) {
-            val currentToken = prefs.getToken()
-            if (currentToken != null && currentToken != tokenUsedInCall) {
-                Log.d("AUTH", "↪️ Old token still valid. Skip refresh.")
-                return currentToken
-            }
+    private fun performRefresh(expiredToken: String): String? {
+        val refreshToken = prefs.getRefreshToken()
+        if (refreshToken.isNullOrBlank()) {
+            Log.e("AUTH", "❌ Cannot refresh without a refresh token.")
+            return null
+        }
 
-            val oldAccess = prefs.getToken()
-            val refresh = prefs.getRefreshToken()
-
-            if (oldAccess.isNullOrBlank() || refresh.isNullOrBlank()) {
-                Log.e("AUTH", "❌ Cannot refresh without both access and refresh token.")
-                return null
-            }
-
-            Log.d("AUTH", "⏳ Starting refresh...")
-            return try {
-                val responseSync = authApiProvider().refresh(
-                    "Bearer $oldAccess",
-                    RefreshRequest(refresh)
-                ).execute()
-
-                if (responseSync.isSuccessful) {
-                    val body = responseSync.body()
-                    if (body != null) {
-                        val result = body.result
-                        prefs.saveToken(result.token)
-                        if (!result.refreshToken.isNullOrBlank()) {
-                            prefs.saveRefreshToken(result.refreshToken)
-                        }
-                        Log.d("AUTH", "✅ Refresh OK! New token has been saved.")
-                        result.token
-                    } else {
-                        Log.e("AUTH", "❌ Refresh HTTP OK but body null.")
-                        null
+        Log.d("AUTH", "🚀 Executing refresh API call...")
+        return try {
+            val responseSync = authApiProvider().refresh(
+                "Bearer $expiredToken",
+                RefreshRequest(refreshToken)
+            ).execute()
+            if (responseSync.isSuccessful) {
+                val body = responseSync.body()
+                if (body != null) {
+                    val result = body.result
+                    prefs.saveToken(result.token)
+                    if (!result.refreshToken.isNullOrBlank()) {
+                        prefs.saveRefreshToken(result.refreshToken)
                     }
+                    Log.d("AUTH", "✅ Refresh OK! New token has been saved.")
+                    result.token
                 } else {
-                    Log.e("AUTH", "❌ Refresh HTTP fail: ${responseSync.code()} ${responseSync.message()}")
+                    Log.e("AUTH", "❌ Refresh HTTP OK but body is null.")
                     null
                 }
-            } catch (e: Exception) {
-                Log.e("AUTH", "❌ Refresh exception", e)
+            } else {
+                Log.e("AUTH", "❌ Refresh HTTP fail: ${responseSync.code()} ${responseSync.message()}")
+                if (responseSync.code() == 401) {
+                    SessionManager.sendLogout()
+                }
                 null
             }
+        } catch (e: Exception) {
+            Log.e("AUTH", "❌ Refresh exception", e)
+            null
         }
+    }
+
+    private fun isTokenAboutToExpire(token: String): Boolean {
+        val expiryTime = getExpiryTime(token) ?: return false
+        val twoMinutesInMillis = 10 * 60 * 1000
+        return (expiryTime - System.currentTimeMillis()) <= twoMinutesInMillis
     }
 
     private fun getExpiryTime(token: String): Long? {

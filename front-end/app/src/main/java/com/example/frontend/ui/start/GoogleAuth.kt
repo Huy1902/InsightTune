@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import com.example.frontend.data.models.user.GoogleResponseResult
 import com.example.frontend.data.remote.ApiClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -17,7 +18,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun rememberGoogleSignInManager(
-    onLoginSuccess: (systemJwt: String) -> Unit,
+    onLoginSuccess: (tokens: GoogleResponseResult) -> Unit,
     onLoginFailure: (errorMessage: String) -> Unit
 ): () -> Unit {
     val context = LocalContext.current

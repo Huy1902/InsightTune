@@ -16,6 +16,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -54,6 +55,8 @@ import com.example.frontend.ui.signup.SignUpScreenStep1
 import com.example.frontend.ui.signup.SignUpScreenStep2
 import com.example.frontend.ui.signup.SignUpScreenStep3
 import com.example.frontend.ui.start.StartScreen
+import com.example.frontend.ui.theme.AppTheme
+import com.example.frontend.ui.theme.ThemeSetting
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 
@@ -64,7 +67,12 @@ object AppGraph {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AppNavHost(prefs: AppPreferences, navController: NavHostController) {
+fun AppNavHost(
+    prefs: AppPreferences,
+    navController: NavHostController,
+    themeSetting: ThemeSetting,
+    onThemeChange: (ThemeSetting) -> Unit
+) {
     val navController = rememberNavController()
     val duration = 600
     val easing = FastOutSlowInEasing
@@ -84,18 +92,11 @@ fun AppNavHost(prefs: AppPreferences, navController: NavHostController) {
         }
     }
 
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0.0f to Color(0xFFFF0000), // đỏ
-                        0.3f to Color(0xFF8B0000), // đỏ sậm
-                        0.6f to Color(0xFF000000)  // đen
-                    )
-                )
-            )
+            .background(MaterialTheme.colorScheme.background)
     ) {
         AnimatedNavHost(
             navController = navController,
@@ -126,10 +127,11 @@ fun AppNavHost(prefs: AppPreferences, navController: NavHostController) {
             }
         ) {
             authGraph(navController, prefs)
-            mainGraph(navController, prefs)
+            mainGraph(navController, prefs, themeSetting, onThemeChange)
         }
     }
 }
+
 
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.authGraph(navController: NavHostController, prefs: AppPreferences) {
@@ -143,11 +145,6 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController, prefs: A
                 onNextSignUp = { navController.navigate(NavRoutes.SignUpStep1.route) },
                 onNextLogIn = { navController.navigate(NavRoutes.Login.route) },
                 onGoogleLogin = {
-//                    val intent = Intent(
-//                        Intent.ACTION_VIEW,
-//                        Uri.parse("http://10.0.2.2:8080/oauth2/authorization/google")
-//                    )
-//                    context.startActivity(intent)
                     navController.navigate(AppGraph.MAIN) {
                         popUpTo(AppGraph.AUTH) {
                             inclusive = true
@@ -177,7 +174,7 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController, prefs: A
             val vm = navBackStackEntry.sharedAuthViewModel(navController = navController)
             SignUpScreenStep3(
                 vm,
-                onNext = { navController.navigate(NavRoutes.Login.route) },
+                onNext = { navController.navigate(NavRoutes.StartScreen.route) },
                 onBack = { navController.popBackStack() })
         }
 
@@ -198,8 +195,14 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController, prefs: A
     }
 }
 
+
 @OptIn(ExperimentalAnimationApi::class)
-private fun NavGraphBuilder.mainGraph(navController: NavHostController, prefs: AppPreferences) {
+private fun NavGraphBuilder.mainGraph(
+    navController: NavHostController,
+    prefs: AppPreferences,
+    themeSetting: ThemeSetting,
+    onThemeChange: (ThemeSetting) -> Unit
+) {
     navigation(
         startDestination = NavRoutes.Home.route,
         route = AppGraph.MAIN
@@ -222,7 +225,9 @@ private fun NavGraphBuilder.mainGraph(navController: NavHostController, prefs: A
                         }
                     }
                 },
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                themeSetting = themeSetting,
+                onThemeChange = onThemeChange
             )
         }
     }
