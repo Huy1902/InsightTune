@@ -24,8 +24,8 @@ public class TrackController {
   }
   @GetMapping("/search")
   @Operation(summary = "Query based on title")
-  public ResponseEntity<List<TrackResponseDto>> getAllTracksByTitle(@RequestParam String title) {
-    List<TrackResponseDto> tracks = trackService.getTracksByName(title);
+  public ResponseEntity<List<TrackResponseDto>> getAllTracksByTitle(@RequestParam String keyword) {
+    List<TrackResponseDto> tracks = trackService.getTracksByKeyword(keyword);
     return ResponseEntity.ok().body(tracks);
   }
 }
