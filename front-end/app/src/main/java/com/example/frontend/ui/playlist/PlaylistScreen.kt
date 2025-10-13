@@ -64,7 +64,7 @@ fun PlaylistScreenContent() {
                             .padding(start = 8.dp)
                     )
                     Text(
-                        text = "Playlist",
+                        text = "My playlist",
                         style = AppTheme.typography.titleLarge,
                         modifier = Modifier
                             .padding(start = 8.dp),

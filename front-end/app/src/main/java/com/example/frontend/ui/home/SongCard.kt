@@ -18,14 +18,16 @@ import com.example.frontend.R
 
 @Composable
 fun SongCard(
-    imageRes: String?,     // 👈 URL có thể null
+    imageRes: String?,
     songName: String,
     artistName: String,
     modifier: Modifier = Modifier
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2C)),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
         modifier = modifier
             .width(160.dp)
             .padding(8.dp)
@@ -38,7 +40,7 @@ fun SongCard(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageRes ?: R.drawable.spotube)   // 👈 fallback nếu null
+                    .data(imageRes ?: R.drawable.spotube)
                     .crossfade(true)
                     .build(),
                 contentDescription = "Cover of $songName",
@@ -52,7 +54,7 @@ fun SongCard(
 
             Text(
                 text = songName,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -60,7 +62,7 @@ fun SongCard(
 
             Text(
                 text = artistName,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

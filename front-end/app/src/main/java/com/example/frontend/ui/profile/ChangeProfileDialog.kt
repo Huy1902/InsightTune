@@ -44,10 +44,6 @@ fun ChangeProfileDialog(
     var phone by remember { mutableStateOf(uiState.phone) }
     var address by remember { mutableStateOf(uiState.address) }
     var role by remember { mutableStateOf(uiState.role) }
-    var avatarUri by remember { mutableStateOf<Uri?>(null) }
-
-    val context = LocalContext.current
-    var showAvatarOptions by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -62,7 +58,6 @@ fun ChangeProfileDialog(
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-
                 AppTextField(firstName, { firstName = it }, placeholderText = stringResource(R.string.first_name))
                 AppTextField(lastName, { lastName = it }, placeholderText = stringResource(R.string.last_name))
                 AppTextField(phone, { phone = it }, placeholderText = stringResource(R.string.phone))

@@ -1,5 +1,6 @@
 package com.example.frontend.ui.search
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,11 +15,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.frontend.ui.theme.AppTheme
 
 data class SearchItem(
     val title: String,
@@ -43,73 +43,92 @@ fun SearchSong(onSwitchSearchSong: () -> Unit) {
         SearchItem("Les", "Song · Childish Gambino", isArtist = false)
     )
 
-    Column(
+    Surface(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF121212))
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            SearchBar(
-                query = query,
-                onQueryChange = { query = it },
-                onSearch = { active = false },
-                active = active,
-                onActiveChange = { active = it },
-                modifier = Modifier.weight(1f),
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.LightGray) },
-                placeholder = { Text("Search", color = Color.LightGray) },
-                trailingIcon = {
-                    if (query.isNotEmpty()) {
-                        IconButton(onClick = { query = "" }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear search", tint = Color.LightGray)
-                        }
-                    }
-                },
-                shape = RoundedCornerShape(8.dp),
-                colors = SearchBarDefaults.colors(
-                    containerColor = Color(0xFF2A2A2A),
-                    inputFieldColors = TextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        cursorColor = Color.White
-                    )
-                ),
-                tonalElevation = 0.dp
-            ) {}
-
-            TextButton(
-                onClick = onSwitchSearchSong,
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Text(
-                    "Cancel",
-                    color = Color.White,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp
-                )
-            }
-        }
-
-        Spacer(Modifier.height(24.dp))
-
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+                .padding(AppTheme.spacing().M)
         ) {
-            Text(
-                "Recent searches",
-                color = Color.White,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(16.dp))
-            recentSearches.forEach { item ->
-                RecentSearchItem(item)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SearchBar(
+                    query = query,
+                    onQueryChange = { query = it },
+                    onSearch = { active = false },
+                    active = active,
+                    onActiveChange = { active = it },
+                    modifier = Modifier.weight(1f),
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    },
+                    placeholder = {
+                        Text(
+                            "Search",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    trailingIcon = {
+                        if (query.isNotEmpty()) {
+                            IconButton(onClick = { query = "" }) {
+                                Icon(
+                                    Icons.Default.Close,
+                                    contentDescription = "Clear search",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    },
+                    shape = RoundedCornerShape(AppTheme.radius().Small),
+                    colors = SearchBarDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        inputFieldColors = TextFieldDefaults.colors(
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
+                        )
+                    ),
+                    tonalElevation = AppTheme.elevation().None
+                ) {}
+
+                TextButton(
+                    onClick = onSwitchSearchSong,
+                    modifier = Modifier.padding(start = AppTheme.spacing().S)
+                ) {
+                    Text(
+                        "Cancel",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(AppTheme.spacing().L))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    "Recent searches",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.height(AppTheme.spacing().M))
+                recentSearches.forEach { item ->
+                    RecentSearchItem(item)
+                }
             }
         }
     }
@@ -120,40 +139,38 @@ fun RecentSearchItem(item: SearchItem) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = AppTheme.spacing().S),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
                 .size(50.dp)
-                .background(Color.DarkGray)
-                .clip(if (item.isArtist) CircleShape else RoundedCornerShape(4.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant) // <-- THAY ĐỔI
+                .clip(if (item.isArtist) CircleShape else RoundedCornerShape(AppTheme.radius().Small)) // <-- THAY ĐỔI
         )
 
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(AppTheme.spacing().M)) // <-- THAY ĐỔI
 
         Column {
             Text(
                 item.title,
-                color = Color.White,
-                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onBackground, // <-- THAY ĐỔİ
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
                 item.subtitle,
-                color = Color.Gray,
-                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant, // <-- THAY ĐỔI
                 style = MaterialTheme.typography.bodyMedium
             )
         }
     }
 }
 
-
-@Preview(showBackground = true, backgroundColor = 0xFF121212)
+@Preview(name = "Light Mode", showSystemUi = true)
+@Preview(name = "Dark Mode", showSystemUi = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun SearchSongPreview() {
-    MaterialTheme {
+    AppTheme {
         SearchSong(onSwitchSearchSong = {})
     }
 }
