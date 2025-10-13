@@ -182,11 +182,11 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
                         ?: R.drawable.spotube
                             .also { Log.w(tag, "⚠️ ${track.title} không có cover -> dùng placeholder") }
 
-//                    SongCard(
-//                        imageRes = track.coverImageKey,
-//                        songName = track.title,
-//                        artistName = "abc"
-//                    )
+                    SongCard(
+                        imageRes = track.coverImageKey,
+                        songName = track.title,
+                        artistName = "abc"
+                    )
                 }
             }
         }
@@ -218,9 +218,7 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
                     SongCard(
                         imageRes = track.coverImageKey,
                         songName = track.title,
-                        artistName = "abc",
-                        urlTrack = track.storageKey,
-                        navController = appNavController
+                        artistName = "abc"
                     )
                 }
             }

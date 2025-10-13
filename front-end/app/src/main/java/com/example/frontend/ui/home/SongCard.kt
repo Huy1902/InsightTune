@@ -1,7 +1,5 @@
 package com.example.frontend.ui.home
 
-import android.net.Uri
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -14,8 +12,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.frontend.R
@@ -25,24 +21,14 @@ fun SongCard(
     imageRes: String?,     // 👈 URL có thể null
     songName: String,
     artistName: String,
-    urlTrack: String,
-    modifier: Modifier = Modifier,
-    navController: NavController
+    modifier: Modifier = Modifier
 ) {
-//    imageRes = if null
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2C)),
         modifier = modifier
             .width(160.dp)
             .padding(8.dp)
-            .clickable(onClick = {
-                val encodedUrl = Uri.encode(urlTrack)
-                val encodedTitle = Uri.encode(songName)
-                val encodedArtist = Uri.encode(artistName)
-                val encodedImageUrl = Uri.encode(imageRes)
-                navController.navigate("track/$encodedUrl/$encodedTitle/$encodedArtist/$encodedImageUrl")
-            })
     ) {
         Column(
             modifier = Modifier
