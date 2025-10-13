@@ -3,6 +3,8 @@ package com.example.frontend.data.remote
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.core.AuthInterceptor
 import com.example.frontend.core.Constants
+import com.example.frontend.data.models.user.GoogleResponse
+import com.example.frontend.data.models.user.GoogleResponseResult
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
@@ -77,13 +79,13 @@ object ApiClient {
     fun init(prefs: AppPreferences) {
         this.prefs = prefs
     }
-    suspend fun loginWithGoogleIdToken(idToken: String): String {
+    suspend fun loginWithGoogleIdToken(idToken: String): GoogleResponseResult {
         val response = googleAuthApi.verifyIdToken(mapOf("idToken" to idToken))
 
         if (response.isSuccessful && response.body() != null) {
             val apiResponse = response.body()!!
             if (apiResponse.code == 200 && apiResponse.result?.token != null) {
-                return apiResponse.result.token
+                return apiResponse.result
             } else {
                 throw Exception(apiResponse.message ?: "Backend returned a successful status but with an error.")
             }

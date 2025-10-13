@@ -1,12 +1,9 @@
 package com.example.frontend.ui.signup
 
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -15,38 +12,61 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
+import com.example.frontend.ui.common.AppTextField
+import com.example.frontend.ui.theme.AppTheme
 import com.example.frontend.R
-import java.nio.file.WatchEvent
-
 
 @Composable
-fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit) {
-    var firtsName by remember { mutableStateOf("") }
+fun SignUpScreenStep3(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
+    var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
-    val gradient = Brush.verticalGradient(
-        colorStops = arrayOf(
-            0.0f to Color(0xFFFF0000),
-            0.3f to Color(0xFF8B0000),
-            0.6f to Color(0xFF000000)
-        )
+    var isLoading by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    SignUpStep3Content(
+        firstName = firstName,
+        onFirstNameChange = { firstName = it },
+        lastName = lastName,
+        onLastNameChange = { lastName = it },
+        isLoading = isLoading,
+        onBackClick = onBack,
+        onCreateAccountClick = {
+            if (firstName.isNotBlank() && lastName.isNotBlank()) {
+                isLoading = true
+                vm.onFirstNameChange(firstName)
+                vm.onLastNameChange(lastName)
+            }
+            vm.onFirstNameChange(firstName)
+            vm.onLastNameChange(lastName)
+            Log.d("REGISTER_UI", "email=${vm.email}, pass=${vm.password}")
+            vm.register {
+                isLoading = false
+                Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                onNext()
+            }
+        }
     )
+}
 
+@Composable
+fun SignUpStep3Content(
+    firstName: String,
+    onFirstNameChange: (String) -> Unit,
+    lastName: String,
+    onLastNameChange: (String) -> Unit,
+    isLoading: Boolean,
+    onBackClick: () -> Unit,
+    onCreateAccountClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = gradient)
             .padding(16.dp)
             .statusBarsPadding(),
         verticalArrangement = Arrangement.Top,
@@ -55,23 +75,19 @@ fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit)
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
                 imageVector = Icons.Default.ArrowBackIosNew,
-                contentDescription = null,
+                contentDescription = "Back",
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .padding(start = 16.dp)
-                    .size(25.dp)
-                    .clickable {
-                        onBack()
-                    },
-                tint = Color.White
+                    .size(AppTheme.iconSize().Medium)
+                    .clickable { onBackClick() },
+                tint = MaterialTheme.colorScheme.onBackground
             )
 
             Text(
-                text = "Create account",
-                fontFamily = FontFamily.Serif,
+                stringResource(R.string.register_title),
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = Color.White,
+                style = AppTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
@@ -83,82 +99,86 @@ fun SignUpScreenStep3(vm: AuthViewModel ,onNext: () -> Unit, onBack: () -> Unit)
                 .padding(start = 16.dp, end = 16.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.Start
-
         ) {
             Text(
-                "Enter your first name",
-                fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color.White,
-                modifier = Modifier.align(Alignment.Start)
+                stringResource(R.string.register_first_name),
+                style = AppTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
-            TextField(
-                value = firtsName,
-                onValueChange = {
-                    firtsName = it
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(45.dp)
-                    .clip(RoundedCornerShape(12.dp))
+            AppTextField(
+                value = firstName,
+                onValueChange = onFirstNameChange,
+                modifier = Modifier.fillMaxWidth(),
+                textColor = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.size(10.dp))
 
             Text(
-                "Enter your last name",
-                fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color.White,
-                modifier = Modifier.align(Alignment.Start)
+                stringResource(R.string.register_last_name),
+                style = AppTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
-            TextField(
+            AppTextField(
                 value = lastName,
-                onValueChange = {
-                    lastName = it
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(45.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                onValueChange = onLastNameChange,
+                modifier = Modifier.fillMaxWidth(),
+                textColor = MaterialTheme.colorScheme.onSurface
             )
         }
-
 
         Spacer(modifier = Modifier.size(30.dp))
 
         Button(
-            onClick = {
-                vm.onFirstNameChange(firtsName)
-                vm.onLastNameChange(lastName)
-                Log.d("REGISTER_UI", "email=${vm.email}, pass=${vm.password}")
-                vm.register { onNext() }
-            },
+            onClick = onCreateAccountClick,
+            enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            Text(
-                "Create an account",
-                fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = Color.Black,
-            )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    stringResource(R.string.register_confirmation),
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+
+@Preview(name = "Light Mode", showBackground = true)
+@Preview(name = "Dark Mode", showBackground = true)
 @Composable
 fun SignUpScreenStep3Preview() {
-    val navController = rememberNavController()
-    val onFinish = Unit
-    val context = LocalContext.current
+    AppTheme {
+        SignUpStep3Content(
+            firstName = "John", onFirstNameChange = {},
+            lastName = "Doe", onLastNameChange = {},
+            isLoading = false,
+            onBackClick = {}, onCreateAccountClick = {}
+        )
+    }
+}
 
-    SignUpScreenStep3(vm = AuthViewModel(context), onNext = {  }, onBack = {  } )
+@Preview(name = "Loading State", showSystemUi = true)
+@Composable
+fun SignUpScreenStep3LoadingPreview() {
+    AppTheme(darkTheme = true) {
+        SignUpStep3Content(
+            firstName = "John", onFirstNameChange = {},
+            lastName = "Doe", onLastNameChange = {},
+            isLoading = true,
+            onBackClick = {}, onCreateAccountClick = {}
+        )
+    }
 }

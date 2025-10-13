@@ -2,6 +2,7 @@ package com.example.frontend.ui.profile
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -29,10 +30,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,6 +52,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,29 +64,34 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.frontend.R
 import com.example.frontend.core.SessionManager
+import com.example.frontend.ui.theme.AppTheme
+import com.example.frontend.ui.theme.ThemeSetting
 
 
 @Composable
 fun ProfileScreen(
     vm: ProfileViewModel,
     onNavigateLogin: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    themeSetting: ThemeSetting,
+    onThemeChange: (ThemeSetting) -> Unit
 ) {
 
     val uiState by vm.uiState.collectAsState()
     var showProfileDialog by remember { mutableStateOf(false) }
+    var showThemeSelectorDialog by remember { mutableStateOf(false) }
     var showPassDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var avatarUri by remember { mutableStateOf<Uri?>(null) }
     var showAvatarDialog by remember { mutableStateOf(false) }
-    // Gallery launcher
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let { vm.updateAvatar(it, context) }
     }
 
-    // Camera launcher
     val cameraUri = remember {
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "avatar_${System.currentTimeMillis()}.jpg")
@@ -96,216 +106,203 @@ fun ProfileScreen(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success && cameraUri != null) {
-            vm.updateAvatar(cameraUri!!, context)   // ✅ Gửi Uri, không toString()
+            vm.updateAvatar(cameraUri!!, context)
         }
     }
 
-    Box(
+    ProfileScreenContent(
+        uiState = uiState,
+        themeSetting = themeSetting,
+        onBackClick = onBack,
+        onLogoutClick = {
+            vm.clearLocalTokens()
+            onNavigateLogin()
+        },
+        onAvatarClick = { showAvatarDialog = true },
+        onEditProfileClick = { showProfileDialog = true },
+        onChangePasswordClick = { showPassDialog = true },
+        onHistoryClick = { /* TODO */ },
+        onChangeThemeClick = { showThemeSelectorDialog = true },
+        onLanguageClick = { showLanguageDialog = true }
+    )
+
+    if (showAvatarDialog) {
+        ChangeAvatarDialog(
+            onDismiss = { showAvatarDialog = false },
+            onPickGallery = { galleryLauncher.launch("image/*") },
+            onTakePhoto = { cameraUri?.let { cameraLauncher.launch(it) } }
+        )
+    }
+    if (showProfileDialog) {
+        ChangeProfileDialog(
+            uiState = uiState,
+            onDismiss = { showProfileDialog = false },
+            onConfirm = { firstName, lastName, phone, address, role ->
+                vm.updateProfile(firstName, lastName, address, phone, role)
+            }
+        )
+    }
+    if (showPassDialog) {
+        ChangePasswordDialog(
+            onDismiss = { showPassDialog = false },
+            onConfirm = { oldPass, newPass -> vm.changePassword(oldPass, newPass) }
+        )
+    }
+    if (showThemeSelectorDialog) {
+        ThemeSelectionDialog(
+            currentTheme = themeSetting,
+            onThemeSelected = onThemeChange,
+            onDismissRequest = { showThemeSelectorDialog = false }
+        )
+    }
+    if (showLanguageDialog) {
+        LanguageSelectionDialog(
+            onDismissRequest = { showLanguageDialog = false }
+        )
+    }
+}
+
+@Composable
+fun ProfileScreenContent(
+    uiState: ProfileUiState,
+    themeSetting: ThemeSetting,
+    onBackClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onAvatarClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
+    onChangePasswordClick: () -> Unit,
+    onHistoryClick: () -> Unit,
+    onChangeThemeClick: () -> Unit,
+    onLanguageClick: () -> Unit
+) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0.0f to Color(0xFFFF0000), // đỏ
-                        0.3f to Color(0xFF8B0000), // đỏ sậm
-                        0.6f to Color(0xFF000000)  // đen
-                    )
-                )
-            )
+            .statusBarsPadding()
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(AppTheme.spacing().M)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBackIosNew,
+                contentDescription = "Back",
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .clickable { onBackClick() },
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                stringResource(R.string.profile),
+                style = AppTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .systemBarsPadding()
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(AppTheme.spacing().M)
         ) {
-
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = null,
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AsyncImage(
+                    model = uiState.avatarUrl ?: R.drawable.spotube_cropped,
+                    contentDescription = "Avatar",
                     modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(start = 16.dp)
-                        .size(25.dp)
-                        .clickable {
-                            onBack()
-                        },
-                    tint = Color.White
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .clickable(onClick = onAvatarClick)
                 )
+                Spacer(modifier = Modifier.width(AppTheme.spacing().M))
+                Column {
+                    Text(
+                        text = uiState.fullName.ifBlank { "Your name" },
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = uiState.email,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    if (uiState.phone.isNotBlank()) {
+                        Text(
+                            stringResource(R.string.phone, uiState.phone),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    if (uiState.address.isNotBlank()) {
+                        Text(
+                            stringResource(R.string.address, uiState.address),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    Text(
+                        stringResource(R.string.role, uiState.role),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(AppTheme.spacing().L))
+            ProfileItem(
+                text = stringResource(R.string.edit_profile),
+                onEditProfileClick
+            )
+            ProfileItem(
+                stringResource(R.string.change_password),
+                onChangePasswordClick
+            )
+            ProfileItem(
+                stringResource(R.string.history),
+                onHistoryClick
+            )
+            ProfileItem(
+                stringResource(R.string.change_theme),
+                    onChangeThemeClick
+                )
+            ProfileItem(
+                stringResource(R.string.language),
+                onLanguageClick
+            )
+        }
 
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(AppTheme.spacing().M),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (uiState.isLoading) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 2.dp
+                )
+                Spacer(Modifier.height(AppTheme.spacing().S))
+            }
+            if (uiState.error != null) {
                 Text(
-                    text = "Profile",
-                    fontFamily = FontFamily.Serif,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
+                    text = uiState.error,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(bottom = AppTheme.spacing().S)
                 )
             }
-
-            Spacer(modifier = Modifier.size(8.dp))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.SpaceBetween
+            Button(
+                onClick = onLogoutClick,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AsyncImage(
-                            model = uiState.avatarUrl ?: "",
-                            contentDescription = "Avatar",
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(RoundedCornerShape(50))
-                                .background(Color.Gray)
-                                .clickable { showAvatarDialog = true }
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                text = "${uiState.fullName}".ifBlank { "Your name" },
-                                color = Color.White,
-                                fontFamily = FontFamily.Serif,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
-                            )
-
-                            Text(
-                                text = "Role: ${uiState.role}",
-                                color = Color.White,
-                                fontFamily = FontFamily.Serif,
-                                fontSize = 14.sp
-                            )
-
-                            Text(
-                                text = uiState.email,
-                                color = Color.White.copy(alpha = 0.7f),
-                                fontFamily = FontFamily.Serif,
-                                fontSize = 14.sp
-                            )
-
-                            if (uiState.phone.isNotBlank()) {
-                                Text(
-                                    text = "Phone: ${uiState.phone}",
-                                    color = Color.White.copy(alpha = 0.7f),
-                                    fontFamily = FontFamily.Serif,
-                                    fontSize = 14.sp
-                                )
-                            }
-
-                            if (uiState.address.isNotBlank()) {
-                                Text(
-                                    text = "Address: ${uiState.address}",
-                                    color = Color.White.copy(alpha = 0.7f),
-                                    fontFamily = FontFamily.Serif,
-                                    fontSize = 14.sp
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    ProfileItem("Edit your profile") {
-                        showProfileDialog = true
-                    }
-
-                    ProfileItem("Change your password") {
-                        showPassDialog = true
-                    }
-
-                    ProfileItem("History") {
-                        // TODO: Navigate sang HistoryScreen
-                    }
-                }
-
-                if (showAvatarDialog) {
-                    ChangeAvatarDialog(
-                        onDismiss = { showAvatarDialog = false },
-                        onPickGallery = { galleryLauncher.launch("image/*") },
-                        onTakePhoto = { cameraUri?.let { cameraLauncher.launch(it) } }
-                    )
-                }
-
-                if (showProfileDialog) {
-                    ChangeProfileDialog(
-                        uiState = uiState,
-                        onDismiss = { showProfileDialog  = false },
-                        onConfirm = { firstName, lastName, phone, address, role ->
-                            vm.updateProfile(firstName, lastName, address, phone, role)
-                        }
-                    )
-                }
-
-                if (showPassDialog) {
-                    ChangePasswordDialog(
-                        onDismiss = { showPassDialog = false },
-                        onConfirm = { oldPass, newPass ->
-                            vm.changePassword(oldPass, newPass)
-                        }
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
-                        if (uiState.isLoading) {
-                            CircularProgressIndicator(color = Color.White, strokeWidth = 2.dp)
-                            Spacer(Modifier.height(8.dp))
-                        }
-
-                        if (uiState.error != null) {
-                            Text(
-                                text = uiState.error!!,
-                                color = Color.White,
-                                fontFamily = FontFamily.Serif,
-                                fontSize = 12.sp
-                            )
-                            Spacer(Modifier.height(12.dp))
-                        } else {
-                            Text(
-                                ""
-                            )
-                        }
-
-                        Button(
-                            onClick = {
-                                val refreshToken = vm.getRefreshToken() ?: ""
-                                if (refreshToken.isNotBlank()) {
-                                    vm.logout(refreshToken) {
-                                    }
-                                }
-                                vm.clearLocalTokens()
-                                onNavigateLogin()
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                            modifier = Modifier
-                                .wrapContentWidth()
-                                .align(Alignment.CenterHorizontally)
-                        ) {
-                            Text(
-                                "Log out",
-                                fontFamily = FontFamily.Serif,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp,
-                                color = Color.Black
-                            )
-                        }
-
-                    }
-                }
+                Text(
+                    stringResource(R.string.log_out),
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     }
@@ -317,37 +314,45 @@ fun ProfileItem(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(vertical = 16.dp),
+            .padding(horizontal = 8.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text,
-            color = Color.White,
-            fontSize = 16.sp,
-            fontFamily = FontFamily.Serif
+            color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 16.sp
         )
         Icon(
-            imageVector = Icons.Default.ArrowForward,
+            imageVector = Icons.Default.ArrowForwardIos,
             contentDescription = null,
-            tint = Color.White
+            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(name = "Light Mode", showSystemUi = true)
+@Preview(name = "Dark Mode", showSystemUi = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun ProfilePreview() {
-    val context = LocalContext.current
-    val sampleViewModel =
-        remember { ProfileViewModel(context) }
-    ProfileScreen(
-        vm = sampleViewModel,
-        onNavigateLogin = {
-            println("Preview: Navigate to Login requested")
-        },
-        onBack = {
-        }
-    )
+    var theme by remember { mutableStateOf(ThemeSetting.DARK) }
+    AppTheme(darkTheme = theme == ThemeSetting.DARK) {
+        ProfileScreenContent(
+            uiState = ProfileUiState(
+                fullName = "Preview User",
+                email = "preview@email.com",
+                error = "Error message"
+            ),
+            themeSetting = theme,
+            onBackClick = {},
+            onLogoutClick = {},
+            onAvatarClick = {},
+            onEditProfileClick = {},
+            onChangePasswordClick = {},
+            onHistoryClick = {},
+            onChangeThemeClick = {},
+            onLanguageClick = {}
+        )
+    }
 }
 
 

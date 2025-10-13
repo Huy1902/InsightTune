@@ -6,11 +6,3 @@ data class Song(
     val artist: String,
     val imageRes: String
 )
-
-
-
-
-
-
-
-

@@ -43,8 +43,8 @@ class UserRepositoryImpl(
         )
         if (response.isSuccessful) {
             val body = response.body() ?: throw Exception("Empty body")
-            Log.d("LOGIN_DEBUG", "Access Token nhận được: ${body.result.token}")
-            Log.d("LOGIN_DEBUG", "Refresh Token nhận được: ${body.result.refreshToken}")
+            Log.d("LOGIN_DEBUG", "Access Token received: ${body.result.token}")
+            Log.d("LOGIN_DEBUG", "Refresh Token received: ${body.result.refreshToken}")
             prefs.saveToken(body.result.token)
             prefs.saveRefreshToken(body.result.refreshToken)
             Log.d("TOKEN_SAVE", "Token saved: ${prefs.getToken()}")
@@ -143,7 +143,7 @@ class UserRepositoryImpl(
         if (response.isSuccessful) {
             val body = response.body() ?: throw Exception("Empty response")
             if (body.code == 200) {
-                Log.d("AVATAR", "✅ Upload success: ${body.result}")
+                Log.d("AVATAR", "Upload success: ${body.result}")
                 return body
             } else {
                 throw Exception("API error: ${body.message}")
@@ -188,7 +188,7 @@ class UserRepositoryImpl(
             val body = response.body() ?: throw Exception("Empty response")
             Log.d("PROFILE", "Response body: $body")
 
-            if (body.code == 200 || body.code == 0) { // tùy backend
+            if (body.code == 200 || body.code == 0) {
                 Log.d("PROFILE", "Update profile success: ${body.result}")
                 return body.result
             } else {

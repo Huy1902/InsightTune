@@ -125,7 +125,6 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
 
             Text(
                 "SpoTube",
-                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
                 color = Color.Red,
@@ -156,7 +155,6 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
             "Recently played",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily.Serif,
             color = Color(255, 255, 255),
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -184,11 +182,11 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
                         ?: R.drawable.spotube
                             .also { Log.w(tag, "⚠️ ${track.title} không có cover -> dùng placeholder") }
 
-//                    SongCard(
-//                        imageRes = track.coverImageKey,
-//                        songName = track.title,
-//                        artistName = "abc"
-//                    )
+                    SongCard(
+                        imageRes = track.coverImageKey,
+                        songName = track.title,
+                        artistName = "abc"
+                    )
                 }
             }
         }
@@ -196,7 +194,6 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
             "Editor's picks",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily.Serif,
             color = Color(255, 255, 255),
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -221,9 +218,7 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
                     SongCard(
                         imageRes = track.coverImageKey,
                         songName = track.title,
-                        artistName = "abc",
-                        urlTrack = track.storageKey,
-                        navController = appNavController
+                        artistName = "abc"
                     )
                 }
             }
