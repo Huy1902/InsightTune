@@ -210,7 +210,12 @@ private fun NavGraphBuilder.mainGraph(
 
         composable(NavRoutes.Home.route) {
             val vm: HomeViewModel = viewModel(factory = HomeViewModelFactory(LocalContext.current))
-            HomeScreen(vm, appNavController = navController)
+            HomeScreen(
+                vm,
+                appNavController = navController,
+                themeSetting = themeSetting,
+                onThemeChange = onThemeChange
+            )
         }
 
         composable(NavRoutes.Profile.route) {

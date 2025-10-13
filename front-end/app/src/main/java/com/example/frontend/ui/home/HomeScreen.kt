@@ -38,29 +38,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.R
+import com.example.frontend.ui.AppGraph
 import com.example.frontend.ui.NavRoutes
+import com.example.frontend.ui.profile.ProfileScreen
 import com.example.frontend.ui.profile.ProfileViewModel
+import com.example.frontend.ui.profile.ProfileViewModelFactory
+import com.example.frontend.ui.theme.AppTheme
+import com.example.frontend.ui.theme.ThemeSetting
 
 
 @Composable
-fun HomeScreen(vm: HomeViewModel, appNavController: NavController) {
+fun HomeScreen(
+    vm: HomeViewModel,
+    appNavController: NavController,
+    themeSetting: ThemeSetting,
+    onThemeChange: (ThemeSetting) -> Unit
+) {
     val bottomNavController = rememberNavController()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(AppTheme.color().Background)
     ) {
         Scaffold(
             containerColor = Color.Transparent,
@@ -74,29 +86,47 @@ fun HomeScreen(vm: HomeViewModel, appNavController: NavController) {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(BottomNavItem.Home.route) {
-                    HomeScreenContent(vm, appNavController)
+                    HomeScreenContent(
+                        vm,
+                        appNavController,
+                        onProfileClick = {
+                            bottomNavController.navigate(BottomNavItem.Profile.route)
+                        }
+                    )
                 }
                 composable(BottomNavItem.Search.route) { /* TODO */ }
                 composable(BottomNavItem.Playlist.route) { /* TODO */ }
                 composable(BottomNavItem.ChatBot.route) { /* TODO */ }
+                composable(BottomNavItem.Profile.route) {
+                    val vm: ProfileViewModel =
+                        viewModel(factory = ProfileViewModelFactory(LocalContext.current))
+                    ProfileScreen(
+                        vm = vm,
+                        onNavigateLogin = {
+                            appNavController.navigate(AppGraph.AUTH) {
+                                popUpTo(AppGraph.MAIN) {
+                                    inclusive = true
+                                }
+                            }
+                        },
+                        onBack = { bottomNavController.popBackStack() },
+                        themeSetting = themeSetting,
+                        onThemeChange = onThemeChange
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
-    var text by remember { mutableStateOf("") }
-    val TAG = "HomeScreenContent"
-    val songs = listOf(
-        Triple(R.drawable.spotube, "Shape of You", "Ed Sheeran"),
-        Triple(R.drawable.spotube, "Blinding Lights", "The Weeknd"),
-        Triple(R.drawable.spotube, "Levitating", "Dua Lipa"),
-        Triple(R.drawable.spotube, "Peaches", "Justin Bieber")
-    )
+fun HomeScreenContent(
+    vm: HomeViewModel,
+    appNavController: NavController,
+    onProfileClick: () -> Unit
+) {
     val tracks by vm.tracks.collectAsState()
     val isLoading by vm.isLoading.collectAsState()
-    val BASE_FILE_URL = "http://10.0.2.2:4000/files/" // emulator
     LaunchedEffect(Unit) {
         vm.loadTracks(limit = 4)
     }
@@ -126,8 +156,8 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
             Text(
                 "SpoTube",
                 fontWeight = FontWeight.Bold,
-                fontSize = 25.sp,
-                color = Color.Red,
+                style = AppTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
             Row(
@@ -139,11 +169,11 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = null,
-                    tint = Color.Red,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .size(50.dp)
                         .clickable {
-                            appNavController.navigate(NavRoutes.Profile.route)
+                            onProfileClick()
                         }
                 )
             }
@@ -152,12 +182,10 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
         Spacer(modifier = Modifier.size(10.dp))
 
         Text(
-            "Recently played",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(255, 255, 255),
+            stringResource(R.string.recently_played),
+            style = AppTheme.typography.titleMedium,
             modifier = Modifier
-                .padding(start = 8.dp)
+                .padding(start = 16.dp)
         )
 
         if (isLoading) {
@@ -165,7 +193,7 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Color.Red)
+                CircularProgressIndicator(color = AppTheme.color().Primary)
             }
         } else {
             LazyRow(
@@ -174,14 +202,6 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
                     .padding(8.dp)
             ) {
                 items(tracks) { track ->
-                    Log.d(TAG, "🎧 Render: ${track.title} (${track.coverImageKey})")
-                    val tag = "HomeScreenContent"
-                    val imageModel: Any = track.coverImageKey
-                        ?.takeIf { it.isNotBlank() }
-                        ?.let { BASE_FILE_URL + it }
-                        ?: R.drawable.spotube
-                            .also { Log.w(tag, "⚠️ ${track.title} không có cover -> dùng placeholder") }
-
                     SongCard(
                         imageRes = track.coverImageKey,
                         songName = track.title,
@@ -191,12 +211,12 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
             }
         }
         Text(
-            "Editor's picks",
-            fontSize = 18.sp,
+            stringResource(R.string.editor_picks),
+            style = AppTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = Color(255, 255, 255),
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
-                .padding(start = 8.dp)
+                .padding(start = 16.dp)
         )
 
         if (isLoading) {
@@ -204,7 +224,7 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Color.Red)
+                CircularProgressIndicator(color = AppTheme.color().Primary)
             }
         } else {
             LazyVerticalGrid(
@@ -236,7 +256,7 @@ fun BottomNavigationBar(navController: NavController) {
     )
 
     NavigationBar(
-        containerColor = Color(0xFF000000)
+        containerColor = Color.Transparent,
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
@@ -253,10 +273,10 @@ fun BottomNavigationBar(navController: NavController) {
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedTextColor = Color.Red,
-                    unselectedTextColor = Color.Gray,
-                    selectedIconColor = Color.Red,
-                    unselectedIconColor = Color.Gray,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedTextColor = MaterialTheme.colorScheme.onBackground,
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onBackground,
                     indicatorColor = Color.Transparent
                 )
             )
@@ -272,5 +292,5 @@ fun PreviewHomeScreen() {
     val navController = rememberNavController()
     val sampleViewModel =
         remember { HomeViewModel(context) }
-    HomeScreen(sampleViewModel, navController)
+    // HomeScreen(sampleViewModel, navController)
 }
