@@ -1,9 +1,9 @@
-package com.pm.catalogservice.dto;
+package com.pm.catalogservice.dto.response;
 
-import com.pm.catalogservice.model.Artist;
 import lombok.*;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
@@ -11,8 +11,10 @@ import java.util.Set;
 @Setter
 @Getter
 public class TrackResponseDto {
+  private UUID id;
   private String title;
   private Set<String> artists;
+  private UUID albumId;
   private String storageKey;
   private int durationMs;
   private String coverImageKey;
