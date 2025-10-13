@@ -19,7 +19,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.frontend.R
+import com.example.frontend.ui.theme.AppTheme
 
 @Composable
 fun AppTextField(
@@ -54,7 +56,10 @@ fun AppTextField(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
         ),
-        textStyle = TextStyle(color = textColor),
+        textStyle = TextStyle(
+            color = textColor,
+            fontSize = 16.sp
+        ),
         singleLine = true,
         visualTransformation = visualTransformation,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),

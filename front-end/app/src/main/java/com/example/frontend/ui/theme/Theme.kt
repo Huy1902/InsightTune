@@ -9,13 +9,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-/**
- * 🎨 SPO-TUBE APP THEME
- * Kết hợp MaterialTheme + hệ thống design riêng (AppSpacing, AppIconSize, v.v.)
- * Hỗ trợ light / dark mode.
- */
-
-// -------------------- 🎨 COLOR SCHEME --------------------
+// -------------------- COLOR SCHEME --------------------
 private val LightColors = lightColorScheme(
     primary = AppColor.Primary,
     secondary = AppColor.Secondary,
@@ -38,7 +32,7 @@ private val DarkColors = darkColorScheme(
     onSurface = Color.White,
 )
 
-// -------------------- 🧩 LOCAL PROVIDERS --------------------
+// -------------------- LOCAL PROVIDERS --------------------
 private val LocalAppSpacing = staticCompositionLocalOf { AppSpacing }
 private val LocalAppRadius = staticCompositionLocalOf { AppRadius }
 private val LocalAppIconSize = staticCompositionLocalOf { AppIconSize }
@@ -46,7 +40,7 @@ private val LocalAppElevation = staticCompositionLocalOf { AppElevation }
 private val LocalAppColor = staticCompositionLocalOf { AppColor }
 private val LocalAppAnimation = staticCompositionLocalOf { AppAnimation }
 
-// -------------------- 🌈 APP THEME COMPOSABLE --------------------
+// -------------------- APP THEME COMPOSABLE --------------------
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
