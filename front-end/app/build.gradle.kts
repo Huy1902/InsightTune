@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -43,9 +43,7 @@ android {
 dependencies {
 // ExoPlayer for audio playback
     implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Hoặc phiên bản mới hơn
-    implementation("androidx.media3:media3-exoplayer:1.3.1")
     implementation("androidx.media3:media3-ui:1.3.1")
-    implementation("androidx.media3:media3-session:1.3.1")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
     implementation("androidx.media3:media3-exoplayer:1.4.1")
@@ -58,7 +56,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation("androidx.navigation:navigation-compose:2.8.3")
+    implementation("androidx.navigation:navigation-compose:2.9.4")
     implementation("androidx.compose.material:material-icons-extended")
     // Accompanist Navigation Animation
     implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
