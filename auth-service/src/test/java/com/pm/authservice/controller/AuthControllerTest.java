@@ -15,17 +15,21 @@ import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.repository.UserRepository;
 import com.pm.authservice.service.AuthService;
 import com.pm.authservice.service.CustomTokenService;
+import com.pm.authservice.service.MailService;
+import com.pm.authservice.service.UserService;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,6 +43,16 @@ public class AuthControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Mock
+    private JavaMailSender mailSender;
+
+    @Mock
+    private MimeMessage mimeMessage;
+
+    @MockitoBean
+    private MailService mailService;
+    @MockitoBean
+    private UserService userService;
     @MockitoBean
     AuthService authService;
     @MockitoBean
@@ -227,4 +241,22 @@ public class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200));
     }
+
+    @Test
+    void givenValidEmail_whenSendOTP_thenReturnSuccessResponse() throws Exception {
+        // Given
+        String email = "test@example.com";
+        doNothing().when(authService).sendOTP(email);
+
+        // When & Then
+        mockMvc.perform(post("/auth/forgot_password")
+                        .param("email", email)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("OTP has been sent to your email"));
+
+        verify(authService, times(1)).sendOTP(email);
+    }
+
 }

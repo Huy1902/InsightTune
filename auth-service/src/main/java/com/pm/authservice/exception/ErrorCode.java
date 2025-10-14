@@ -20,6 +20,9 @@ public enum ErrorCode {
     CANT_CONNECT_USERSERVICE(500, "Cannot connect to user-service"),
     CANT_CHANGE_ROLE(400, "Cannot change role to USER"),
     IDTOKEN_NULL(401, "Token is null"),
+    CANT_SEND_EMAIL_FORGOT(500, "Can't send email for forgot"),
+    INVALID_OTP(400, "Invalid OTP"),
+    CANT_FIND_PATH(500, "Can't find HTML path")
     ;
 
     ErrorCode(int code, String message) {

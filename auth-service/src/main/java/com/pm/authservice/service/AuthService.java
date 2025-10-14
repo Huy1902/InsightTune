@@ -7,8 +7,10 @@ import com.pm.authservice.dto.response.AuthenticationResponse;
 import com.pm.authservice.dto.response.UserProfileResponse;
 import com.pm.authservice.exception.AppException;
 import com.pm.authservice.exception.ErrorCode;
+import com.pm.authservice.models.OneTimePassword;
 import com.pm.authservice.models.RefreshToken;
 import com.pm.authservice.models.User;
+import com.pm.authservice.repository.OneTimePasswordRepository;
 import com.pm.authservice.repository.RefreshTokenRepository;
 import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.repository.UserRepository;
@@ -18,10 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+
 @Service
 @Slf4j
 public class AuthService {
-
     @Value("${user-service.create-path}")
     private String createUserPath;
 
@@ -31,15 +35,22 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final RoleRepository roleRepository;
     private final RestTemplate restTemplate;
+    private final OneTimePasswordRepository oneTimePasswordRepository;
+    private final MailService mailService;
 
 
-    public AuthService(UserRepository userRepository, CustomTokenService tokenService, PasswordEncoder passwordEncoder, RefreshTokenRepository refreshTokenRepository, RoleRepository roleRepository, RestTemplate restTemplate) {
+    public AuthService(UserRepository userRepository, CustomTokenService tokenService,
+                       PasswordEncoder passwordEncoder, RefreshTokenRepository refreshTokenRepository,
+                       RoleRepository roleRepository, RestTemplate restTemplate,
+                       OneTimePasswordRepository oneTimePasswordRepository, MailService mailService) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenRepository = refreshTokenRepository;
         this.roleRepository = roleRepository;
         this.restTemplate = restTemplate;
+        this.oneTimePasswordRepository = oneTimePasswordRepository;
+        this.mailService = mailService;
     }
 
     public void save(User user) {
@@ -164,4 +175,61 @@ public class AuthService {
 
         refreshTokenRepository.delete(refreshToken);
     }
+
+    /**
+     * Gửi mã OTP đến địa chỉ email của người dùng để xác thực.
+     * <p>
+     * Phương thức này sẽ:
+     * <ul>
+     *   <li>Kiểm tra xem người dùng có tồn tại trong hệ thống hay không (theo email).</li>
+     *   <li>Tạo mã OTP gồm 6 chữ số ngẫu nhiên.</li>
+     *   <li>Lưu hoặc cập nhật mã OTP vào cơ sở dữ liệu, kèm thời gian hết hạn (5 phút).</li>
+     *   <li>Gửi mã OTP đến email của người dùng thông qua {@link MailService}.</li>
+     * </ul>
+     * Nếu người dùng không tồn tại hoặc quá trình gửi email thất bại, phương thức sẽ ném ra ngoại lệ tương ứng.
+     *
+     * @param email địa chỉ email của người dùng cần gửi mã OTP.
+     * @throws AppException nếu không tìm thấy người dùng tương ứng với email.
+     * @throws RuntimeException nếu xảy ra lỗi khi gửi email (ví dụ: lỗi kết nối SMTP, cấu hình sai, hoặc template không hợp lệ).
+     *
+     * @see MailService#sendMail(String, String)
+     * @see OneTimePassword
+     */
+    public void sendOTP(String email) {
+        if (!existsByEmail(email)) {
+            throw new AppException(ErrorCode.USER_NOTFOUND);
+        }
+
+        String chars = "0123456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder otp = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            otp.append(chars.charAt(random.nextInt(chars.length())));
+        }
+
+        OneTimePassword existing = oneTimePasswordRepository.findByEmail(email).orElse(null);
+
+        if (existing == null) {
+            OneTimePassword otp_model = OneTimePassword.builder()
+                    .email(email)
+                    .otp(otp.toString())
+                    .expiry(LocalDateTime.now().plusMinutes(5))
+                    .otp_used(false)
+                    .build();
+
+            oneTimePasswordRepository.save(otp_model);
+        } else {
+            existing.setOtp(otp.toString());
+            existing.setExpiry(LocalDateTime.now().plusMinutes(5));
+            existing.setOtp_used(false);
+            oneTimePasswordRepository.save(existing);
+        }
+
+        try {
+            mailService.sendMail(email, otp.toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
 }
