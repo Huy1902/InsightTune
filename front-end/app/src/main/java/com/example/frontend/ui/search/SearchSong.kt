@@ -34,12 +34,17 @@ fun SearchScreen(
     val query by vm.searchQuery.collectAsState()
     val searchResults by vm.searchResults.collectAsState()
     val isLoading by vm.isLoading.collectAsState()
+    val recentSearches by vm.recentSearches.collectAsState()
 
     SearchScreenContent(
         query = query,
         onQueryChange = vm::onQueryChange,
         searchResults = searchResults,
         isLoading = isLoading,
+        recentSearches = recentSearches,
+        onSearch = { keyword ->
+            vm.addSearchToHistory(keyword)
+        },
         onCancel = onCancel
     )
 }
@@ -51,6 +56,8 @@ fun SearchScreenContent(
     onQueryChange: (String) -> Unit,
     searchResults: List<GetTracksResponse>,
     isLoading: Boolean,
+    recentSearches: List<String>,
+    onSearch: (String) -> Unit,
     onCancel: () -> Unit
 ) {
     val recentSearches = listOf("FKA twigs", "Hozier", "Grimes")
@@ -64,7 +71,9 @@ fun SearchScreenContent(
         DockedSearchBar(
             query = query,
             onQueryChange = onQueryChange,
-            onSearch = { },
+            onSearch = {
+                onSearch(query)
+            },
             active = false,
             onActiveChange = { },
             modifier = Modifier.fillMaxWidth(),
@@ -169,6 +178,8 @@ fun SearchScreenPreview() {
             onQueryChange = {},
             searchResults = fakeTracks,
             isLoading = false,
+            onSearch = {},
+            recentSearches = listOf("FKA twigs", "Hozier", "Grimes"),
             onCancel = {}
         )
     }

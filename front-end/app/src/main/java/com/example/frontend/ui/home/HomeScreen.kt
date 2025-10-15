@@ -51,6 +51,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.R
+import com.example.frontend.core.AppPreferences
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.ui.AppGraph
@@ -96,8 +97,8 @@ fun HomeScreen(
             }
             composable(BottomNavItem.Search.route) {
                 val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
-
-                val searchViewModelFactory = SearchViewModelFactory(trackRepository)
+                val prefs = AppPreferences(LocalContext.current)
+                val searchViewModelFactory = SearchViewModelFactory(trackRepository, prefs)
 
                 val vm: SearchViewModel = viewModel(factory = searchViewModelFactory)
 
