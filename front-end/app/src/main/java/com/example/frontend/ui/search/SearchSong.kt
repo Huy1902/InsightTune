@@ -1,6 +1,7 @@
 package com.example.frontend.ui.search
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -60,7 +61,7 @@ fun SearchScreenContent(
     onSearch: (String) -> Unit,
     onCancel: () -> Unit
 ) {
-    val recentSearches = listOf("FKA twigs", "Hozier", "Grimes")
+    //val recentSearches = listOf("FKA twigs", "Hozier", "Grimes")
 
     Column(
         modifier = Modifier
@@ -72,6 +73,7 @@ fun SearchScreenContent(
             query = query,
             onQueryChange = onQueryChange,
             onSearch = {
+                Log.d("SEARCH_DEBUG", "1. UI Layer received: $query")
                 onSearch(query)
             },
             active = false,
@@ -84,7 +86,10 @@ fun SearchScreenContent(
             trailingIcon = {
                 if (query.isNotEmpty()) {
                     IconButton(onClick = { onQueryChange("") }) {
-                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = stringResource(R.string.close)
+                        )
                     }
                 }
             },
@@ -126,6 +131,7 @@ fun SearchScreenContent(
             Text(
                 stringResource(R.string.recent_search),
                 style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(AppTheme.spacing().M))
@@ -138,9 +144,17 @@ fun SearchScreenContent(
                             .padding(vertical = AppTheme.spacing().M),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.History, contentDescription = "History")
+                        Icon(
+                            Icons.Default.History,
+                            contentDescription = "History",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
                         Spacer(modifier = Modifier.width(AppTheme.spacing().M))
-                        Text(item)
+                        Text(
+                            item,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
                     }
                 }
             }
