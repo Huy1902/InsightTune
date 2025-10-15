@@ -217,24 +217,6 @@ private fun NavGraphBuilder.mainGraph(
                 onThemeChange = onThemeChange
             )
         }
-
-        composable(NavRoutes.Profile.route) {
-            val vm: ProfileViewModel =
-                viewModel(factory = ProfileViewModelFactory(LocalContext.current))
-            ProfileScreen(
-                vm = vm,
-                onNavigateLogin = {
-                    navController.navigate(AppGraph.AUTH) {
-                        popUpTo(AppGraph.MAIN) {
-                            inclusive = true
-                        }
-                    }
-                },
-                onBack = { navController.popBackStack() },
-                themeSetting = themeSetting,
-                onThemeChange = onThemeChange
-            )
-        }
     }
 }
 

@@ -53,5 +53,8 @@
     <string name="first_name">Họ</string>
     <string name="last_name">Tên</string>
     <string name="select_role">Chọn vai trò</string>
+    <string name="no_result">Không có kết quả nào.</string>
+    <string name="recent_search">Tìm kiếm gần đây.</string>
+    <string name="search_title">Tìm kiếm bằng tên bài hát hoặc nghệ sĩ</string>
 
 </resources>

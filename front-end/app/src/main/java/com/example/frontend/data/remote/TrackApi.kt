@@ -3,8 +3,14 @@ package com.example.frontend.data.remote
 import com.example.frontend.data.models.song.GetTracksResponse
 import okhttp3.Response
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface TrackApi {
     @GET("tracks")
     suspend fun getTracks(): List<GetTracksResponse>
+
+    @GET("tracks/search")
+    suspend fun searchTracks(
+        @Query("keyword") keyword: String
+    ): List<GetTracksResponse>
 }

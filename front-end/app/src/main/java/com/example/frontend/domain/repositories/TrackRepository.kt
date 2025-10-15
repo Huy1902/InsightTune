@@ -6,4 +6,5 @@ import retrofit2.Response
 
 interface TrackRepository {
     suspend fun getTracks(): List<GetTracksResponse>
+    suspend fun searchTracks(keyword: String): List<GetTracksResponse>
 }

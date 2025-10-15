@@ -52,5 +52,8 @@
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
     <string name="select_role">Select role</string>
+    <string name="no_result">No result found.</string>
+    <string name="recent_search">Recent search</string>
+    <string name="search_title">Search by songs or artists</string>
 
 </resources>

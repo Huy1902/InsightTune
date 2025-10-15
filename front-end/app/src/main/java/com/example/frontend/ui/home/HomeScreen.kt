@@ -51,11 +51,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.frontend.R
+import com.example.frontend.data.remote.ApiClient
+import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.ui.AppGraph
 import com.example.frontend.ui.NavRoutes
 import com.example.frontend.ui.profile.ProfileScreen
 import com.example.frontend.ui.profile.ProfileViewModel
 import com.example.frontend.ui.profile.ProfileViewModelFactory
+import com.example.frontend.ui.search.SearchScreen
+import com.example.frontend.ui.search.SearchViewModel
+import com.example.frontend.ui.search.SearchViewModelFactory
 import com.example.frontend.ui.theme.AppTheme
 import com.example.frontend.ui.theme.ThemeSetting
 
@@ -69,51 +74,56 @@ fun HomeScreen(
 ) {
     val bottomNavController = rememberNavController()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AppTheme.color().Background)
-    ) {
-        Scaffold(
-            containerColor = Color.Transparent,
-            bottomBar = {
-                BottomNavigationBar(bottomNavController)
+    Scaffold(
+        containerColor = Color.Transparent,
+        bottomBar = {
+            BottomNavigationBar(bottomNavController)
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = bottomNavController,
+            startDestination = BottomNavItem.Home.route,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(BottomNavItem.Home.route) {
+                HomeScreenContent(
+                    vm,
+                    appNavController,
+                    onProfileClick = {
+                        bottomNavController.navigate(BottomNavItem.Profile.route)
+                    }
+                )
             }
-        ) { innerPadding ->
-            androidx.navigation.compose.NavHost(
-                navController = bottomNavController,
-                startDestination = BottomNavItem.Home.route,
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                composable(BottomNavItem.Home.route) {
-                    HomeScreenContent(
-                        vm,
-                        appNavController,
-                        onProfileClick = {
-                            bottomNavController.navigate(BottomNavItem.Profile.route)
-                        }
-                    )
-                }
-                composable(BottomNavItem.Search.route) { /* TODO */ }
-                composable(BottomNavItem.Playlist.route) { /* TODO */ }
-                composable(BottomNavItem.ChatBot.route) { /* TODO */ }
-                composable(BottomNavItem.Profile.route) {
-                    val vm: ProfileViewModel =
-                        viewModel(factory = ProfileViewModelFactory(LocalContext.current))
-                    ProfileScreen(
-                        vm = vm,
-                        onNavigateLogin = {
-                            appNavController.navigate(AppGraph.AUTH) {
-                                popUpTo(AppGraph.MAIN) {
-                                    inclusive = true
-                                }
+            composable(BottomNavItem.Search.route) {
+                val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
+
+                val searchViewModelFactory = SearchViewModelFactory(trackRepository)
+
+                val vm: SearchViewModel = viewModel(factory = searchViewModelFactory)
+
+                SearchScreen(
+                    vm = vm,
+                    onCancel = { bottomNavController.popBackStack() }
+                )
+            }
+            composable(BottomNavItem.Playlist.route) { /* TODO */ }
+            composable(BottomNavItem.ChatBot.route) { /* TODO */ }
+            composable(BottomNavItem.Profile.route) {
+                val vm: ProfileViewModel =
+                    viewModel(factory = ProfileViewModelFactory(LocalContext.current))
+                ProfileScreen(
+                    vm = vm,
+                    onNavigateLogin = {
+                        appNavController.navigate(AppGraph.AUTH) {
+                            popUpTo(AppGraph.MAIN) {
+                                inclusive = true
                             }
-                        },
-                        onBack = { bottomNavController.popBackStack() },
-                        themeSetting = themeSetting,
-                        onThemeChange = onThemeChange
-                    )
-                }
+                        }
+                    },
+                    onBack = { bottomNavController.popBackStack() },
+                    themeSetting = themeSetting,
+                    onThemeChange = onThemeChange
+                )
             }
         }
     }
@@ -128,7 +138,7 @@ fun HomeScreenContent(
     val tracks by vm.tracks.collectAsState()
     val isLoading by vm.isLoading.collectAsState()
     LaunchedEffect(Unit) {
-        vm.loadTracks(limit = 4)
+        vm.loadTracks(limit = 8)
     }
 
     Column(
@@ -183,6 +193,7 @@ fun HomeScreenContent(
 
         Text(
             stringResource(R.string.recently_played),
+            color = MaterialTheme.colorScheme.onBackground,
             style = AppTheme.typography.titleMedium,
             modifier = Modifier
                 .padding(start = 16.dp)
@@ -202,10 +213,13 @@ fun HomeScreenContent(
                     .padding(8.dp)
             ) {
                 items(tracks) { track ->
+                    val artistString = track.artists?.joinToString(", ") ?: "Unknown artist"
                     SongCard(
                         imageRes = track.coverImageKey,
                         songName = track.title,
-                        artistName = "abc"
+                        artistName = artistString,
+                        urlTrack = track.storageKey,
+                        navController = appNavController
                     )
                 }
             }
@@ -235,10 +249,13 @@ fun HomeScreenContent(
                     .padding(8.dp)
             ) {
                 items(tracks) { track ->
+                    val artistString = track.artists?.joinToString(", ") ?: "Unknown artist"
                     SongCard(
                         imageRes = track.coverImageKey,
                         songName = track.title,
-                        artistName = "abc"
+                        artistName = artistString,
+                        urlTrack = track.storageKey,
+                        navController = appNavController
                     )
                 }
             }
@@ -263,8 +280,8 @@ fun BottomNavigationBar(navController: NavController) {
 
         items.forEach { item ->
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.label) },
-                label = { Text(item.label) },
+                icon = { Icon(item.icon, contentDescription = null) },
+                label = { Text(stringResource(id = item.labelResId)) },
                 selected = currentRoute == item.route,
                 onClick = {
                     navController.navigate(item.route) {
