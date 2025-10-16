@@ -1,6 +1,6 @@
 package com.pm.catalogservice.mapper;
 
-import com.pm.catalogservice.dto.TrackResponseDto;
+import com.pm.catalogservice.dto.response.TrackResponseDto;
 import com.pm.catalogservice.model.Artist;
 import com.pm.catalogservice.model.Track;
 
@@ -17,8 +17,10 @@ public class TrackMapper {
             .collect(Collectors.toSet());
 
     return TrackResponseDto.builder()
+            .id(track.getId())
             .title(track.getTitle())
             .artists(artistNames)
+            .albumId(track.getAlbum().getId())
             .storageKey(track.getStorageKey())
             .durationMs(track.getDurationMs())
             .coverImageKey(track.getCoverImageKey())

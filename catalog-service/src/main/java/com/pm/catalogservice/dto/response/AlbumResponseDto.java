@@ -1,4 +1,4 @@
-package com.pm.catalogservice.dto;
+package com.pm.catalogservice.dto.response;
 
 import lombok.*;
 
