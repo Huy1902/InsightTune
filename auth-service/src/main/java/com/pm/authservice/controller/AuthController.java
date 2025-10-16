@@ -11,12 +11,15 @@ import com.pm.authservice.dto.response.UserProfileResponse;
 import com.pm.authservice.service.AuthService;
 import com.pm.authservice.service.CustomTokenService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.io.IOException;
 import java.text.ParseException;
+import java.util.Map;
 
 /**
  * Controller xử lý các API liên quan đến xác thực người dùng.
@@ -109,6 +112,16 @@ public class AuthController {
         authService.logout(logoutRequest);
         return ApiResponse.<AuthenticationResponse>builder()
                 .code(200)
+                .build();
+    }
+
+    @PostMapping("/forgot_password")
+    @Operation(summary = "Forgot password", description = "API for to get otp in email")
+    public ApiResponse<String> sendOTP(@RequestParam String email) {
+        authService.sendOTP(email);
+        return ApiResponse.<String>builder()
+                .code(200)
+                .message("OTP has been sent to your email")
                 .build();
     }
 

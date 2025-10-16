@@ -1,10 +1,13 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.request.ChangePasswordRequest;
+import com.pm.authservice.dto.request.ForgotPasswordRequest;
 import com.pm.authservice.dto.request.UpdateRoleRequest;
 import com.pm.authservice.exception.AppException;
 import com.pm.authservice.exception.ErrorCode;
+import com.pm.authservice.models.OneTimePassword;
 import com.pm.authservice.models.Role;
+import com.pm.authservice.repository.OneTimePasswordRepository;
 import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -14,10 +17,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +33,9 @@ public class UserServiceTest {
 
     @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private OneTimePasswordRepository oneTimePasswordRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -132,4 +138,131 @@ public class UserServiceTest {
         // Verify repository method never called
         verify(userRepository, never()).changePasswordByEmail(anyString(), anyString());
     }
+
+
+    @Test
+    void getValidOtp_whenForgotPassword_thenSuccess() {
+        // given
+        ForgotPasswordRequest request = new ForgotPasswordRequest();
+        request.setEmail("test@gmail.com");
+        request.setOtp("123456");
+        request.setNewPassword("newPass123");
+        request.setConfirmNewPassword("newPass123");
+
+        OneTimePassword otp = new OneTimePassword();
+        otp.setEmail("test@gmail.com");
+        otp.setOtp("123456");
+        otp.setExpiry(LocalDateTime.now().plusMinutes(5));
+        otp.setOtp_used(false);
+
+        when(oneTimePasswordRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(otp));
+        when(passwordEncoder.encode("newPass123")).thenReturn("hashed_pw");
+
+        // when
+        userService.forgotPassword(request);
+
+        // then
+        verify(passwordEncoder).encode("newPass123");
+        verify(userRepository).changePasswordByEmail("test@gmail.com", "hashed_pw");
+        verify(oneTimePasswordRepository).save(otp);
+        assertTrue(otp.isOtp_used());
+    }
+
+    @Test
+    void getPasswordsDoNotMatch_whenForgotPassword_thenThrowException() {
+        ForgotPasswordRequest request = new ForgotPasswordRequest();
+        request.setEmail("test@gmail.com");
+        request.setOtp("123456");
+        request.setNewPassword("newPass123");
+        request.setConfirmNewPassword("wrongPass");
+
+        AppException ex = assertThrows(AppException.class, () ->
+                userService.forgotPassword(request));
+
+        assertEquals(ErrorCode.PASSWORD_NOT_MATCH, ex.getError());
+        verify(userRepository, never()).changePasswordByEmail(anyString(), anyString());
+    }
+
+    @Test
+    void getOtpNotFound_whenForgotPassword_thenThrowException() {
+        ForgotPasswordRequest request = new ForgotPasswordRequest();
+        request.setEmail("test@gmail.com");
+        request.setOtp("123456");
+        request.setNewPassword("newPass123");
+        request.setConfirmNewPassword("newPass123");
+
+        when(oneTimePasswordRepository.findByEmail("test@gmail.com")).thenReturn(Optional.empty());
+
+        AppException ex = assertThrows(AppException.class, () ->
+                userService.forgotPassword(request));
+
+        assertEquals(ErrorCode.INVALID_OTP, ex.getError());
+    }
+
+    @Test
+    void getOtpWrong_whenForgotPassword_thenThrowException() {
+        ForgotPasswordRequest request = new ForgotPasswordRequest();
+        request.setEmail("test@gmail.com");
+        request.setOtp("999999"); // khác OTP
+        request.setNewPassword("newPass123");
+        request.setConfirmNewPassword("newPass123");
+
+        OneTimePassword otp = new OneTimePassword();
+        otp.setEmail("test@gmail.com");
+        otp.setOtp("123456");
+        otp.setExpiry(LocalDateTime.now().plusMinutes(5));
+        otp.setOtp_used(false);
+
+        when(oneTimePasswordRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(otp));
+
+        AppException ex = assertThrows(AppException.class, () ->
+                userService.forgotPassword(request));
+
+        assertEquals(ErrorCode.INVALID_OTP, ex.getError());
+    }
+
+    @Test
+    void getOtpExpired_whenForgotPassword_thenThrowException() {
+        ForgotPasswordRequest request = new ForgotPasswordRequest();
+        request.setEmail("test@gmail.com");
+        request.setOtp("123456");
+        request.setNewPassword("newPass123");
+        request.setConfirmNewPassword("newPass123");
+
+        OneTimePassword otp = new OneTimePassword();
+        otp.setEmail("test@gmail.com");
+        otp.setOtp("123456");
+        otp.setExpiry(LocalDateTime.now().minusMinutes(1)); // hết hạn
+        otp.setOtp_used(false);
+
+        when(oneTimePasswordRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(otp));
+
+        AppException ex = assertThrows(AppException.class, () ->
+                userService.forgotPassword(request));
+
+        assertEquals(ErrorCode.INVALID_OTP, ex.getError());
+    }
+
+    @Test
+    void getOtpAlreadyUsed_whenForgotPassword_thenThrowException() {
+        ForgotPasswordRequest request = new ForgotPasswordRequest();
+        request.setEmail("test@gmail.com");
+        request.setOtp("123456");
+        request.setNewPassword("newPass123");
+        request.setConfirmNewPassword("newPass123");
+
+        OneTimePassword otp = new OneTimePassword();
+        otp.setEmail("test@gmail.com");
+        otp.setOtp("123456");
+        otp.setExpiry(LocalDateTime.now().plusMinutes(5));
+        otp.setOtp_used(true); // đã dùng
+
+        when(oneTimePasswordRepository.findByEmail("test@gmail.com")).thenReturn(Optional.of(otp));
+
+        AppException ex = assertThrows(AppException.class, () ->
+                userService.forgotPassword(request));
+
+        assertEquals(ErrorCode.INVALID_OTP, ex.getError());
+    }
+
 }
