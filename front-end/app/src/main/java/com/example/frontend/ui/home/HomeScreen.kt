@@ -94,9 +94,11 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
         Triple(R.drawable.spotube, "Levitating", "Dua Lipa"),
         Triple(R.drawable.spotube, "Peaches", "Justin Bieber")
     )
+
     val tracks by vm.tracks.collectAsState()
     val isLoading by vm.isLoading.collectAsState()
     val BASE_FILE_URL = "http://10.0.2.2:4000/files/" // emulator
+
     LaunchedEffect(Unit) {
         vm.loadTracks(limit = 4)
     }
@@ -125,6 +127,7 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
 
             Text(
                 "SpoTube",
+                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
                 color = Color.Red,
@@ -155,6 +158,7 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
             "Recently played",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.Serif,
             color = Color(255, 255, 255),
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -182,11 +186,11 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
                         ?: R.drawable.spotube
                             .also { Log.w(tag, "⚠️ ${track.title} không có cover -> dùng placeholder") }
 
-                    SongCard(
-                        imageRes = track.coverImageKey,
-                        songName = track.title,
-                        artistName = "abc"
-                    )
+//                    SongCard(
+//                        imageRes = track.coverImageKey,
+//                        songName = track.title,
+//                        artistName = "abc"
+//                    )
                 }
             }
         }
@@ -194,6 +198,7 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
             "Editor's picks",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.Serif,
             color = Color(255, 255, 255),
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -214,11 +219,15 @@ fun HomeScreenContent(vm: HomeViewModel, appNavController: NavController) {
                 modifier = Modifier
                     .padding(8.dp)
             ) {
-                items(tracks) { track ->
+                items(tracks ) { track ->
+
                     SongCard(
-                        imageRes = track.coverImageKey,
+                        imageKey = track.coverImageKey,
                         songName = track.title,
-                        artistName = "abc"
+                        artistName = "abc",
+                        trackKey = track.storageKey,
+
+                        navController = appNavController
                     )
                 }
             }

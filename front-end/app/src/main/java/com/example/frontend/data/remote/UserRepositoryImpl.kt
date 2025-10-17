@@ -12,13 +12,9 @@ import com.example.frontend.data.models.user.LogOutRequest
 import com.example.frontend.data.models.user.LoginRequest
 import com.example.frontend.data.models.user.LogoutResponseDto
 import com.example.frontend.data.models.user.LogoutResult
-import com.example.frontend.data.models.user.RefreshRequest
-import com.example.frontend.data.models.user.RefreshResponseDto
 import com.example.frontend.data.models.user.RegisterRequest
 import com.example.frontend.data.models.user.RegisterResponseDto
-import com.example.frontend.data.models.user.UpdateAvatarRequest
 import com.example.frontend.data.models.user.UpdateUserRequest
-import com.example.frontend.data.models.user.UserDto
 import com.example.frontend.data.models.user.UserResult
 import com.example.frontend.data.remote.ApiClient.userApi
 import com.example.frontend.domain.repositories.UserRepository
@@ -43,8 +39,8 @@ class UserRepositoryImpl(
         )
         if (response.isSuccessful) {
             val body = response.body() ?: throw Exception("Empty body")
-            Log.d("LOGIN_DEBUG", "Access Token received: ${body.result.token}")
-            Log.d("LOGIN_DEBUG", "Refresh Token received: ${body.result.refreshToken}")
+            Log.d("LOGIN_DEBUG", "Access Token nhận được: ${body.result.token}")
+            Log.d("LOGIN_DEBUG", "Refresh Token nhận được: ${body.result.refreshToken}")
             prefs.saveToken(body.result.token)
             prefs.saveRefreshToken(body.result.refreshToken)
             Log.d("TOKEN_SAVE", "Token saved: ${prefs.getToken()}")
@@ -143,7 +139,7 @@ class UserRepositoryImpl(
         if (response.isSuccessful) {
             val body = response.body() ?: throw Exception("Empty response")
             if (body.code == 200) {
-                Log.d("AVATAR", "Upload success: ${body.result}")
+                Log.d("AVATAR", "✅ Upload success: ${body.result}")
                 return body
             } else {
                 throw Exception("API error: ${body.message}")
@@ -188,7 +184,7 @@ class UserRepositoryImpl(
             val body = response.body() ?: throw Exception("Empty response")
             Log.d("PROFILE", "Response body: $body")
 
-            if (body.code == 200 || body.code == 0) {
+            if (body.code == 200 || body.code == 0) { // tùy backend
                 Log.d("PROFILE", "Update profile success: ${body.result}")
                 return body.result
             } else {

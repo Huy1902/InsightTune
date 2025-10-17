@@ -10,4 +10,7 @@ sealed class NavRoutes(val route: String) {
 
     object Profile : NavRoutes("profile")
 
+    object Search : NavRoutes("search")
+
+    object Track : NavRoutes("track/{urlKey}/{title}/{artist}/{imageKey}")
 }

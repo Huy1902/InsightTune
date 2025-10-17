@@ -4,8 +4,6 @@ import com.example.frontend.data.models.user.AuthResponseDto
 import com.example.frontend.data.models.user.ChangePasswordRequest
 import com.example.frontend.data.models.user.ChangePasswordResponse
 import com.example.frontend.data.models.user.CheckEmailResponse
-import com.example.frontend.data.models.user.GoogleRequest
-import com.example.frontend.data.models.user.GoogleResponse
 import com.example.frontend.data.models.user.LogOutRequest
 import com.example.frontend.data.models.user.LoginRequest
 import com.example.frontend.data.models.user.LogoutResponseDto
@@ -52,9 +50,3 @@ interface AuthApi {
     suspend fun changePassword(@Body request: ChangePasswordRequest): Response<ChangePasswordResponse>
 
 }
-
-interface GoogleAuthApi {
-    @POST("api/auth/google")
-    suspend fun verifyIdToken(@Body body: Map<String, String>): Response<GoogleResponse>
-}
-

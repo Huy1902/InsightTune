@@ -16,15 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.frontend.ui.common.AppTextField
 import com.example.frontend.ui.profile.ProfileUiState
-import com.example.frontend.ui.theme.AppTheme
-import com.example.frontend.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,9 +49,10 @@ fun ChangeProfileDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                stringResource(R.string.edit_profile),
+                "Edit Profile",
+                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.titleLarge
+                color = Color.White
             )
         },
         text = {
@@ -63,36 +60,73 @@ fun ChangeProfileDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
 
-                AppTextField(firstName, { firstName = it }, placeholderText = stringResource(R.string.first_name))
-                AppTextField(lastName, { lastName = it }, placeholderText = stringResource(R.string.last_name))
-                AppTextField(phone, { phone = it }, placeholderText = stringResource(R.string.phone))
-                AppTextField(address, { address = it }, placeholderText = stringResource(R.string.address))
+                // First name
+                TextField(
+                    value = firstName,
+                    onValueChange = { firstName = it },
+                    placeholder = { Text("Change first name") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                )
 
+                // Last name
+                TextField(
+                    value = lastName,
+                    onValueChange = { lastName = it },
+                    placeholder = { Text("Change last name") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                )
+
+                // Phone
+                TextField(
+                    value = phone,
+                    onValueChange = { phone = it },
+                    placeholder = { Text("Change phone number") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                )
+
+                // Address
+                TextField(
+                    value = address,
+                    onValueChange = { address = it },
+                    placeholder = { Text("Change address") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                )
+
+                // Role
                 var expanded by remember { mutableStateOf(false) }
 
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded }
                 ) {
-                    AppTextField(
+                    TextField(
                         value = role,
                         onValueChange = {},
                         readOnly = true,
-                        placeholderText = stringResource(R.string.select_role),
+                        placeholder = { Text("Select role") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .menuAnchor()
+                            .clip(RoundedCornerShape(12.dp))
                             .clickable { expanded = true }
                     )
 
                     ExposedDropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        containerColor = Color(0xFF121212)
                     ) {
                         DropdownMenuItem(
-                            text = { Text("USER") },
+                            text = { Text("USER", color = Color.White) },
                             onClick = {
                                 role = "USER"
                                 expanded = false
@@ -100,7 +134,7 @@ fun ChangeProfileDialog(
                             enabled = uiState.role != "ADMIN"
                         )
                         DropdownMenuItem(
-                            text = { Text("ADMIN") },
+                            text = { Text("ADMIN", color = Color.White) },
                             onClick = {
                                 role = "ADMIN"
                                 expanded = false
@@ -115,19 +149,14 @@ fun ChangeProfileDialog(
                 onConfirm(firstName, lastName, phone, address, role)
                 onDismiss()
             }) {
-                Text(
-                    stringResource(R.string.save),
-                )
+                Text("Save", color = Color.Red, fontFamily = FontFamily.Serif)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(
-                    stringResource(R.string.cancel),
-                )
+                Text("Cancel", color = Color.White, fontFamily = FontFamily.Serif)
             }
         },
-        containerColor = MaterialTheme.colorScheme.background,
-        titleContentColor = MaterialTheme.colorScheme.onBackground
+        containerColor = Color(0xFF121212)
     )
 }

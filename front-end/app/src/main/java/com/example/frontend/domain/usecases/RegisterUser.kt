@@ -1,7 +1,6 @@
 package com.example.frontend.domain.usecases
 
 import com.example.frontend.core.Resource
-import com.example.frontend.data.models.user.AuthResponseDto
 import com.example.frontend.data.models.user.RegisterResponseDto
 import com.example.frontend.domain.repositories.UserRepository
 import kotlinx.coroutines.flow.Flow

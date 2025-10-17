@@ -3,8 +3,6 @@ package com.example.frontend.data.remote
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.core.AuthInterceptor
 import com.example.frontend.core.Constants
-import com.example.frontend.data.models.user.GoogleResponse
-import com.example.frontend.data.models.user.GoogleResponseResult
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
@@ -76,26 +74,34 @@ object ApiClient {
             .build()
             .create(TrackApi::class.java)
     }
+
+    val playingApi: PlayingApi by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.PLAYING_SERVICE_BASE_URL)
+            .client(mainClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(PlayingApi::class.java)
+    }
+
     fun init(prefs: AppPreferences) {
         this.prefs = prefs
     }
-    suspend fun loginWithGoogleIdToken(idToken: String): GoogleResponseResult {
-        val response = googleAuthApi.verifyIdToken(mapOf("idToken" to idToken))
-
-        if (response.isSuccessful && response.body() != null) {
-            val apiResponse = response.body()!!
-            if (apiResponse.code == 200 && apiResponse.result?.token != null) {
-                return apiResponse.result
-            } else {
-                throw Exception(apiResponse.message ?: "Backend returned a successful status but with an error.")
-            }
+    suspend fun loginWithGoogleCode(code: String): String {
+        val response = googleAuthApi.exchangeCode(mapOf("code" to code))
+        if (response.isSuccessful) {
+            return response.body()?.get("token") ?: throw Exception("Don't get JWT")
         } else {
-            val errorBody = response.errorBody()?.string()
-            throw Exception("Backend error ${response.code()}: $errorBody")
+            throw Exception("Backend error ${response.code()}")
         }
     }
     val googleAuthApi: GoogleAuthApi by lazy {
         gatewayRetrofit.create(GoogleAuthApi::class.java)
     }
+}
+
+interface GoogleAuthApi {
+    @POST("auth/google/callback")
+    suspend fun exchangeCode(@Body body: Map<String, String>): Response<Map<String, String>>
 }
 

@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -31,8 +30,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.frontend.R
-import com.example.frontend.ui.common.AppTextField
-import com.example.frontend.ui.theme.AppTheme
 
 @Composable
 fun ChangePasswordDialog(
@@ -48,27 +45,60 @@ fun ChangePasswordDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                stringResource(R.string.change_password_title),
+                "Change your password",
+                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.titleLarge
+                color = Color.White
             )
         },
         text = {
             Column {
-                AppTextField(
+                TextField(
                     value = oldPass,
                     onValueChange = { oldPass = it },
-                    placeholderText = stringResource(R.string.current_password),
-                    isPassword = true,
-                    textColor = MaterialTheme.colorScheme.onSurface
+                    placeholder = { Text("Enter current password") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp)),
+                    visualTransformation = if (isOldPasswordVisible) VisualTransformation.None
+                    else {
+                        PasswordVisualTransformation()
+                    },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { isOldPasswordVisible = !isOldPasswordVisible }
+                        ) {
+                            Icon(
+                                painter = if (isOldPasswordVisible)
+                                    painterResource(id = R.drawable.opened_eye)
+                                else
+                                    painterResource(id = R.drawable.closed_eye),
+                                contentDescription = if (isOldPasswordVisible ) "Hide password" else "Show password"
+                            )
+                        }
+                    }
                 )
                 Spacer(Modifier.height(8.dp))
-                AppTextField(
+                TextField(
                     value = newPass,
                     onValueChange = { newPass = it },
-                    placeholderText = stringResource(R.string.new_password),
-                    isPassword = true,
-                    textColor = MaterialTheme.colorScheme.onSurface
+                    placeholder = { Text("Enter new password") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp)),
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { isNewPasswordVisible = !isNewPasswordVisible }
+                        ) {
+                            Icon(
+                                painter = if (isNewPasswordVisible)
+                                    painterResource(id = R.drawable.opened_eye)
+                                else
+                                    painterResource(id = R.drawable.closed_eye),
+                                contentDescription = if (isNewPasswordVisible) "Hide password" else "Show password"
+                            )
+                        }
+                    }
                 )
             }
         },
@@ -77,18 +107,15 @@ fun ChangePasswordDialog(
                 onConfirm(oldPass, newPass)
                 onDismiss()
             }) {
-                Text("OK")
+                Text("OK", color = Color.Red, fontFamily = FontFamily.Serif)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(
-                    stringResource(R.string.cancel),
-                )
+                Text("Cancel", color = Color.White, fontFamily = FontFamily.Serif)
             }
         },
-        containerColor = MaterialTheme.colorScheme.background,
-        titleContentColor = MaterialTheme.colorScheme.onBackground
+        containerColor = Color(0xFF121212)
     )
 }
 

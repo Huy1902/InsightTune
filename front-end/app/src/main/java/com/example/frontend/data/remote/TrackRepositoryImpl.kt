@@ -12,20 +12,20 @@ class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {
 
     override suspend fun getTracks(): List<GetTracksResponse> {
         return try {
-            Log.d(TAG, "Call API getTracks()...")
+            Log.d(TAG, "🚀 Gọi API getTracks()...")
             val response = trackApi.getTracks()
-            Log.d(TAG, "API response: ${response.size} songs")
+            Log.d(TAG, "✅ API trả về ${response.size} bài hát")
 
             if (response.isNotEmpty()) {
                 val first = response.first()
-                Log.d(TAG, "First song: title=${first.title}, cover=${first.coverImageKey}, storageKey=${first.storageKey}")
+                Log.d(TAG, "🎵 Bài đầu tiên: title=${first.title}, cover=${first.coverImageKey}, urlKey=${first.storageKey}")
             } else {
-                Log.w(TAG, "Empty response from API")
+                Log.w(TAG, "⚠️ Danh sách bài hát rỗng!")
             }
 
             response
         } catch (e: Exception) {
-            Log.e(TAG, "Error when calling API: ${e.message}", e)
+            Log.e(TAG, "💥 Lỗi khi gọi getTracks(): ${e.message}", e)
             emptyList()
         }
     }

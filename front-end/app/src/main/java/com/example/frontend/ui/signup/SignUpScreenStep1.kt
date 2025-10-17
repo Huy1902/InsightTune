@@ -1,7 +1,12 @@
 package com.example.frontend.ui.signup
 
+import android.content.Context
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -10,15 +15,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.frontend.ui.common.AppTextField
-import com.example.frontend.ui.theme.AppTheme
+import androidx.navigation.compose.rememberNavController
+import com.example.frontend.ui.NavRoutes
 import com.example.frontend.R
+import java.nio.file.WatchEvent
 
 val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$".toRegex()
 
@@ -26,52 +36,25 @@ fun isValidEmail(email: String): Boolean {
     return emailRegex.matches(email)
 }
 
+
 @Composable
 fun SignUpScreenStep1(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
     var email by remember { mutableStateOf("") }
+    var isValid by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
-
-    SignUpStep1Content(
-        email = email,
-        onEmailChange = {
-            email = it
-            errorMessage = null
-        },
-        isLoading = isLoading,
-        errorMessage = errorMessage,
-        onBackClick = onBack,
-        onNextClick = {
-            if (!isValidEmail(email)) {
-                errorMessage = "Invalid email format."
-            } else {
-                isLoading = true
-                vm.checkEmail(email) { exists ->
-                    isLoading = false
-                    if (exists) {
-                        errorMessage = "Email already exists. Please try another one."
-                    } else {
-                        vm.onEmailChange(email)
-                        onNext()
-                    }
-                }
-            }
-        }
+    val gradient = Brush.verticalGradient(
+        colorStops = arrayOf(
+            0.0f to Color(0xFFFF0000),
+            0.3f to Color(0xFF8B0000),
+            0.6f to Color(0xFF000000)
+        )
     )
-}
 
-@Composable
-fun SignUpStep1Content(
-    email: String,
-    onEmailChange: (String) -> Unit,
-    isLoading: Boolean,
-    errorMessage: String?,
-    onBackClick: () -> Unit,
-    onNextClick: () -> Unit
-) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(brush = gradient)
             .padding(16.dp)
             .statusBarsPadding(),
         verticalArrangement = Arrangement.Top,
@@ -80,18 +63,23 @@ fun SignUpStep1Content(
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
                 imageVector = Icons.Default.ArrowBackIosNew,
-                contentDescription = "Back",
+                contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .size(AppTheme.iconSize().Medium)
-                    .clickable { onBackClick() },
-                tint = MaterialTheme.colorScheme.onBackground
+                    .padding(start = 16.dp)
+                    .size(25.dp)
+                    .clickable {
+                        onBack()
+                    },
+                tint = Color.White
             )
+
             Text(
-                stringResource(R.string.register_title),
+                text = "Create account",
+                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 16.sp,
+                color = Color.White,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
@@ -103,30 +91,38 @@ fun SignUpStep1Content(
                 .padding(start = 16.dp, end = 16.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.Start
+
         ) {
             Text(
-                stringResource(R.string.register_email),
-                style = AppTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                "What's your email?",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.White,
                 modifier = Modifier.align(Alignment.Start)
             )
 
-            Spacer(modifier = Modifier.size(4.dp))
-
-            AppTextField(
+            TextField(
                 value = email,
-                onValueChange = onEmailChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholderText = ""
+                onValueChange = {
+                    email = it
+                    vm.onEmailChange(it)
+                    errorMessage = null
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .clip(RoundedCornerShape(12.dp))
             )
 
-            Spacer(modifier = Modifier.size(4.dp))
+            Spacer(modifier = Modifier.size(6.dp))
 
             Text(
-                stringResource(R.string.register_email_details),
+                "You'll need to confirm this email later.",
+                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 10.sp,
+                color = Color.White,
                 modifier = Modifier.align(Alignment.Start)
             )
         }
@@ -134,31 +130,40 @@ fun SignUpStep1Content(
         Spacer(modifier = Modifier.size(30.dp))
 
         Button(
-            onClick = onNextClick,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            onClick = {
+                if (!isValidEmail(email)) {
+                    errorMessage = "Invalid email format."
+                } else {
+                    isLoading = true
+                    vm.checkEmail(email) { exists ->
+                        isLoading = false
+                        if (exists) {
+                            errorMessage = "Email already exists. Please try another one."
+                        } else {
+                            vm.onEmailChange(email) // lưu email vào ViewModel
+                            onNext()
+                        }
+                    }
+                }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             enabled = !isLoading
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = Color.Black,
                     strokeWidth = 2.dp,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(Modifier.width(8.dp))
-                Text(
-                    stringResource(R.string.check),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.Bold,
-                    style = AppTheme.typography.labelSmall,
-                    fontSize = 14.sp,
-                )
+                Text("Checking...", color = Color.Black)
             } else {
                 Text(
-                    stringResource(R.string.next),
+                    "Next",
+                    fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
-                    style = AppTheme.typography.labelSmall,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = Color.Black,
                 )
             }
         }
@@ -167,55 +172,24 @@ fun SignUpStep1Content(
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 it,
-                style = AppTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.error,
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp,
+                color = Color.White,
             )
         }
     }
 }
 
-
-@Preview(showBackground = true, showSystemUi = true, name = "Normal State")
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SignUpScreenStep1Preview() {
-    AppTheme {
-        SignUpStep1Content(
-            email = "hello@world.com",
-            onEmailChange = {},
-            isLoading = false,
-            errorMessage = null,
-            onBackClick = {},
-            onNextClick = {}
-        )
-    }
-}
+    val navController = rememberNavController()
+   // val vm = AuthViewModel(context = Context)
 
-@Preview(showBackground = true, showSystemUi = true, name = "Loading State")
-@Composable
-fun SignUpScreenStep1LoadingPreview() {
-    AppTheme {
-        SignUpStep1Content(
-            email = "hello@world.com",
-            onEmailChange = {},
-            isLoading = true,
-            errorMessage = null,
-            onBackClick = {},
-            onNextClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true, name = "Error State")
-@Composable
-fun SignUpScreenStep1ErrorPreview() {
-    AppTheme {
-        SignUpStep1Content(
-            email = "hello@world.com",
-            onEmailChange = {},
-            isLoading = false,
-            errorMessage = "Email already exists. Please try another one.",
-            onBackClick = {},
-            onNextClick = {}
-        )
-    }
+//    SignUpScreenStep1(
+//        vm,
+//        onNext = { navController.navigate(NavRoutes.SignUpStep2.route) },
+//        onBack = { navController.popBackStack() }
+//    )
 }

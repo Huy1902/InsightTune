@@ -13,6 +13,4 @@ sealed class BottomNavItem(val route: String, val label: String, val icon: Image
     object Search : BottomNavItem("search", "Search", Icons.Default.Search)
     object Playlist : BottomNavItem("playlist", "Playlist", Icons.Default.LibraryMusic)
     object ChatBot : BottomNavItem("chatbot", "Chat Bot", Icons.Default.Chat)
-
-    object Profile : BottomNavItem("profile", "Profile", Icons.Default.AccountCircle)
 }

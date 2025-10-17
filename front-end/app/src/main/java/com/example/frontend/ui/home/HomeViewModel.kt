@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.song.PlayingResponse
 import com.example.frontend.data.remote.ApiClient
+import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
+import com.example.frontend.domain.repositories.PlayingRepository
 import com.example.frontend.domain.repositories.TrackRepository
 import com.example.frontend.ui.profile.ProfileViewModel
 import com.example.frontend.ui.profile.ProfileViewModelFactory
@@ -17,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(context: Context) : ViewModel() {
     private val repo: TrackRepository = TrackRepositoryImpl(ApiClient.trackApi)
+
     private val _tracks = MutableStateFlow<List<GetTracksResponse>>(emptyList())
     val tracks = _tracks.asStateFlow()
 
@@ -31,4 +35,5 @@ class HomeViewModel(context: Context) : ViewModel() {
             _isLoading.value = false
         }
     }
+
 }

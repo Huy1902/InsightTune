@@ -1,7 +1,5 @@
 package com.example.frontend.data.models.user
 
-import com.google.gson.annotations.SerializedName
-
 data class AuthResponseDto(
     val code: Int,
     val message: String,
@@ -51,24 +49,5 @@ data class RefreshResult(
     val token: String,
     val refreshToken: String,
     val email: String,
-    val authenticated: Boolean
-)
-
-data class GoogleResponse(
-    val code: Int,
-    val message: String,
-    val result: GoogleResponseResult
-)
-
-data class GoogleResponseResult(
-    @SerializedName("token")
-    val token: String,
-
-    @SerializedName("refreshToken")
-    val refreshToken: String,
-
-    @SerializedName("email")
-    val email: String,
-
     val authenticated: Boolean
 )

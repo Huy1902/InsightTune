@@ -1,26 +1,22 @@
 package com.example.frontend.ui
 
-import android.R.attr.duration
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -31,21 +27,21 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.NavType
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.example.frontend.ui.home.BottomNavItem
-import com.example.frontend.ui.NavRoutes
+import androidx.navigation.navArgument
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.core.SessionManager
 import com.example.frontend.ui.home.HomeScreen
 import com.example.frontend.ui.home.HomeViewModel
 import com.example.frontend.ui.home.HomeViewModelFactory
 import com.example.frontend.ui.login.LogInScreen
+import com.example.frontend.ui.playingsong.MusicPlayer
+import com.example.frontend.ui.playingsong.MusicPlayerViewModel
+import com.example.frontend.ui.playingsong.MusicPlayerViewModelFactory
 import com.example.frontend.ui.profile.ProfileScreen
 import com.example.frontend.ui.profile.ProfileViewModel
 import com.example.frontend.ui.profile.ProfileViewModelFactory
@@ -55,8 +51,6 @@ import com.example.frontend.ui.signup.SignUpScreenStep1
 import com.example.frontend.ui.signup.SignUpScreenStep2
 import com.example.frontend.ui.signup.SignUpScreenStep3
 import com.example.frontend.ui.start.StartScreen
-import com.example.frontend.ui.theme.AppTheme
-import com.example.frontend.ui.theme.ThemeSetting
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 
@@ -67,12 +61,7 @@ object AppGraph {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AppNavHost(
-    prefs: AppPreferences,
-    navController: NavHostController,
-    themeSetting: ThemeSetting,
-    onThemeChange: (ThemeSetting) -> Unit
-) {
+fun AppNavHost(prefs: AppPreferences, navController: NavHostController) {
     val navController = rememberNavController()
     val duration = 600
     val easing = FastOutSlowInEasing
@@ -92,49 +81,82 @@ fun AppNavHost(
         }
     }
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(
+                Brush.verticalGradient(
+                    colorStops = arrayOf(
+                        0.0f to Color(0xFFFF0000), // đỏ
+                        0.3f to Color(0xFF8B0000), // đỏ sậm
+                        0.6f to Color(0xFF000000)  // đen
+                    )
+                )
+            )
     ) {
         AnimatedNavHost(
             navController = navController,
             startDestination = startDestination,
             enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { it },
-                    animationSpec = tween(durationMillis = duration, easing = easing)
-                ) + fadeIn(animationSpec = tween(durationMillis = duration))
+                when (targetState.destination.route) {
+                    NavRoutes.Track.route ->
+                        slideInVertically(
+                            initialOffsetY = { it },
+                            animationSpec = tween(durationMillis = duration, easing = easing)
+                        )
+
+                    else ->
+                        slideInHorizontally(
+                            initialOffsetX = { it },
+                            animationSpec = tween(durationMillis = duration, easing = easing)
+                        ) + fadeIn(animationSpec = tween(durationMillis = duration))
+                }
             },
             exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { -it },
-                    animationSpec = tween(durationMillis = duration, easing = easing)
-                ) + fadeOut(animationSpec = tween(durationMillis = duration))
+                when (targetState.destination.route) {
+                    NavRoutes.Track.route ->
+                        fadeOut(animationSpec = tween(durationMillis = duration))
+                    else ->
+                        slideOutHorizontally(
+                            targetOffsetX = { -it },
+                            animationSpec = tween(durationMillis = duration, easing = easing)
+                        ) + fadeOut(animationSpec = tween(durationMillis = duration))
+                }
             },
             popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -it },
-                    animationSpec = tween(durationMillis = duration, easing = easing)
-                ) + fadeIn(animationSpec = tween(durationMillis = duration))
+                when (initialState.destination.route) {
+                    NavRoutes.Track.route ->
+                        EnterTransition.None
+                    else ->
+                        slideInHorizontally(
+                            initialOffsetX = { -it },
+                            animationSpec = tween(durationMillis = duration, easing = easing)
+                        ) + fadeIn(animationSpec = tween(durationMillis = duration))
+                }
             },
             popExitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { it },
-                    animationSpec = tween(durationMillis = duration, easing = easing)
-                ) + fadeOut(animationSpec = tween(durationMillis = duration))
+                when (initialState.destination.route) {
+                    NavRoutes.Track.route ->
+                        slideOutVertically (
+                            targetOffsetY = {it},
+                            animationSpec = tween(durationMillis = duration, easing = easing)
+                        ) + fadeOut(animationSpec = tween(durationMillis = duration))
+                    else ->
+                        slideOutHorizontally(
+                            targetOffsetX = { it },
+                            animationSpec = tween(durationMillis = duration, easing = easing)
+                        ) + fadeOut(animationSpec = tween(durationMillis = duration))
+                }
             }
         ) {
-            authGraph(navController, prefs)
-            mainGraph(navController, prefs, themeSetting, onThemeChange)
+            authGraph(navController)
+            mainGraph(navController)
         }
     }
 }
 
-
 @OptIn(ExperimentalAnimationApi::class)
-private fun NavGraphBuilder.authGraph(navController: NavHostController, prefs: AppPreferences) {
+private fun NavGraphBuilder.authGraph(navController: NavHostController) {
     navigation(
         startDestination = NavRoutes.StartScreen.route,
         route = AppGraph.AUTH
@@ -145,13 +167,12 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController, prefs: A
                 onNextSignUp = { navController.navigate(NavRoutes.SignUpStep1.route) },
                 onNextLogIn = { navController.navigate(NavRoutes.Login.route) },
                 onGoogleLogin = {
-                    navController.navigate(AppGraph.MAIN) {
-                        popUpTo(AppGraph.AUTH) {
-                            inclusive = true
-                        }
-                    }
-                },
-                prefs
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("http://10.0.2.2:8080/oauth2/authorization/google")
+                    )
+                    context.startActivity(intent)
+                }
             )
         }
         composable(NavRoutes.SignUpStep1.route) { navBackStackEntry ->
@@ -174,7 +195,7 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController, prefs: A
             val vm = navBackStackEntry.sharedAuthViewModel(navController = navController)
             SignUpScreenStep3(
                 vm,
-                onNext = { navController.navigate(NavRoutes.StartScreen.route) },
+                onNext = { navController.navigate(NavRoutes.Login.route) },
                 onBack = { navController.popBackStack() })
         }
 
@@ -195,14 +216,8 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController, prefs: A
     }
 }
 
-
 @OptIn(ExperimentalAnimationApi::class)
-private fun NavGraphBuilder.mainGraph(
-    navController: NavHostController,
-    prefs: AppPreferences,
-    themeSetting: ThemeSetting,
-    onThemeChange: (ThemeSetting) -> Unit
-) {
+private fun NavGraphBuilder.mainGraph(navController: NavHostController) {
     navigation(
         startDestination = NavRoutes.Home.route,
         route = AppGraph.MAIN
@@ -210,12 +225,14 @@ private fun NavGraphBuilder.mainGraph(
 
         composable(NavRoutes.Home.route) {
             val vm: HomeViewModel = viewModel(factory = HomeViewModelFactory(LocalContext.current))
-            HomeScreen(vm, appNavController = navController)
+            HomeScreen(
+                vm,
+                appNavController = navController
+            )
         }
 
         composable(NavRoutes.Profile.route) {
-            val vm: ProfileViewModel =
-                viewModel(factory = ProfileViewModelFactory(LocalContext.current))
+            val vm: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(LocalContext.current))
             ProfileScreen(
                 vm = vm,
                 onNavigateLogin = {
@@ -225,11 +242,41 @@ private fun NavGraphBuilder.mainGraph(
                         }
                     }
                 },
-                onBack = { navController.popBackStack() },
-                themeSetting = themeSetting,
-                onThemeChange = onThemeChange
+                onBack = { navController.popBackStack() }
             )
         }
+
+        composable (
+            NavRoutes.Track.route,
+            arguments = listOf(
+                navArgument("urlKey") {type = NavType.StringType},
+                navArgument("title") {type = NavType.StringType},
+                navArgument("artist") {type = NavType.StringType},
+                navArgument("imageKey") {type = NavType.StringType},
+            )
+        ) {
+                backStackEntry  ->
+                val context = LocalContext.current
+                val url = backStackEntry.arguments?.getString("urlKey") ?: ""
+                val title = backStackEntry.arguments?.getString("title") ?: ""
+                val artist = backStackEntry.arguments?.getString("artist") ?: ""
+                val imageUrl = backStackEntry.arguments?.getString("imageKey") ?: ""
+
+            val vm: MusicPlayerViewModel = viewModel(
+                factory = MusicPlayerViewModelFactory(url, title, artist, imageUrl, context)
+            )
+            MusicPlayer(
+                viewModel = vm,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable (NavRoutes.Search.route) {
+
+        }
+
+
+
     }
 }
 

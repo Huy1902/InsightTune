@@ -1,216 +1,205 @@
 package com.example.frontend.ui.login
 
-import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.frontend.core.Resource
-import com.example.frontend.ui.common.AppTextField
-import com.example.frontend.ui.signup.AuthViewModel
-import com.example.frontend.ui.theme.AppTheme
+import androidx.navigation.compose.rememberNavController
 import com.example.frontend.R
+import com.example.frontend.core.Resource
+import com.example.frontend.ui.signup.AuthViewModel
 
 @Composable
 fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
-    val uiState by vm.state.collectAsState()
-
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var isVisible by remember { mutableStateOf(false) }
+    val state by vm.state.collectAsState()
+    val gradient = Brush.verticalGradient(
+        colorStops = arrayOf(
+            0.0f to Color(0xFFFF0000),
+            0.3f to Color(0xFF8B0000),
+            0.6f to Color(0xFF000000)
+        )
+    )
     LaunchedEffect(Unit) {
         vm.resetState()
     }
 
-    val context = LocalContext.current
-
-    LaunchedEffect(uiState) {
-        if (uiState is Resource.Success) {
-            Toast.makeText(context, "Log in successfully!", Toast.LENGTH_SHORT).show()
+    LaunchedEffect(state) {
+        if (state is Resource.Success) {
             onNext()
         }
     }
 
-    LogInScreenContent(
-        emailValue = vm.email,
-        onEmailChange = vm::onEmailChange,
-        passwordValue = vm.password,
-        onPasswordChange = vm::onPasswordChange,
-        uiState = uiState,
-        onLoginClick = { vm.login() },
-        onBackClick = onBack
-    )
-}
-
-@Composable
-fun LogInScreenContent(
-    emailValue: String,
-    onEmailChange: (String) -> Unit,
-    passwordValue: String,
-    onPasswordChange: (String) -> Unit,
-    uiState: Resource<*>,
-    onLoginClick: () -> Unit,
-    onBackClick: () -> Unit
-) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(AppTheme.spacing().M)
+            .background(brush = gradient)
+            .padding(16.dp)
             .statusBarsPadding()
             .navigationBarsPadding(),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
                 imageVector = Icons.Default.ArrowBackIosNew,
-                contentDescription = "Back",
+                contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .size(AppTheme.iconSize().Medium)
-                    .clickable { onBackClick() },
-                tint = MaterialTheme.colorScheme.onBackground
+                    .padding(start = 16.dp)
+                    .size(25.dp)
+                    .clickable {
+                        onBack()
+                    },
+                tint = Color.White
             )
 
             Text(
-                stringResource(R.string.Log_in),
-                style = AppTheme.typography.titleLarge,
+                text = "Log in",
+                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 16.sp,
+                color = Color.White,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
 
-        Spacer(modifier = Modifier.size(AppTheme.spacing().L))
+        Spacer(modifier = Modifier.size(20.dp))
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.Start
+
         ) {
             Text(
-                stringResource(R.string.login_email),
-                style = AppTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                "What's your email?",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.Start)
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing().S))
-
-            AppTextField(
-                value = emailValue,
-                onValueChange = onEmailChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholderText = ""
+            TextField(
+                value = vm.email,
+                onValueChange = vm::onEmailChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .clip(RoundedCornerShape(12.dp))
             )
 
-            Spacer(modifier = Modifier.size(AppTheme.spacing().M))
+            Spacer(modifier = Modifier.size(10.dp))
 
             Text(
-                stringResource(R.string.login_password),
-                style = AppTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                "Password",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.Start)
             )
 
-            Spacer(modifier = Modifier.height(AppTheme.spacing().S))
-
-            AppTextField(
-                value = passwordValue,
-                onValueChange = onPasswordChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholderText = "",
-                isPassword = true
+            TextField(
+                value = vm.password,
+                onValueChange = vm::onPasswordChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                visualTransformation = if (isVisible) VisualTransformation.None
+                else {
+                    PasswordVisualTransformation()
+                },
+                trailingIcon = {
+                    IconButton(
+                        onClick = { isVisible = !isVisible }
+                    ) {
+                        Icon(
+                            painter = if (isVisible)
+                                painterResource(id = R.drawable.opened_eye)
+                            else
+                                painterResource(id = R.drawable.closed_eye),
+                            contentDescription = if (isVisible) "Hide password" else "Show password"
+                        )
+                    }
+                }
             )
+
         }
 
-        Spacer(modifier = Modifier.size(AppTheme.spacing().L))
+        Spacer(modifier = Modifier.size(30.dp))
 
         Button(
-            onClick = onLoginClick,
-            enabled = uiState !is Resource.Loading,
+            onClick = {
+                vm.login()
+            },
             colors = ButtonDefaults.buttonColors(
-                containerColor = AppTheme.color().Primary
+                containerColor = Color.White
             )
         ) {
-            if (uiState is Resource.Loading) {
+            if (state is Resource.Loading) {
                 CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = Color.Black,
                     strokeWidth = 2.dp,
                     modifier = Modifier.size(18.dp)
                 )
-                Spacer(Modifier.width(AppTheme.spacing().S))
-                Text("Logging in...", color = MaterialTheme.colorScheme.onPrimary)
-            } else  {
+                Spacer(Modifier.width(8.dp))
+                Text("Logging in...", color = Color.Black)
+            } else {
                 Text(
-                    stringResource(R.string.Log_in),
+                    "Log in",
+                    fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = Color.Black
                 )
             }
         }
 
-        if (uiState is Resource.Error) {
-            Spacer(modifier = Modifier.height(AppTheme.spacing().M))
+
+
+        if (state is Resource.Error) {
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Wrong email or password, please try again.",
-                style = AppTheme.typography.labelSmall,
-                color = AppTheme.color().Error
+                text = "Wrong email or password, please try again soon.",
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = Color.White
             )
         }
     }
 }
 
-
-@Preview(name = "Default State", showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LogInPreview_Default() {
-    AppTheme(darkTheme = false) {
-        LogInScreenContent(
-            emailValue = "test@email.com",
-            onEmailChange = {},
-            passwordValue = "password123",
-            onPasswordChange = {},
-            uiState = Resource.Idle,
-            onLoginClick = {},
-            onBackClick = {}
-        )
-    }
-}
+fun LogInPreview() {
+    val navController = rememberNavController()
+    val context = LocalContext.current
 
-@Preview(name = "Loading State", showSystemUi = true)
-@Composable
-fun LogInPreview_Loading() {
-    AppTheme(darkTheme = true) {
-        LogInScreenContent(
-            emailValue = "test@email.com",
-            onEmailChange = {},
-            passwordValue = "password123",
-            onPasswordChange = {},
-            uiState = Resource.Loading,
-            onLoginClick = {},
-            onBackClick = {}
-        )
-    }
-}
-
-@Preview(name = "Error State", showSystemUi = true)
-@Composable
-fun LogInPreview_Error() {
-    AppTheme(darkTheme = true) {
-        LogInScreenContent(
-            emailValue = "test@email.com",
-            onEmailChange = {},
-            passwordValue = "password123",
-            onPasswordChange = {},
-            uiState = Resource.Error(""),
-            onLoginClick = {},
-            onBackClick = {}
-        )
-    }
+    LogInScreen(vm = AuthViewModel(context), onNext = {}, onBack = {})
 }
