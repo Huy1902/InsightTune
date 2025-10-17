@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+package track.events;
+option java_multiple_files = true;
+
+message SearchSongEvent {
+  string email = 1;
+  string search = 2;
+  google.protobuf.Timestamp searchedAt = 3;
+}

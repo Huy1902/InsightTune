@@ -10,6 +10,4 @@ import java.util.Optional;
 @Repository
 public interface HistoryRepository extends JpaRepository<History,Long> {
     List<History> findAllByEmail(String email);
-
-  Optional<History> findHistoryByStorageKey(String storageKey);
 }

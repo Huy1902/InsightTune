@@ -3,6 +3,7 @@ package com.pm.historyservice.controller;
 import com.pm.historyservice.dto.HistoryRequest;
 import com.pm.historyservice.mapper.HistoryMapper;
 import com.pm.historyservice.models.History;
+import com.pm.historyservice.models.SearchHistory;
 import com.pm.historyservice.service.HistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
@@ -39,5 +40,12 @@ public class HistoryController {
         return ResponseEntity
                 .ok()
                 .body(historyService.findAllByEmail(authentication.getName()));
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Searched histories")
+    public ResponseEntity<List<SearchHistory>> findAllSearch(Authentication authentication) {
+        return ResponseEntity.ok()
+                .body(historyService.findAllSearchByEmail(authentication.getName()));
     }
 }
