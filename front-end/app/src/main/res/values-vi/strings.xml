@@ -74,5 +74,7 @@
     <string name="password_do_not_match">Mật khẩu không trùng khớp.</string>
     <string name="log_in_successfully">Đăng nhập thành công!</string>
     <string name="log_in_error">Sai email hoặc mật khẩu.</string>
+    <string name="register_successfully">Tạo tài khoản thành công!</string>
+    <string name="register_failed">Tạo tài khoản thất bại.</string>
 
 </resources>
