@@ -62,7 +62,10 @@ fun OtpScreen(
         },
         timer = timer,
         canResend = canResend,
-        onResendClick = { timer = 60 },
+        onResendClick = {
+            vm.requestOtp(vm.email, onResult = {})
+            timer = 60
+        },
         isLoading = isLoading,
         errorMessage = errorMessage,
         onVerifyClick = {

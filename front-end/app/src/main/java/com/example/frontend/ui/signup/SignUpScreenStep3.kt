@@ -39,11 +39,19 @@ fun SignUpScreenStep3(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
     LaunchedEffect(uiState) {
         when (uiState) {
             is Resource.Success -> {
-                Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.register_successfully),
+                    Toast.LENGTH_SHORT
+                ).show()
                 onNext()
             }
             is Resource.Error -> {
-                Toast.makeText(context, "Registration failed.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.register_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             else -> {}
         }

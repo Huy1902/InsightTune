@@ -73,5 +73,7 @@
     <string name="password_do_not_match">Password do not match.</string>
     <string name="log_in_successfully">Log in succesfully!</string>
     <string name="log_in_error">Wrong email or password.</string>
+    <string name="register_successfully">Account created successfully!</string>
+    <string name="register_failed">Registration failed.</string>
 
 </resources>
