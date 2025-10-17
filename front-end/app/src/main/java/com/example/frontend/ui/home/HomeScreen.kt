@@ -46,16 +46,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.frontend.R
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.ui.AppGraph
 import com.example.frontend.ui.NavRoutes
+import com.example.frontend.ui.playingsong.MusicPlayer
+import com.example.frontend.ui.playingsong.MusicPlayerViewModel
+import com.example.frontend.ui.playingsong.MusicPlayerViewModelFactory
 import com.example.frontend.ui.profile.ProfileScreen
 import com.example.frontend.ui.profile.ProfileViewModel
 import com.example.frontend.ui.profile.ProfileViewModelFactory
@@ -87,12 +92,18 @@ fun HomeScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(BottomNavItem.Home.route) {
+
+                val playingVmFactory: PlayingViewModelFactory = PlayingViewModelFactory(LocalContext.current)
+                val playingVm: PlayingViewModel = viewModel(factory = playingVmFactory)
+
                 HomeScreenContent(
                     vm,
+                //    playingVm,
                     appNavController,
                     onProfileClick = {
                         bottomNavController.navigate(BottomNavItem.Profile.route)
-                    }
+                    },
+                    bottomNavController
                 )
             }
             composable(BottomNavItem.Search.route) {
@@ -109,6 +120,30 @@ fun HomeScreen(
             }
             composable(BottomNavItem.Playlist.route) { /* TODO */ }
             composable(BottomNavItem.ChatBot.route) { /* TODO */ }
+            composable (
+                BottomNavItem.Track.route,
+                arguments = listOf(
+                    navArgument("urlKey") {type = NavType.StringType},
+                    navArgument("title") {type = NavType.StringType},
+                    navArgument("artist") {type = NavType.StringType},
+                    navArgument("imageKey") {type = NavType.StringType},
+                )
+            ) {
+                    backStackEntry  ->
+                val context = LocalContext.current
+                val url = backStackEntry.arguments?.getString("urlKey") ?: ""
+                val title = backStackEntry.arguments?.getString("title") ?: ""
+                val artist = backStackEntry.arguments?.getString("artist") ?: ""
+                val imageUrl = backStackEntry.arguments?.getString("imageKey") ?: ""
+
+                val vm: MusicPlayerViewModel = viewModel(
+                    factory = MusicPlayerViewModelFactory(url, title, artist, imageUrl, context)
+                )
+                MusicPlayer(
+                    viewModel = vm,
+                    onBack = { bottomNavController.popBackStack() }
+                )
+            }
             composable(BottomNavItem.Profile.route) {
                 val vm: ProfileViewModel =
                     viewModel(factory = ProfileViewModelFactory(LocalContext.current))
@@ -133,8 +168,10 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     vm: HomeViewModel,
+    //playingVm: PlayingViewModel,
     appNavController: NavController,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    bottomNavController: NavController
 ) {
     val tracks by vm.tracks.collectAsState()
     val isLoading by vm.isLoading.collectAsState()
@@ -214,13 +251,22 @@ fun HomeScreenContent(
                     .padding(8.dp)
             ) {
                 items(tracks) { track ->
+                    val songCardVm: SongCardViewModel = viewModel(
+                        factory = SongCardViewModelFactory(
+                            storageKey = track.storageKey,
+                            coverImageKey = track.coverImageKey
+                        )
+                    )
                     val artistString = track.artists?.joinToString(", ") ?: "Unknown artist"
+
                     SongCard(
-                        imageRes = track.coverImageKey,
+                        viewModel = songCardVm,
                         songName = track.title,
                         artistName = artistString,
-                        urlTrack = track.storageKey,
-                        navController = appNavController
+                        // Truyền các key cần thiết cho navigation
+                        urlKey = track.storageKey,
+                        imageKey = track.coverImageKey ?: "",
+                        navController = bottomNavController
                     )
                 }
             }
@@ -250,13 +296,21 @@ fun HomeScreenContent(
                     .padding(8.dp)
             ) {
                 items(tracks) { track ->
+                    val songCardVm: SongCardViewModel = viewModel(
+                        factory = SongCardViewModelFactory(
+                            storageKey = track.storageKey,
+                            coverImageKey = track.coverImageKey
+                        )
+                    )
                     val artistString = track.artists?.joinToString(", ") ?: "Unknown artist"
                     SongCard(
-                        imageRes = track.coverImageKey,
+                        viewModel = songCardVm,
                         songName = track.title,
                         artistName = artistString,
-                        urlTrack = track.storageKey,
-                        navController = appNavController
+                        // Truyền các key cần thiết cho navigation
+                        urlKey = track.storageKey,
+                        imageKey = track.coverImageKey ?: "",
+                        navController = bottomNavController
                     )
                 }
             }
@@ -281,8 +335,8 @@ fun BottomNavigationBar(navController: NavController) {
 
         items.forEach { item ->
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = null) },
-                label = { Text(stringResource(id = item.labelResId)) },
+                icon = { Icon(item.icon ?: Icons.Default.AccountCircle, contentDescription = null) },
+                label = { Text(stringResource(id = item.labelResId ?: R.drawable.spotube)) },
                 selected = currentRoute == item.route,
                 onClick = {
                     navController.navigate(item.route) {

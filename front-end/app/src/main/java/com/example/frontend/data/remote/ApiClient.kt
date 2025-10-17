@@ -12,6 +12,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
+import kotlin.getValue
 
 object ApiClient {
 
@@ -76,6 +77,16 @@ object ApiClient {
             .build()
             .create(TrackApi::class.java)
     }
+
+    val playingApi: PlayingApi by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.PLAYING_SERVICE_BASE_URL)
+            .client(mainClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(PlayingApi::class.java)
+    }
+
     fun init(prefs: AppPreferences) {
         this.prefs = prefs
     }

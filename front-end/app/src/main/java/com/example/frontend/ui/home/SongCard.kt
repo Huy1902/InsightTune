@@ -1,11 +1,14 @@
 package com.example.frontend.ui.home
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,6 +23,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.frontend.R
 import com.example.frontend.ui.theme.AppTheme
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 enum class SongCardLayout {
     VERTICAL,
@@ -27,13 +32,15 @@ enum class SongCardLayout {
 }
 @Composable
 fun SongCard(
-    imageRes: String?,
+    viewModel: SongCardViewModel,
     songName: String,
     artistName: String,
-    urlTrack: String,
+    urlKey: String,      // Key cho URL nhạc
+    imageKey: String,    // Key cho URL ảnh
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2C)),
@@ -41,12 +48,15 @@ fun SongCard(
             .width(160.dp)
             .padding(8.dp)
             .clickable(onClick = {
-                val encodedUrl = Uri.encode(urlTrack)
-                val encodedTitle = Uri.encode(songName)
-                val encodedArtist = Uri.encode(artistName)
-                val encodedImageUrl = Uri.encode(imageRes)
-                navController.navigate("track/$encodedUrl/$encodedTitle/$encodedArtist/$encodedImageUrl")
-            })
+                val encodedUrlKey = URLEncoder.encode(urlKey, StandardCharsets.UTF_8.toString())
+                val encodedSongName = URLEncoder.encode(songName, StandardCharsets.UTF_8.toString())
+                val encodedArtistName = URLEncoder.encode(artistName, StandardCharsets.UTF_8.toString())
+                val encodedImageKey = URLEncoder.encode(imageKey, StandardCharsets.UTF_8.toString())
+
+                // Route này khớp với định nghĩa trong BottomNavItem.kt
+                val route = "track/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
+                navController.navigate(route)
+                })
     ) {
         Column(
             modifier = Modifier
@@ -56,7 +66,7 @@ fun SongCard(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageRes ?: R.drawable.spotube)
+                    .data(uiState.coverImageUrl ?: R.drawable.spotube) // Hiển thị ảnh mặc định khi chưa load xong
                     .crossfade(true)
                     .build(),
                 contentDescription = "Cover of $songName",
