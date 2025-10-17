@@ -55,5 +55,23 @@
     <string name="no_result">No result found.</string>
     <string name="recent_search">Recent search</string>
     <string name="search_title">Search by songs or artists</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="email_verification">Email verification</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="otp_title">We’ve sent a 6-digit code to email:</string>
+    <string name="resend">Resend</string>
+    <string name="resend_in_seconds">Resend in %1$d seconds</string>
+    <string name="did_not_receive_code">Didn’t receive the code?</string>
+    <string name="verify">Verify</string>
+    <string name="send_otp_details">We\'ll send an OTP to your email to create a new password.</string>
+    <string name="send_otp">Send OTP</string>
+    <string name="create_new_password">Create new password</string>
+    <string name="confirm">Confirm</string>
+    <string name="create_new_password_successfully">Create new password successfully!</string>
+    <string name="email_verification_successfully">We\'ve sent an OTP to your email.</string>
+    <string name="email_verification_error">Cannot find user with this email.</string>
+    <string name="password_do_not_match">Password do not match.</string>
+    <string name="log_in_successfully">Log in succesfully!</string>
+    <string name="log_in_error">Wrong email or password.</string>
 
 </resources>

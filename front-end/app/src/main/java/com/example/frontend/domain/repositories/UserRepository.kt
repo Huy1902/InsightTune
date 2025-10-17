@@ -6,6 +6,7 @@ import com.example.frontend.data.models.user.AuthResponseDto
 import com.example.frontend.data.models.user.ChangeAvatarResponse
 import com.example.frontend.data.models.user.ChangePasswordRequest
 import com.example.frontend.data.models.user.ChangePasswordResponse
+import com.example.frontend.data.models.user.ForgotPasswordResponse
 import com.example.frontend.data.models.user.LogoutResponseDto
 import com.example.frontend.data.models.user.RefreshResponseDto
 import com.example.frontend.data.models.user.RegisterResponseDto
@@ -44,4 +45,8 @@ interface UserRepository {
 
     fun getRefreshToken(): String?
     fun clearToken()
+
+    suspend fun requestOtp(email: String): ForgotPasswordResponse?
+
+    suspend fun forgetPassword(otp: String, email: String, newPassword: String, confirmNewPassword: String): ForgotPasswordResponse?
 }

@@ -23,7 +23,12 @@ import com.example.frontend.ui.theme.AppTheme
 import com.example.frontend.R
 
 @Composable
-fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
+fun LogInScreen(
+    vm: AuthViewModel,
+    onNext: () -> Unit,
+    onBack: () -> Unit,
+    onForgotPassword: () -> Unit
+) {
     val uiState by vm.state.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -34,7 +39,7 @@ fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
 
     LaunchedEffect(uiState) {
         if (uiState is Resource.Success) {
-            Toast.makeText(context, "Log in successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.log_in_successfully), Toast.LENGTH_SHORT).show()
             onNext()
         }
     }
@@ -46,7 +51,8 @@ fun LogInScreen(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
         onPasswordChange = vm::onPasswordChange,
         uiState = uiState,
         onLoginClick = { vm.login() },
-        onBackClick = onBack
+        onBackClick = onBack,
+        onForgotPassword = onForgotPassword
     )
 }
 
@@ -58,7 +64,8 @@ fun LogInScreenContent(
     onPasswordChange: (String) -> Unit,
     uiState: Resource<*>,
     onLoginClick: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onForgotPassword: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -128,7 +135,19 @@ fun LogInScreenContent(
             )
         }
 
-        Spacer(modifier = Modifier.size(AppTheme.spacing().L))
+        Spacer(modifier = Modifier.size(AppTheme.spacing().XS))
+        TextButton(
+            onClick = {
+                onForgotPassword()
+            },
+        ) {
+            Text(
+                stringResource(R.string.forgot_password),
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
+
+        Spacer(modifier = Modifier.size(AppTheme.spacing().M))
 
         Button(
             onClick = onLoginClick,
@@ -145,7 +164,7 @@ fun LogInScreenContent(
                 )
                 Spacer(Modifier.width(AppTheme.spacing().S))
                 Text("Logging in...", color = MaterialTheme.colorScheme.onPrimary)
-            } else  {
+            } else {
                 Text(
                     stringResource(R.string.Log_in),
                     fontWeight = FontWeight.Bold,
@@ -158,7 +177,7 @@ fun LogInScreenContent(
         if (uiState is Resource.Error) {
             Spacer(modifier = Modifier.height(AppTheme.spacing().M))
             Text(
-                text = "Wrong email or password, please try again.",
+                text = stringResource(R.string.log_in_error),
                 style = AppTheme.typography.labelSmall,
                 color = AppTheme.color().Error
             )
@@ -178,7 +197,8 @@ fun LogInPreview_Default() {
             onPasswordChange = {},
             uiState = Resource.Idle,
             onLoginClick = {},
-            onBackClick = {}
+            onBackClick = {},
+            onForgotPassword = {}
         )
     }
 }
@@ -194,7 +214,8 @@ fun LogInPreview_Loading() {
             onPasswordChange = {},
             uiState = Resource.Loading,
             onLoginClick = {},
-            onBackClick = {}
+            onBackClick = {},
+            onForgotPassword = {}
         )
     }
 }
@@ -210,7 +231,8 @@ fun LogInPreview_Error() {
             onPasswordChange = {},
             uiState = Resource.Error(""),
             onLoginClick = {},
-            onBackClick = {}
+            onBackClick = {},
+            onForgotPassword = {}
         )
     }
 }

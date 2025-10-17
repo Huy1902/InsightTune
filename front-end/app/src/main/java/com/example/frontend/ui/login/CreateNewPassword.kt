@@ -1,5 +1,6 @@
-package com.example.frontend.ui.signup
+package com.example.frontend.ui.login
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.R
 import com.example.frontend.ui.common.AppTextField
+import com.example.frontend.ui.signup.AuthViewModel
 import com.example.frontend.ui.theme.AppTheme
 
 fun isValidPassword(password: String): Boolean {
@@ -29,17 +31,14 @@ fun isValidPassword(password: String): Boolean {
     return passwordRegex.matches(password)
 }
 
-// Stateful Composable
 @Composable
-fun SignUpScreenStep2(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
+fun CreateNewPassword(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var isPasswordVisible by remember { mutableStateOf(false) }
-    var isConfirmVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    SignUpStep2Content(
+    CreateNewPasswordContent(
         password = password,
         onPasswordChange = {
             password = it
@@ -50,10 +49,6 @@ fun SignUpScreenStep2(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
             confirmPassword = it
             errorMessage = null
         },
-        isPasswordVisible = isPasswordVisible,
-        onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
-        isConfirmVisible = isConfirmVisible,
-        onConfirmVisibilityChange = { isConfirmVisible = !isConfirmVisible },
         errorMessage = errorMessage,
         onBackClick = onBack,
         onNextClick = {
@@ -62,13 +57,22 @@ fun SignUpScreenStep2(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
                     errorMessage =
                         context.getString(R.string.register_password_details)
                 }
+
                 password != confirmPassword -> {
                     errorMessage =
                         context.getString(R.string.password_do_not_match)
                 }
+
                 else -> {
-                    vm.onPasswordChange(password)
-                    vm.onConfirmPasswordChange(confirmPassword)
+                    vm.onNewPasswordChange(password)
+                    vm.onConfirmNewPasswordChange(confirmPassword)
+                    vm.createNewPassword {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.create_new_password_successfully), // <-- SỬA LẠI
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                     errorMessage = null
                     onNext()
                 }
@@ -77,17 +81,12 @@ fun SignUpScreenStep2(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
     )
 }
 
-// Stateless Composable
 @Composable
-fun SignUpStep2Content(
+fun CreateNewPasswordContent(
     password: String,
     onPasswordChange: (String) -> Unit,
     confirmPassword: String,
     onConfirmPasswordChange: (String) -> Unit,
-    isPasswordVisible: Boolean,
-    onPasswordVisibilityChange: () -> Unit,
-    isConfirmVisible: Boolean,
-    onConfirmVisibilityChange: () -> Unit,
     errorMessage: String?,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit
@@ -111,7 +110,7 @@ fun SignUpStep2Content(
                 tint = MaterialTheme.colorScheme.onBackground
             )
             Text(
-                stringResource(R.string.register_title),
+                stringResource(R.string.create_new_password),
                 fontWeight = FontWeight.Bold,
                 style = AppTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -170,7 +169,7 @@ fun SignUpStep2Content(
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         ) {
             Text(
-                stringResource(R.string.next),
+                stringResource(R.string.confirm),
                 fontWeight = FontWeight.Bold,
                 style = AppTheme.typography.labelSmall,
                 fontSize = 14.sp,
@@ -192,17 +191,13 @@ fun SignUpStep2Content(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SignUpScreenStep2Preview() {
+fun CreateNewPasswordPreview() {
     AppTheme {
-        SignUpStep2Content(
+        CreateNewPasswordContent(
             password = "password123",
             onPasswordChange = {},
             confirmPassword = "password123",
             onConfirmPasswordChange = {},
-            isPasswordVisible = false,
-            onPasswordVisibilityChange = {},
-            isConfirmVisible = true,
-            onConfirmVisibilityChange = {},
             errorMessage = "Passwords do not match.",
             onBackClick = {},
             onNextClick = {}

@@ -22,35 +22,49 @@ import androidx.compose.ui.unit.sp
 import com.example.frontend.ui.common.AppTextField
 import com.example.frontend.ui.theme.AppTheme
 import com.example.frontend.R
+import com.example.frontend.core.Resource
 
 @Composable
 fun SignUpScreenStep3(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val uiState by vm.registerState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        vm.resetRegisterState()
+    }
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is Resource.Success -> {
+                Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                onNext()
+            }
+            is Resource.Error -> {
+                Toast.makeText(context, "Registration failed.", Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
+        }
+    }
     SignUpStep3Content(
         firstName = firstName,
         onFirstNameChange = { firstName = it },
         lastName = lastName,
         onLastNameChange = { lastName = it },
-        isLoading = isLoading,
         onBackClick = onBack,
         onCreateAccountClick = {
             if (firstName.isNotBlank() && lastName.isNotBlank()) {
-                isLoading = true
                 vm.onFirstNameChange(firstName)
                 vm.onLastNameChange(lastName)
             }
             vm.onFirstNameChange(firstName)
             vm.onLastNameChange(lastName)
             Log.d("REGISTER_UI", "email=${vm.email}, pass=${vm.password}")
-            vm.register {
-                isLoading = false
-                Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
-                onNext()
-            }
-        }
+            vm.register {}
+        },
+        uiState = uiState
     )
 }
 
@@ -60,9 +74,9 @@ fun SignUpStep3Content(
     onFirstNameChange: (String) -> Unit,
     lastName: String,
     onLastNameChange: (String) -> Unit,
-    isLoading: Boolean,
     onBackClick: () -> Unit,
-    onCreateAccountClick: () -> Unit
+    onCreateAccountClick: () -> Unit,
+    uiState: Resource<*>? = null
 ) {
     Column(
         modifier = Modifier
@@ -133,12 +147,12 @@ fun SignUpStep3Content(
 
         Button(
             onClick = onCreateAccountClick,
-            enabled = !isLoading,
+            enabled = uiState !is Resource.Loading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary
             )
         ) {
-            if (isLoading) {
+            if (uiState is Resource.Loading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(20.dp),
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -152,6 +166,15 @@ fun SignUpStep3Content(
                 )
             }
         }
+
+        if (uiState is Resource.Error) {
+            Spacer(modifier = Modifier.height(AppTheme.spacing().M))
+            Text(
+                text = "Email already exists.",
+                style = AppTheme.typography.labelSmall,
+                color = AppTheme.color().Error
+            )
+        }
     }
 }
 
@@ -164,7 +187,6 @@ fun SignUpScreenStep3Preview() {
         SignUpStep3Content(
             firstName = "John", onFirstNameChange = {},
             lastName = "Doe", onLastNameChange = {},
-            isLoading = false,
             onBackClick = {}, onCreateAccountClick = {}
         )
     }
@@ -177,7 +199,6 @@ fun SignUpScreenStep3LoadingPreview() {
         SignUpStep3Content(
             firstName = "John", onFirstNameChange = {},
             lastName = "Doe", onLastNameChange = {},
-            isLoading = true,
             onBackClick = {}, onCreateAccountClick = {}
         )
     }
