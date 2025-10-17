@@ -20,6 +20,8 @@ class AuthInterceptor(
             val originalRequest = chain.request()
             val currentToken = prefs.getToken()
 
+            Log.d("AUTH_DEBUG", "Intercepting request for: ${originalRequest.url}")
+            Log.d("AUTH_DEBUG", "Current token exists: ${!currentToken.isNullOrBlank()}")
             val tokenToUse = if (currentToken != null && isTokenAboutToExpire(currentToken)) {
                 Log.d("AUTH", "⏳ Token is about to expire. Proactively refreshing...")
                 performRefresh(currentToken) ?: currentToken // Nếu refresh thất bại, thử dùng lại token cũ
@@ -31,6 +33,7 @@ class AuthInterceptor(
                 return chain.proceed(originalRequest)
             }
 
+            Log.d("AUTH_DEBUG", "Attaching token to header.")
             val newRequest = originalRequest.newBuilder()
                 .header("Authorization", "Bearer $tokenToUse")
                 .build()
@@ -48,6 +51,7 @@ class AuthInterceptor(
 
     private fun performRefresh(expiredToken: String): String? {
         val refreshToken = prefs.getRefreshToken()
+        Log.d("AUTH_REFRESH", "Attempting to refresh. Refresh token exists: ${!refreshToken.isNullOrBlank()}")
         if (refreshToken.isNullOrBlank()) {
             Log.e("AUTH", "❌ Cannot refresh without a refresh token.")
             return null
@@ -59,6 +63,7 @@ class AuthInterceptor(
                 "Bearer $expiredToken",
                 RefreshRequest(refreshToken)
             ).execute()
+            Log.d("AUTH_REFRESH", "Refresh API response code: ${responseSync.code()}") // <-- Log mã phản hồi
             if (responseSync.isSuccessful) {
                 val body = responseSync.body()
                 if (body != null) {
@@ -74,6 +79,7 @@ class AuthInterceptor(
                     null
                 }
             } else {
+                Log.e("AUTH_REFRESH", "Refresh failed with error body: ${responseSync.errorBody()?.string()}") // <-- Log lỗi
                 Log.e("AUTH", "❌ Refresh HTTP fail: ${responseSync.code()} ${responseSync.message()}")
                 if (responseSync.code() == 401) {
                     SessionManager.sendLogout()

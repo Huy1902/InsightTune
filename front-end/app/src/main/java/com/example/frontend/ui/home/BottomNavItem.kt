@@ -10,7 +10,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.frontend.R
 
-sealed class BottomNavItem(val route: String, @StringRes val labelResId: Int, val icon: ImageVector) {
+sealed class BottomNavItem(val route: String, @StringRes val labelResId: Int? = null, val icon: ImageVector? = null) {
     object Home : BottomNavItem(
         "home",
         R.string.home,
@@ -21,4 +21,6 @@ sealed class BottomNavItem(val route: String, @StringRes val labelResId: Int, va
     object Playlist : BottomNavItem("playlist", R.string.playlist, Icons.Default.LibraryMusic)
     object ChatBot : BottomNavItem("chatbot", R.string.chat_bot, Icons.Default.Chat)
     object Profile : BottomNavItem("profile", R.string.profile, Icons.Default.AccountCircle)
+
+    object Track : BottomNavItem("track/{urlKey}/{title}/{artist}/{imageKey}")
 }

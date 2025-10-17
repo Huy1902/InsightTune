@@ -7,4 +7,8 @@ object Constants {
     const val PREFS_NAME = "spotube_prefs"
     const val KEY_TOKEN = "auth_token"
     const val KEY_REFRESH_TOKEN = "refresh_token"
+
+    const val PLAYING_SERVICE_BASE_URL = "http://10.0.2.2:4001/"
+
+
 }

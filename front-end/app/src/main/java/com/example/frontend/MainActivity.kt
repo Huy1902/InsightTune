@@ -14,35 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import com.example.frontend.ui.theme.AppTheme
-import com.example.playingasong.view.Playingasong
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val exoPlayer = ExoPlayer.Builder(this).build()
-
-        val viewModelFactory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MusicPlayerViewModel(exoPlayer) as T
-            }
-        }
-
-        enableEdgeToEdge()
-        setContent {
-            AppTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Greeting(
-//                        name = "Android",
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-//                }
-                val musicPlayerViewModel: MusicPlayerViewModel = viewModel(factory = viewModelFactory)
-                Playingasong(viewModel = musicPlayerViewModel)
-            }
-        }
-    }
-}
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
