@@ -45,7 +45,10 @@ import com.example.frontend.core.SessionManager
 import com.example.frontend.ui.home.HomeScreen
 import com.example.frontend.ui.home.HomeViewModel
 import com.example.frontend.ui.home.HomeViewModelFactory
+import com.example.frontend.ui.login.CreateNewPassword
+import com.example.frontend.ui.login.ForgetPasswordScreen
 import com.example.frontend.ui.login.LogInScreen
+import com.example.frontend.ui.login.OtpScreen
 import com.example.frontend.ui.profile.ProfileScreen
 import com.example.frontend.ui.profile.ProfileViewModel
 import com.example.frontend.ui.profile.ProfileViewModelFactory
@@ -189,7 +192,44 @@ private fun NavGraphBuilder.authGraph(navController: NavHostController, prefs: A
                         }
                     }
                 },
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onForgotPassword = {
+                    navController.navigate(NavRoutes.ForgotPassword.route)
+                }
+            )
+        }
+
+        composable(NavRoutes.ForgotPassword.route) { navBackStackEntry ->
+            val vm = navBackStackEntry.sharedAuthViewModel(navController = navController)
+            ForgetPasswordScreen(
+                vm,
+                onNavigateToOtp = {
+                    email ->
+                    navController.navigate(NavRoutes.VerifyEmail.createRoute(email))
+                },
+                onBack = {navController.popBackStack()}
+            )
+        }
+
+        composable(NavRoutes.VerifyEmail.route) { navBackStackEntry ->
+            val vm = navBackStackEntry.sharedAuthViewModel(navController = navController)
+            val email = navBackStackEntry.arguments?.getString("email") ?: ""
+            OtpScreen(
+                vm,
+                email,
+                onVerify = {
+                    navController.navigate(NavRoutes.CreateNewPassword.route)
+                },
+                onBack = {navController.popBackStack()}
+            )
+        }
+
+        composable(NavRoutes.CreateNewPassword.route) { navBackStackEntry ->
+            val vm = navBackStackEntry.sharedAuthViewModel(navController = navController)
+            CreateNewPassword(
+                vm,
+                onNext = {navController.navigate(NavRoutes.StartScreen.route)},
+                onBack = {navController.popBackStack()}
             )
         }
     }
@@ -213,24 +253,6 @@ private fun NavGraphBuilder.mainGraph(
             HomeScreen(
                 vm,
                 appNavController = navController,
-                themeSetting = themeSetting,
-                onThemeChange = onThemeChange
-            )
-        }
-
-        composable(NavRoutes.Profile.route) {
-            val vm: ProfileViewModel =
-                viewModel(factory = ProfileViewModelFactory(LocalContext.current))
-            ProfileScreen(
-                vm = vm,
-                onNavigateLogin = {
-                    navController.navigate(AppGraph.AUTH) {
-                        popUpTo(AppGraph.MAIN) {
-                            inclusive = true
-                        }
-                    }
-                },
-                onBack = { navController.popBackStack() },
                 themeSetting = themeSetting,
                 onThemeChange = onThemeChange
             )

@@ -18,11 +18,22 @@ class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {
 
             if (response.isNotEmpty()) {
                 val first = response.first()
-                Log.d(TAG, "First song: title=${first.title}, cover=${first.coverImageKey}, storageKey=${first.storageKey}")
+                Log.d(TAG, "First song: title=${first.title}, cover=${first.coverImageKey}, storageKey=${first.storageKey}}")
             } else {
                 Log.w(TAG, "Empty response from API")
             }
+            response
+        } catch (e: Exception) {
+            Log.e(TAG, "Error when calling API: ${e.message}", e)
+            emptyList()
+        }
+    }
 
+    override suspend fun searchTracks(keyword: String): List<GetTracksResponse> {
+        return try {
+            Log.d(TAG, "Call API searchTracks()...")
+            val response = trackApi.searchTracks(keyword)
+            Log.d(TAG, "API response: ${response.size} songs")
             response
         } catch (e: Exception) {
             Log.e(TAG, "Error when calling API: ${e.message}", e)

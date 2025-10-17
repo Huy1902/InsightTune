@@ -4,6 +4,8 @@ import com.example.frontend.data.models.user.AuthResponseDto
 import com.example.frontend.data.models.user.ChangePasswordRequest
 import com.example.frontend.data.models.user.ChangePasswordResponse
 import com.example.frontend.data.models.user.CheckEmailResponse
+import com.example.frontend.data.models.user.ForgotPasswordRequest
+import com.example.frontend.data.models.user.ForgotPasswordResponse
 import com.example.frontend.data.models.user.GoogleRequest
 import com.example.frontend.data.models.user.GoogleResponse
 import com.example.frontend.data.models.user.LogOutRequest
@@ -23,6 +25,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -50,6 +53,14 @@ interface AuthApi {
 
     @PUT("user/changePassword")
     suspend fun changePassword(@Body request: ChangePasswordRequest): Response<ChangePasswordResponse>
+
+    @POST("auth/forgot_password")
+    suspend fun forgotPassword(@Query("email") email: String): Response<ForgotPasswordResponse>
+
+    @PATCH("user/forgotPassword")
+    suspend fun resetPassword(
+        @Body request: ForgotPasswordRequest
+    ): Response<ForgotPasswordResponse>
 
 }
 

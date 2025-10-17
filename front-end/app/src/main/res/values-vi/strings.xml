@@ -53,5 +53,26 @@
     <string name="first_name">Họ</string>
     <string name="last_name">Tên</string>
     <string name="select_role">Chọn vai trò</string>
+    <string name="no_result">Không có kết quả nào.</string>
+    <string name="recent_search">Tìm kiếm gần đây.</string>
+    <string name="search_title">Tìm tên bài hát hoặc nghệ sĩ</string>
+    <string name="forgot_password">Quên mật khẩu</string>
+    <string name="email_verification">Xác thực email</string>
+    <string name="enter_otp">Nhập mã xác thực</string>
+    <string name="otp_title">Chúng tôi đã gửi một mã gồm 6 chữ số đến email:</string>
+    <string name="resend">Gửi lại</string>
+    <string name="resend_in_seconds">Gửi lại sau %1$d giây</string>
+    <string name="did_not_receive_code">Không nhận được mã?</string>
+    <string name="verify">Xác thực</string>
+    <string name="send_otp_details">Chúng tôi sẽ gửi một mã OTP để bạn có thể tạo lại mật khẩu mới.</string>
+    <string name="send_otp">Gửi mã</string>
+    <string name="create_new_password">Tạo mật khẩu mới</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="create_new_password_successfully">Tạo mật khẩu mới thành công!</string>
+    <string name="email_verification_successfully">Chúng tôi đã gửi OTP đến email của bạn.</string>
+    <string name="email_verification_error">Không tìm thấy người dùng với email này.</string>
+    <string name="password_do_not_match">Mật khẩu không trùng khớp.</string>
+    <string name="log_in_successfully">Đăng nhập thành công!</string>
+    <string name="log_in_error">Sai email hoặc mật khẩu.</string>
 
 </resources>

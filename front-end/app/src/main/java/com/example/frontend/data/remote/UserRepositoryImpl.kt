@@ -8,6 +8,8 @@ import com.example.frontend.data.models.user.AuthResponseDto
 import com.example.frontend.data.models.user.ChangeAvatarResponse
 import com.example.frontend.data.models.user.ChangePasswordRequest
 import com.example.frontend.data.models.user.ChangePasswordResponse
+import com.example.frontend.data.models.user.ForgotPasswordRequest
+import com.example.frontend.data.models.user.ForgotPasswordResponse
 import com.example.frontend.data.models.user.LogOutRequest
 import com.example.frontend.data.models.user.LoginRequest
 import com.example.frontend.data.models.user.LogoutResponseDto
@@ -216,4 +218,22 @@ class UserRepositoryImpl(
         prefs.clearToken()
     }
 
+    override suspend fun requestOtp(email: String): ForgotPasswordResponse? {
+        return authApi.forgotPassword(email).body()
+    }
+
+    override suspend fun forgetPassword(
+        otp: String,
+        email: String,
+        newPassword: String,
+        confirmNewPassword: String
+    ): ForgotPasswordResponse {
+        val request = ForgotPasswordRequest(otp, email, newPassword, confirmNewPassword)
+        val response = authApi.resetPassword(request)
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("Empty response")
+        } else {
+            throw Exception("HTTP ${response.code()}: ${response.message()}")
+        }
+    }
 }

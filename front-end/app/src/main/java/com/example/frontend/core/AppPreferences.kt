@@ -6,6 +6,9 @@ import com.example.frontend.ui.theme.ThemeSetting
 class AppPreferences(context: Context) {
     private val prefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE)
 
+    private val KEY_RECENT_SEARCHES = "recent_searches"
+    private val MAX_RECENT_SEARCHES = 10
+
     fun saveToken(token: String) {
         prefs.edit().putString(Constants.KEY_TOKEN, token).apply()
     }
@@ -49,5 +52,27 @@ class AppPreferences(context: Context) {
 
     fun getLanguage(): String {
         return prefs.getString("app_language", "en") ?: "en"
+    }
+
+    fun getRecentSearches(): List<String> {
+        val searchSet = prefs.getStringSet(KEY_RECENT_SEARCHES, emptySet()) ?: emptySet()
+        return searchSet.toList().reversed()
+    }
+
+    fun addRecentSearch(query: String) {
+        if (query.isBlank()) return
+
+        val oldSearches = prefs.getStringSet(KEY_RECENT_SEARCHES, emptySet())?.toMutableSet() ?: mutableSetOf()
+
+        oldSearches.remove(query)
+
+        oldSearches.add(query)
+
+        var searchesList = oldSearches.toList()
+        if (searchesList.size > MAX_RECENT_SEARCHES) {
+            searchesList = searchesList.takeLast(MAX_RECENT_SEARCHES)
+        }
+
+        prefs.edit().putStringSet(KEY_RECENT_SEARCHES, searchesList.toSet()).apply()
     }
 }

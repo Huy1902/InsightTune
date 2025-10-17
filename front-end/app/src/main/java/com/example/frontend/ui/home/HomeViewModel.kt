@@ -24,6 +24,9 @@ class HomeViewModel(context: Context) : ViewModel() {
     val isLoading = _isLoading.asStateFlow()
 
     fun loadTracks(limit: Int = 10) {
+        if (_tracks.value.isNotEmpty()) {
+            return
+        }
         viewModelScope.launch {
             _isLoading.value = true
             val allTracks = repo.getTracks()

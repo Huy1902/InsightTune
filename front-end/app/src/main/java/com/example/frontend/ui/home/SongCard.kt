@@ -1,5 +1,7 @@
 package com.example.frontend.ui.home
 
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -12,25 +14,39 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.frontend.R
+import com.example.frontend.ui.theme.AppTheme
 
+enum class SongCardLayout {
+    VERTICAL,
+    HORIZONTAL
+}
 @Composable
 fun SongCard(
     imageRes: String?,
     songName: String,
     artistName: String,
-    modifier: Modifier = Modifier
+    urlTrack: String,
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2C)),
         modifier = modifier
             .width(160.dp)
             .padding(8.dp)
+            .clickable(onClick = {
+                val encodedUrl = Uri.encode(urlTrack)
+                val encodedTitle = Uri.encode(songName)
+                val encodedArtist = Uri.encode(artistName)
+                val encodedImageUrl = Uri.encode(imageRes)
+                navController.navigate("track/$encodedUrl/$encodedTitle/$encodedArtist/$encodedImageUrl")
+            })
     ) {
         Column(
             modifier = Modifier
@@ -54,7 +70,7 @@ fun SongCard(
 
             Text(
                 text = songName,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = Color.White,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -62,8 +78,54 @@ fun SongCard(
 
             Text(
                 text = artistName,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = Color.Gray,
                 style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Composable
+fun HorizontalSongCard(
+    imageRes: String?,
+    songName: String,
+    artistName: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = AppTheme.spacing().S),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imageRes ?: R.drawable.spotube)
+                .crossfade(true)
+                .build(),
+            contentDescription = "Cover of $songName",
+            modifier = Modifier
+                .size(56.dp)
+                .clip(RoundedCornerShape(4.dp)),
+            contentScale = ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.width(AppTheme.spacing().M))
+
+        Column {
+            Text(
+                text = songName,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = artistName,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

@@ -72,3 +72,9 @@ data class GoogleResponseResult(
 
     val authenticated: Boolean
 )
+
+data class ForgotPasswordResponse(
+    val code: Int,
+    val message: String,
+    val result: String
+)

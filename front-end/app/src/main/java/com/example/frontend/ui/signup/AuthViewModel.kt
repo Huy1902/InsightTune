@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(context: Context) : ViewModel() {
 
-    private val repo = UserRepositoryImpl(ApiClient.authApi, ApiClient.userApi, AppPreferences(context))
+    private val repo =
+        UserRepositoryImpl(ApiClient.authApi, ApiClient.userApi, AppPreferences(context))
     private val loginUser = LoginUser(repo)
     private val registerUser = RegisterUser(repo)
 
@@ -43,13 +44,48 @@ class AuthViewModel(context: Context) : ViewModel() {
     var confirmPassword by mutableStateOf("")
         private set
 
+    var otp by mutableStateOf("")
+        private set
+
+    var newPassword by mutableStateOf("")
+        private set
+
+    var confirmNewPassword by mutableStateOf("")
+        private set
+
+
     fun onEmailChange(v: String) {
         email = v.trim()
     }
-    fun onPasswordChange(v: String) { password = v }
-    fun onFirstNameChange(v: String) { firstName = v }
-    fun onLastNameChange(v: String) { lastName = v }
-    fun onConfirmPasswordChange(v: String) { confirmPassword = v }
+
+    fun onPasswordChange(v: String) {
+        password = v
+    }
+
+    fun onFirstNameChange(v: String) {
+        firstName = v
+    }
+
+    fun onLastNameChange(v: String) {
+        lastName = v
+    }
+
+    fun onConfirmPasswordChange(v: String) {
+        confirmPassword = v
+    }
+
+    fun onOtpChange(v: String) {
+        otp = v
+    }
+
+    fun onNewPasswordChange(v: String) {
+        newPassword = v
+    }
+
+    fun onConfirmNewPasswordChange(v: String) {
+        confirmNewPassword = v
+    }
+
 
     fun login(onSuccess: () -> Unit = {}) {
         Log.d("LOGIN", "email=$email, pass=$password")
@@ -86,6 +122,12 @@ class AuthViewModel(context: Context) : ViewModel() {
         password = ""
     }
 
+    fun resetRegisterState() {
+        _registerState.value = Resource.Idle
+        firstName = ""
+        lastName = ""
+    }
+
     fun checkEmail(email: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
@@ -101,4 +143,39 @@ class AuthViewModel(context: Context) : ViewModel() {
         return repo.getToken() != null
     }
 
+
+    fun requestOtp(email: String, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = repo.requestOtp(email)
+                Log.d("OTP", "Request OTP response: ${response?.code}")
+                onResult(response?.code == 200)
+            } catch (e: Exception) {
+                Log.d("OTP", "Request OTP error: ${e.message}")
+                e.printStackTrace()
+                onResult(false)
+            }
+        }
+    }
+
+    fun createNewPassword(
+        onSuccess: () -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = repo.forgetPassword(otp, email, newPassword, confirmNewPassword)
+                Log.d("CREATE_NEW_PASSWORD", "Create new password response: ${response.code}")
+                if (response.code == 200) {
+                    onSuccess()
+                }
+            } catch (e: Exception) {
+                Log.d("CREATE_NEW_PASSWORD", "Create new password error: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun clearToken() {
+        repo.clearToken()
+    }
 }

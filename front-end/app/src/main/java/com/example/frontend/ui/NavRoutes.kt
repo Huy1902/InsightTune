@@ -8,6 +8,10 @@ sealed class NavRoutes(val route: String) {
     object Login : NavRoutes("login")
     object Home : NavRoutes("home")
 
-    object Profile : NavRoutes("profile")
+    object ForgotPassword : NavRoutes("forgot_password")
+    object VerifyEmail : NavRoutes("verify_email/{email}") {
+        fun createRoute(email: String) = "verify_email/$email"
+    }
+    object CreateNewPassword : NavRoutes("create_new_password")
 
 }
