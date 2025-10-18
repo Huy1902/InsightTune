@@ -30,7 +30,7 @@ public class TrackController {
     return ResponseEntity.ok().body(tracks);
   }
   @GetMapping("/search")
-  @Operation(summary = "Query based on title")
+  @Operation(summary = "Query based on title or artist")
   public ResponseEntity<List<TrackResponseDto>> getAllTracksByTitle(@RequestParam String keyword, Principal principal) {
     String email = principal.getName();
 
@@ -46,7 +46,7 @@ public class TrackController {
   }
 
   @GetMapping("/next")
-  @Operation(summary = "Get 5 next songs")
+  @Operation(summary = "Get 5 next songs", description = "This current playing track's information in request")
   public ResponseEntity<List<TrackResponseDto>> getNextSong(@RequestBody NextSongRequestDto nextSongRequestDto) {
     List<TrackResponseDto> tracks = trackService.getNextSong(nextSongRequestDto);
     return ResponseEntity.ok().body(tracks);
