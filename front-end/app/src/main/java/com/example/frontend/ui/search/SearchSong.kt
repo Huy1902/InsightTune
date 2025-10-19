@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontend.R
 import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.song.SearchHistoryResponse
 import com.example.frontend.ui.home.HorizontalSongCard
 import com.example.frontend.ui.home.SongCard
 import com.example.frontend.ui.home.SongCardLayout
@@ -44,7 +45,8 @@ fun SearchScreen(
         isLoading = isLoading,
         recentSearches = recentSearches,
         onSearch = { keyword ->
-            vm.addSearchToHistory(keyword)
+            vm.onQueryChange(keyword)
+            vm.loadRecentSearches(10)
         },
         onCancel = onCancel
     )
@@ -57,11 +59,10 @@ fun SearchScreenContent(
     onQueryChange: (String) -> Unit,
     searchResults: List<GetTracksResponse>,
     isLoading: Boolean,
-    recentSearches: List<String>,
+    recentSearches: List<SearchHistoryResponse>,
     onSearch: (String) -> Unit,
     onCancel: () -> Unit
 ) {
-    //val recentSearches = listOf("FKA twigs", "Hozier", "Grimes")
 
     Column(
         modifier = Modifier
@@ -140,7 +141,7 @@ fun SearchScreenContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onQueryChange(item) }
+                            .clickable { onQueryChange(item.search) }
                             .padding(vertical = AppTheme.spacing().M),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -151,7 +152,7 @@ fun SearchScreenContent(
                         )
                         Spacer(modifier = Modifier.width(AppTheme.spacing().M))
                         Text(
-                            item,
+                            item.search,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -186,15 +187,15 @@ fun SearchScreenPreview() {
             storageKey = "123"
         )
     )
-    AppTheme {
-        SearchScreenContent(
-            query = "test",
-            onQueryChange = {},
-            searchResults = fakeTracks,
-            isLoading = false,
-            onSearch = {},
-            recentSearches = listOf("FKA twigs", "Hozier", "Grimes"),
-            onCancel = {}
-        )
-    }
+//    AppTheme {
+//        SearchScreenContent(
+//            query = "test",
+//            onQueryChange = {},
+//            searchResults = fakeTracks,
+//            isLoading = false,
+//            onSearch = {},
+//            recentSearches = { emptyList() },
+//            onCancel = {}
+//        )
+//    }
 }

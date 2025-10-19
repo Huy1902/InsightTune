@@ -39,5 +39,6 @@ class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {
             Log.e(TAG, "Error when calling API: ${e.message}", e)
             emptyList()
         }
+        Log.d(TAG, "End of searchTracks()")
     }
 }
