@@ -76,5 +76,7 @@
     <string name="log_in_error">Sai email hoặc mật khẩu.</string>
     <string name="register_successfully">Tạo tài khoản thành công!</string>
     <string name="register_failed">Tạo tài khoản thất bại.</string>
+    <string name="favorite_songs">Mục yêu thích</string>
+    <string name="no_favorite_songs">Bạn chưa có bài hát nào ở mục yêu thích.</string>
 
 </resources>

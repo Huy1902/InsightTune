@@ -120,7 +120,7 @@ fun HomeScreen(
                     onCancel = { bottomNavController.popBackStack() }
                 )
             }
-            composable(BottomNavItem.Playlist.route) { /* TODO */ }
+            composable(BottomNavItem.Favorites.route) { /* TODO */ }
             composable(BottomNavItem.ChatBot.route) { /* TODO */ }
             composable (
                 BottomNavItem.Track.route,
@@ -325,7 +325,7 @@ fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Search,
-        BottomNavItem.Playlist,
+        BottomNavItem.Favorites,
         BottomNavItem.ChatBot
     )
 
