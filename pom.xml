@@ -81,7 +81,6 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.6.3</version>
                 <configuration>
-                    <aggregate>true</aggregate>
                     <failOnError>false</failOnError>
                     <doclint>none</doclint>
                     <encoding>${project.build.sourceEncoding}</encoding>

@@ -9,8 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -18,7 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -40,27 +37,25 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     if (auth != null && auth.startsWith("Bearer ")) {
       String jwt = auth.substring(7);
       try {
-        Claims claims = jwtUtil.parseClaims(jwt); // verifies signature
-        @SuppressWarnings("unchecked")
-        List<String> roles = claims.get("authorities", List.class);
+        Claims claims = jwtUtil.parseClaims(jwt);
 
-        List<GrantedAuthority> authorities = roles == null ? List.of()
-                : roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         String email = claims.getSubject();
-        log.info("Receive token contain email: {}", email);
-
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (email != null && !email.isBlank()) {
+          log.info("Receive token contain email: {}", email);
+          UsernamePasswordAuthenticationToken authentication =
+                  new UsernamePasswordAuthenticationToken(email, null, List.of()); // no roles
+          authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+          log.warn("JWT subject (email) is missing or blank");
+          SecurityContextHolder.clearContext();
+        }
 
       } catch (JwtException | IllegalArgumentException e) {
-        // Invalid/expired token → clear context; let entry point handle 401
+        log.warn("JWT rejected: {}", e.getMessage());
         SecurityContextHolder.clearContext();
       }
     }
     chain.doFilter(request, response);
   }
 }
-
