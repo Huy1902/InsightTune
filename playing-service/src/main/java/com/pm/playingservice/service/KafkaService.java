@@ -21,7 +21,7 @@ import java.time.ZoneId;
 public class KafkaService {
   private final KafkaTemplate<String, byte[]> kafkaTemplate;
 
-  public void sendCreatedTrack(@Valid PlayTrackDto playTrackDto) {
+  public void sendPlayTrack(@Valid PlayTrackDto playTrackDto) {
     LocalDateTime ldt = playTrackDto.playedAt();
     Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
 

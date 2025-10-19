@@ -18,16 +18,15 @@ public class SecurityConfig {
   SecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwt) throws Exception {
     return http
             .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))   // ✅ no sessions/cookies
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.GET, "/user_state").authenticated()
                     .requestMatchers(HttpMethod.POST, "/user_state").authenticated()
-                    .requestMatchers(HttpMethod.POST, "/play")
-                    .hasAnyRole("USER", "ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/play").authenticated()
                     .anyRequest().permitAll())
             .exceptionHandling(ex -> ex
                     .authenticationEntryPoint((req, res, e) ->
-                            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))      // ✅ 401 on missing/invalid JWT
+                            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
             .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class)
             .build();
   }

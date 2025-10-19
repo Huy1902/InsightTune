@@ -32,7 +32,7 @@ public class PlayingController {
       imageUrl = awsUrlService.getUrl(req.coverImageKey());
     }
 
-    kafkaService.sendCreatedTrack(new PlayTrackDto(auth.getName(), req.storageKey(), LocalDateTime.now()));
+    kafkaService.sendPlayTrack(new PlayTrackDto(auth.getName(), req.storageKey(), LocalDateTime.now()));
 
     return ResponseEntity.ok().body(new PlayResponseDto(trackUrl, imageUrl));
   }

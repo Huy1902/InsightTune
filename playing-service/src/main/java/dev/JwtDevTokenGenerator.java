@@ -22,7 +22,7 @@ public class JwtDevTokenGenerator {
             .setSubject("bob@example.com")
             .claim("authorities", List.of("ROLE_USER"))
             .setIssuedAt(new Date())
-            .setExpiration(Date.from(Instant.now().plusSeconds(3600)))
+            .setExpiration(Date.from(Instant.now().plusSeconds(60 * 60 * 24 * 30)))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
 
