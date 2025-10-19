@@ -4,6 +4,7 @@ import androidx.annotation.StringRes // Thêm import này
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Search
@@ -18,7 +19,7 @@ sealed class BottomNavItem(val route: String, @StringRes val labelResId: Int? = 
     )
 
     object Search : BottomNavItem("search", R.string.search, Icons.Default.Search)
-    object Playlist : BottomNavItem("playlist", R.string.playlist, Icons.Default.LibraryMusic)
+    object Favorites : BottomNavItem("favorites", R.string.playlist, Icons.Default.Favorite)
     object ChatBot : BottomNavItem("chatbot", R.string.chat_bot, Icons.Default.Chat)
     object Profile : BottomNavItem("profile", R.string.profile, Icons.Default.AccountCircle)
 

@@ -96,6 +96,15 @@ object ApiClient {
             .create(HistoryApi::class.java)
     }
 
+    val favoriteApi: FavoriteApi by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.FAVORITE_SERVICE_BASE_URL)
+            .client(mainClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(FavoriteApi::class.java)
+    }
+
     fun init(prefs: AppPreferences) {
         this.prefs = prefs
     }

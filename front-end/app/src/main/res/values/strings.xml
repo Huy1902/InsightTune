@@ -75,5 +75,7 @@
     <string name="log_in_error">Wrong email or password.</string>
     <string name="register_successfully">Account created successfully!</string>
     <string name="register_failed">Registration failed.</string>
+    <string name="favorite_songs">Your favorite songs</string>
+    <string name="no_favorite_songs">You have no favorite songs yet.</string>
 
 </resources>
