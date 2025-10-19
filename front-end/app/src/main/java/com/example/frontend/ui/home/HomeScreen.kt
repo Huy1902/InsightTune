@@ -55,6 +55,7 @@ import androidx.navigation.navArgument
 import com.example.frontend.R
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.data.remote.ApiClient
+import com.example.frontend.data.remote.HistoryRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.ui.AppGraph
 import com.example.frontend.ui.NavRoutes
@@ -109,7 +110,8 @@ fun HomeScreen(
             composable(BottomNavItem.Search.route) {
                 val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
                 val prefs = AppPreferences(LocalContext.current)
-                val searchViewModelFactory = SearchViewModelFactory(trackRepository, prefs)
+                val historyRepository = HistoryRepositoryImpl(ApiClient.historyApi, prefs)
+                val searchViewModelFactory = SearchViewModelFactory(trackRepository, historyRepository, prefs)
 
                 val vm: SearchViewModel = viewModel(factory = searchViewModelFactory)
 
@@ -232,7 +234,8 @@ fun HomeScreenContent(
         Text(
             stringResource(R.string.recently_played),
             color = MaterialTheme.colorScheme.onBackground,
-            style = AppTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            style = AppTheme.typography.bodyLarge,
             modifier = Modifier
                 .padding(start = 16.dp)
         )
@@ -263,7 +266,6 @@ fun HomeScreenContent(
                         viewModel = songCardVm,
                         songName = track.title,
                         artistName = artistString,
-                        // Truyền các key cần thiết cho navigation
                         urlKey = track.storageKey,
                         imageKey = track.coverImageKey ?: "",
                         navController = bottomNavController
@@ -273,7 +275,7 @@ fun HomeScreenContent(
         }
         Text(
             stringResource(R.string.editor_picks),
-            style = AppTheme.typography.titleMedium,
+            style = AppTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier

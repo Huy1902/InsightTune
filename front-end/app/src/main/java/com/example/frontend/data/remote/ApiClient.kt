@@ -87,6 +87,15 @@ object ApiClient {
             .create(PlayingApi::class.java)
     }
 
+    val historyApi: HistoryApi by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.HISTORY_SERVICE_BASE_URL)
+            .client(mainClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(HistoryApi::class.java)
+    }
+
     fun init(prefs: AppPreferences) {
         this.prefs = prefs
     }
