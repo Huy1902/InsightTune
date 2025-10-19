@@ -15,6 +15,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/tracks")
@@ -50,5 +51,10 @@ public class TrackController {
   public ResponseEntity<List<TrackResponseDto>> getNextSong(@RequestBody NextSongRequestDto nextSongRequestDto) {
     List<TrackResponseDto> tracks = trackService.getNextSong(nextSongRequestDto);
     return ResponseEntity.ok().body(tracks);
+  }
+
+  @PostMapping("/by-ids")
+  public ResponseEntity<List<TrackResponseDto>> getAllTracksById(@RequestBody Set<UUID> ids) {
+      return ResponseEntity.ok().body(trackService.getAllTrackByIds(ids));
   }
 }

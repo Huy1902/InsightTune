@@ -46,4 +46,6 @@ public interface TrackRepository extends JpaRepository<Track, UUID> {
     ORDER BY FUNCTION('RAND')
     """)
   List<Track> findRandomTracks(Pageable pageable);
+
+  List<Track> findTracksByIdIn(Set<UUID> ids);
 }
