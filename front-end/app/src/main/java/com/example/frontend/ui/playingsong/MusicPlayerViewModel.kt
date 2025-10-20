@@ -1,14 +1,22 @@
 package com.example.frontend.ui.playingsong
 
 import android.R
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.annotation.OptIn
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.data.models.song.PlayingResponse
 import com.example.frontend.data.remote.ApiClient
@@ -18,9 +26,11 @@ import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.domain.repositories.FavoriteRepository
 import com.example.frontend.domain.repositories.PlayingRepository
 import com.example.frontend.domain.repositories.TrackRepository
+import com.example.frontend.service.MusicService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import retrofit2.http.Url
@@ -35,7 +45,8 @@ data class PlayerState(
     val isFavorite: Boolean = false
 )
 
-class MusicPlayerViewModel (
+class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class) constructor
+    (
     private val trackId: String,
     private val favoriteRepo: FavoriteRepository,
     private val playingRepo: PlayingRepository,
@@ -48,6 +59,13 @@ class MusicPlayerViewModel (
 
     private val tracksRepo : TrackRepository = TrackRepositoryImpl(ApiClient.trackApi)
     private val _playerState = MutableStateFlow(PlayerState())
+
+    private var controller: MediaController? = null
+
+
+    private var currentSongUrl: String = ""
+
+    private val appContext = context.applicationContext
 
     val playerState = _playerState.asStateFlow()
 
@@ -63,22 +81,63 @@ class MusicPlayerViewModel (
     val exoPlayer = ExoPlayer.Builder(context).build()
 
     init {
-        exoPlayer.addListener(listener)
-        loadPlaying()
-        loadCoverImage()
-     //   checkIfFavorite()
         viewModelScope.launch {
+            setupMediaController()
+            loadPlaying()
+            loadCoverImage()
+            startProgressUpdater()
+        }
+    }
 
+
+    @OptIn(UnstableApi::class)
+    private fun startMusicService(context: Context, songUrl: String?) {
+        if (songUrl.isNullOrEmpty()) return
+
+        val intent = Intent(context, MusicService::class.java).apply {
+            putExtra("song_url", songUrl)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
+        }
+    }
+
+    @OptIn(UnstableApi::class)
+    private suspend fun setupMediaController() {
+        try {
+            val sessionToken = SessionToken(appContext, ComponentName(appContext, MusicService::class.java))
+            controller = MediaController.Builder(appContext, sessionToken).buildAsync().await()
+
+            controller?.addListener(object : Player.Listener {
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    _playerState.value = _playerState.value.copy(isPlaying = isPlaying)
+                }
+
+                override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+                    _playerState.value = _playerState.value.copy(mediaMetadata = mediaMetadata)
+                }
+            })
+        } catch (e: Exception) {
+            Log.e("MusicPlayerVM", "Failed to create MediaController: ${e.message}")
+        }
+    }
+
+    private fun startProgressUpdater() {
+        viewModelScope.launch {
             while (isActive) {
-
-                _playerState.value = _playerState.value.copy(
-                    currentPosition = exoPlayer.currentPosition,
-                    totalDuration = exoPlayer.duration.coerceAtLeast(0L)
-                )
+                controller?.let {
+                    _playerState.value = _playerState.value.copy(
+                        currentPosition = it.currentPosition,
+                        totalDuration = if (it.duration > 0) it.duration else 0L
+                    )
+                }
                 delay(500)
             }
         }
     }
+
 
     private fun checkIfFavorite() {
         viewModelScope.launch {
@@ -91,19 +150,26 @@ class MusicPlayerViewModel (
             }
         }
     }
-    fun loadPlaying() {
+    private fun loadPlaying() {
         if (urlKey.isBlank()) return
 
         viewModelScope.launch {
-            val response = playingRepo.getUrlTrack(urlKey, imageKey)
+            try {
+                val response = playingRepo.getUrlTrack(urlKey, imageKey)
+                if (response.trackUrl.isNotEmpty()) {
+                    currentSongUrl = response.trackUrl
+                    Log.d("MusicDebug", "Track URL: ${response.trackUrl}")
 
-            if (response.trackUrl.isNotEmpty()) {
-                val mediaItem = MediaItem.fromUri(response.trackUrl)
-                exoPlayer.setMediaItem(mediaItem)
-                exoPlayer.prepare()
+                    // Gửi sang MusicService để phát
+                    startMusicService(appContext, currentSongUrl!!)
+                }
+            } catch (e: Exception) {
+                Log.e("MusicPlayerVM", "Error loading track URL: ${e.message}")
             }
         }
     }
+
+
 
     private fun loadCoverImage() {
         if (imageKey.isBlank() || imageKey == "no_image") return
@@ -129,10 +195,10 @@ class MusicPlayerViewModel (
         return artist
     }
     fun onPlayPauseClick() {
-        if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play()
-        Log.d("PlayerDebug", "Nút Play/Pause đã được ấn")
+        controller?.let {
+            if (it.isPlaying) it.pause() else it.play()
+        }
     }
-
     fun onPlayNextSong() {
         exoPlayer.seekToNext()
         exoPlayer.play()

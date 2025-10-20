@@ -43,9 +43,9 @@ android {
 dependencies {
 // ExoPlayer for audio playback
     implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Hoặc phiên bản mới hơn
-    implementation("androidx.media3:media3-exoplayer:1.3.1")
-    implementation("androidx.media3:media3-ui:1.3.1")
-    implementation("androidx.media3:media3-session:1.3.1")
+    implementation("androidx.media3:media3-exoplayer:1.4.1")
+    implementation("androidx.media3:media3-session:1.4.1")
+    implementation("androidx.media3:media3-ui:1.4.1")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
     implementation("androidx.media3:media3-exoplayer:1.4.1")
@@ -60,8 +60,10 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation("androidx.navigation:navigation-compose:2.8.3")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.media:media:1.7.0")
     // Accompanist Navigation Animation
     implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.7.3")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")

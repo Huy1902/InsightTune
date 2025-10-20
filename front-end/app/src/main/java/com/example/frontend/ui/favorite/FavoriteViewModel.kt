@@ -44,4 +44,11 @@ class FavoriteViewModel(
             _isLoading.value = false
         }
     }
+
+    fun deleteFavorite(trackId: String) {
+        viewModelScope.launch {
+            favoriteRepository.deleteFavorite(trackId)
+            loadFavorites()
+        }
+    }
 }

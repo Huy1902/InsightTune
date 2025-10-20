@@ -124,7 +124,7 @@ fun HorizontalSongCard(
             Text(
                 text = songName,
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

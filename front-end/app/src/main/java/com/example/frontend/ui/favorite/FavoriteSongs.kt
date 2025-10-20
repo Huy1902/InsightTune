@@ -36,18 +36,18 @@ fun FavoriteScreen(
     }
 
     FavoriteScreenContent(
+        vm,
         tracks = tracks,
         isLoading = isLoading,
-        onRemoveFavorite = { TODO() },
         navController = navController
     )
 }
 
 @Composable
 fun FavoriteScreenContent(
+    vm: FavoriteViewModel,
     tracks: List<TrackUiModel>,
     isLoading: Boolean,
-    onRemoveFavorite: (String) -> Unit,
     navController: NavController
 ) {
     Column(
@@ -69,7 +69,11 @@ fun FavoriteScreenContent(
             }
         } else if (tracks.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(stringResource(R.string.no_favorite_songs))
+                Text(
+                    stringResource(R.string.no_favorite_songs),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                    )
             }
         } else {
             LazyColumn(
@@ -79,7 +83,7 @@ fun FavoriteScreenContent(
                 items(tracks) { track ->
                     FavoriteSongItem(
                         trackModel = track,
-                        onRemoveClick = { },
+                        onRemoveClick = { vm.deleteFavorite(track.trackInfo.id) },
                         navController = navController
                     )
                 }
@@ -97,7 +101,8 @@ private fun FavoriteSongItem(
     Row(
         modifier = Modifier
             .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         val track = trackModel.trackInfo
         val artistString = track.artists?.joinToString(", ") ?: "Unknown"
@@ -133,66 +138,3 @@ private fun FavoriteSongItem(
     }
 }
 
-@Preview(name = "Content Loaded", showSystemUi = true)
-@Preview(
-    name = "Content Loaded (Dark)",
-    showSystemUi = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-fun FavoriteScreenPreview_Content() {
-    val fakeTracks = listOf(
-        GetTracksResponse(
-            "1",
-            "Shape of You",
-            listOf("Ed Sheeran"),
-            "cover1",
-            "storage1",
-            12,
-            "abcdde"
-        ),
-        GetTracksResponse(
-            "2",
-            "Blinding Lights",
-            listOf("The Weeknd"),
-            "cover2",
-            "storage2",
-            456,
-            "abcdde"
-        )
-    )
-//    AppTheme {
-//        FavoriteScreenContent(
-//            tracks = fakeTracks,
-//            isLoading = false,
-//            onRemoveFavorite = {},
-//            onSongClick = {}
-//        )
-//    }
-}
-
-@Preview(name = "Empty State", showSystemUi = true)
-@Composable
-fun FavoriteScreenPreview_Empty() {
-    AppTheme {
-        FavoriteScreenContent(
-            tracks = emptyList(),
-            isLoading = false,
-            onRemoveFavorite = {},
-            navController = NavController(LocalContext.current)
-        )
-    }
-}
-
-@Preview(name = "Loading State", showSystemUi = true)
-@Composable
-fun FavoriteScreenPreview_Loading() {
-    AppTheme {
-        FavoriteScreenContent(
-            tracks = emptyList(),
-            isLoading = true,
-            onRemoveFavorite = {},
-            navController = NavController(LocalContext.current)
-        )
-    }
-}
