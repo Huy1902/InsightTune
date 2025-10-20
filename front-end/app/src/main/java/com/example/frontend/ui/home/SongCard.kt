@@ -32,15 +32,12 @@ enum class SongCardLayout {
 }
 @Composable
 fun SongCard(
-    viewModel: SongCardViewModel,
     songName: String,
     artistName: String,
-    urlKey: String,      // Key cho URL nhạc
-    imageKey: String,    // Key cho URL ảnh
-    modifier: Modifier = Modifier,
-    navController: NavController
+    coverImageUrl: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val uiState by viewModel.uiState.collectAsState()
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2C)),
@@ -48,15 +45,8 @@ fun SongCard(
             .width(160.dp)
             .padding(8.dp)
             .clickable(onClick = {
-                val encodedUrlKey = URLEncoder.encode(urlKey, StandardCharsets.UTF_8.toString())
-                val encodedSongName = URLEncoder.encode(songName, StandardCharsets.UTF_8.toString())
-                val encodedArtistName = URLEncoder.encode(artistName, StandardCharsets.UTF_8.toString())
-                val encodedImageKey = URLEncoder.encode(imageKey, StandardCharsets.UTF_8.toString())
-
-                // Route này khớp với định nghĩa trong BottomNavItem.kt
-                val route = "track/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
-                navController.navigate(route)
-                })
+                onClick()
+            })
     ) {
         Column(
             modifier = Modifier
@@ -66,7 +56,7 @@ fun SongCard(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(uiState.coverImageUrl ?: R.drawable.spotube) // Hiển thị ảnh mặc định khi chưa load xong
+                    .data(coverImageUrl ?: R.drawable.spotube)
                     .crossfade(true)
                     .build(),
                 contentDescription = "Cover of $songName",
@@ -99,20 +89,24 @@ fun SongCard(
 
 @Composable
 fun HorizontalSongCard(
-    imageRes: String?,
     songName: String,
     artistName: String,
+    coverImageUrl: String?,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = AppTheme.spacing().S),
+            .padding(vertical = AppTheme.spacing().S)
+            .clickable(onClick = {
+                onClick()
+            }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(imageRes ?: R.drawable.spotube)
+                .data(coverImageUrl ?: R.drawable.spotube)
                 .crossfade(true)
                 .build(),
             contentDescription = "Cover of $songName",

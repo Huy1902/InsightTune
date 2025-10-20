@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.frontend.R
 import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.data.models.song.SearchHistoryResponse
@@ -27,10 +28,13 @@ import com.example.frontend.ui.home.HorizontalSongCard
 import com.example.frontend.ui.home.SongCard
 import com.example.frontend.ui.home.SongCardLayout
 import com.example.frontend.ui.theme.AppTheme
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun SearchScreen(
     vm: SearchViewModel,
+    navController: NavController,
     onCancel: () -> Unit
 ) {
     val query by vm.searchQuery.collectAsState()
@@ -48,6 +52,7 @@ fun SearchScreen(
             vm.onQueryChange(keyword)
             vm.loadRecentSearches(10)
         },
+        navController = navController,
         onCancel = onCancel
     )
 }
@@ -57,10 +62,11 @@ fun SearchScreen(
 fun SearchScreenContent(
     query: String,
     onQueryChange: (String) -> Unit,
-    searchResults: List<GetTracksResponse>,
+    searchResults: List<TrackUiModel>,
     isLoading: Boolean,
     recentSearches: List<SearchHistoryResponse>,
     onSearch: (String) -> Unit,
+    navController: NavController,
     onCancel: () -> Unit
 ) {
 
@@ -113,13 +119,23 @@ fun SearchScreenContent(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(AppTheme.spacing().S)
                 ) {
-                    items(searchResults) { track ->
-                        val artistDisplayString =
-                            track.artists?.joinToString(", ") ?: "Unknown"
+                    items(searchResults) { trackModel ->
+                        val track = trackModel.trackInfo
+                        val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+
                         HorizontalSongCard(
-                            imageRes = track.coverImageKey,
                             songName = track.title,
-                            artistName = artistDisplayString,
+                            artistName = artistString,
+                            coverImageUrl = trackModel.coverImageUrl,
+                            onClick = {
+                                val encodedUrlKey = URLEncoder.encode(track.storageKey, StandardCharsets.UTF_8.toString())
+                                val encodedSongName = URLEncoder.encode(track.title, StandardCharsets.UTF_8.toString())
+                                val encodedArtistName = URLEncoder.encode(artistString, StandardCharsets.UTF_8.toString())
+                                val encodedImageKey = URLEncoder.encode(track.coverImageKey ?: "no_image", StandardCharsets.UTF_8.toString())
+
+                                val route = "track/${track.id}/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
+                                navController.navigate(route)
+                            }
                         )
                     }
                 }

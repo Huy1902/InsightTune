@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,6 +47,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
+import com.example.frontend.R
 import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.TrackRepositoryImpl
@@ -59,14 +61,6 @@ fun MusicPlayer(
     onBack: () -> Unit
 ) {
 
-    val gradient = Brush.verticalGradient(
-        colorStops = arrayOf(
-            0.0f to Color(0xFF962419),
-            0.45f to Color(0xFF661710),
-            1f to Color(0xFF430E09)
-        )
-    )
-
     val state by viewModel.playerState.collectAsState()
     val currentTrack = state.currentTrack
 //    if (currentTrack != null) {
@@ -78,13 +72,12 @@ fun MusicPlayer(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = gradient)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp, 0.dp)
-                .systemBarsPadding(),
+                .padding(10.dp, 0.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row (modifier = Modifier
@@ -102,22 +95,22 @@ fun MusicPlayer(
                         .clickable {
                             onBack()
                         },
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = "1 (Remastered)",
+                    text = "SpoTube",
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 8.dp),
                     textAlign = TextAlign.Center,
-                    fontSize = 18.sp,
-                    color = Color.White
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Icon(
                     imageVector = Icons.Default.MoreHoriz,
                     contentDescription = "MoreOption",
                     modifier = Modifier.padding(end = 16.dp),
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
             Box (
@@ -128,7 +121,7 @@ fun MusicPlayer(
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage (
-                    model = viewModel.getImage(),
+                    model = state.coverImageUrl ?: R.drawable.spotube,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -149,12 +142,12 @@ fun MusicPlayer(
                     text = viewModel.getTitle(),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = viewModel.getArtist(),
                     modifier = Modifier.padding(top = 4.dp),
-                    color = Color.LightGray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 16.sp
                 )
             }
@@ -177,7 +170,6 @@ fun MusicPlayer(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                var isFavorite: Boolean by remember { mutableStateOf(false) }
                 IconButton(
 //                    modifier = Modifier.fillMaxHeight(0.3f),
                     modifier = Modifier.size(28.dp),
@@ -187,7 +179,7 @@ fun MusicPlayer(
                         imageVector = Icons.Default.Shuffle,
                         modifier = Modifier.fillMaxSize(),
                         contentDescription = "Shuffle",
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 IconButton(
@@ -199,11 +191,10 @@ fun MusicPlayer(
                         imageVector = Icons.Default.SkipPrevious,
                         modifier = Modifier.fillMaxSize(),
                         contentDescription = "Previous Song",
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 IconButton (
-//                    modifier = Modifier.fillMaxHeight(0.8f),
                     onClick = {viewModel.onPlayPauseClick() },
                     modifier = Modifier.size(72.dp)
                     ) {
@@ -211,7 +202,7 @@ fun MusicPlayer(
                         imageVector = if (state.isPlaying) Icons.Default.PauseCircle else Icons.Default.PlayCircle,
                         modifier = Modifier.fillMaxSize(),
                         contentDescription = "Play/Pause",
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 IconButton(
@@ -223,21 +214,21 @@ fun MusicPlayer(
                         imageVector = Icons.Default.SkipNext,
                         modifier = Modifier.fillMaxSize(),
                         contentDescription = "Next Song",
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 IconButton(
 //                    modifier = Modifier.fillMaxHeight(0.3f),
                     modifier = Modifier.size(28.dp),
                     onClick = {
-                        isFavorite = !isFavorite
+                        viewModel.onToggleFavorite()
                     }
                 ) {
                     Icon(
-                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        imageVector = if (state.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         modifier = Modifier.fillMaxSize(),
                         contentDescription = "Like",
-                        tint = Color.White
+                        tint = if (state.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
                     )
                 }
             }

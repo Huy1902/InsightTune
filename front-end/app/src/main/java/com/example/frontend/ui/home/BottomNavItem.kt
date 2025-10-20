@@ -23,5 +23,5 @@ sealed class BottomNavItem(val route: String, @StringRes val labelResId: Int? = 
     object ChatBot : BottomNavItem("chatbot", R.string.chat_bot, Icons.Default.Chat)
     object Profile : BottomNavItem("profile", R.string.profile, Icons.Default.AccountCircle)
 
-    object Track : BottomNavItem("track/{urlKey}/{title}/{artist}/{imageKey}")
+    object Track : BottomNavItem("track/{trackId}/{urlKey}/{title}/{artist}/{imageKey}")
 }

@@ -98,12 +98,12 @@ private fun FavoriteSongItem(
             .clickable(onClick = onSongClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        HorizontalSongCard(
-            imageRes = track.coverImageKey,
-            songName = track.title,
-            artistName = track.artists?.joinToString(", ") ?: "Unknown Artist",
-            modifier = Modifier.weight(1f)
-        )
+//        HorizontalSongCard(
+//            imageRes = track.coverImageKey,
+//            songName = track.title,
+//            artistName = track.artists?.joinToString(", ") ?: "Unknown Artist",
+//            modifier = Modifier.weight(1f)
+//        )
         IconButton(onClick = onRemoveClick) {
             Icon(
                 imageVector = Icons.Default.Favorite,

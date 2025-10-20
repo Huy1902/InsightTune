@@ -55,7 +55,9 @@ import androidx.navigation.navArgument
 import com.example.frontend.R
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.data.remote.ApiClient
+import com.example.frontend.data.remote.FavoriteRepositoryImpl
 import com.example.frontend.data.remote.HistoryRepositoryImpl
+import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.ui.AppGraph
 import com.example.frontend.ui.NavRoutes
@@ -70,6 +72,9 @@ import com.example.frontend.ui.search.SearchViewModel
 import com.example.frontend.ui.search.SearchViewModelFactory
 import com.example.frontend.ui.theme.AppTheme
 import com.example.frontend.ui.theme.ThemeSetting
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 
 @Composable
@@ -117,6 +122,7 @@ fun HomeScreen(
 
                 SearchScreen(
                     vm = vm,
+                    navController = bottomNavController,
                     onCancel = { bottomNavController.popBackStack() }
                 )
             }
@@ -130,16 +136,34 @@ fun HomeScreen(
                     navArgument("artist") {type = NavType.StringType},
                     navArgument("imageKey") {type = NavType.StringType},
                 )
-            ) {
-                    backStackEntry  ->
+            ) { backStackEntry  ->
                 val context = LocalContext.current
-                val url = backStackEntry.arguments?.getString("urlKey") ?: ""
-                val title = backStackEntry.arguments?.getString("title") ?: ""
-                val artist = backStackEntry.arguments?.getString("artist") ?: ""
-                val imageUrl = backStackEntry.arguments?.getString("imageKey") ?: ""
+                val trackId = backStackEntry.arguments?.getString("trackId") ?: ""
+
+                val encodedUrl = backStackEntry.arguments?.getString("urlKey") ?: ""
+                val encodedTitle = backStackEntry.arguments?.getString("title") ?: ""
+                val encodedArtist = backStackEntry.arguments?.getString("artist") ?: ""
+                val encodedImageUrl = backStackEntry.arguments?.getString("imageKey") ?: ""
+
+                val url = URLDecoder.decode(encodedUrl, StandardCharsets.UTF_8.toString())
+                val title = URLDecoder.decode(encodedTitle, StandardCharsets.UTF_8.toString())
+                val artist = URLDecoder.decode(encodedArtist, StandardCharsets.UTF_8.toString())
+                val imageUrl = URLDecoder.decode(encodedImageUrl, StandardCharsets.UTF_8.toString())
+
+                val favoriteRepo = FavoriteRepositoryImpl(ApiClient.favoriteApi)
+                val playingRepo = PlayingRepositoryImpl(ApiClient.playingApi)
 
                 val vm: MusicPlayerViewModel = viewModel(
-                    factory = MusicPlayerViewModelFactory(url, title, artist, imageUrl, context)
+                    factory = MusicPlayerViewModelFactory(
+                        trackId = trackId,
+                        favoriteRepo = favoriteRepo,
+                        playingRepo = playingRepo,
+                        urlKey = url,
+                        title = title,
+                        artist = artist,
+                        imageKey = imageUrl,
+                        context = context
+                    )
                 )
                 MusicPlayer(
                     viewModel = vm,
@@ -176,6 +200,7 @@ fun HomeScreenContent(
     bottomNavController: NavController
 ) {
     val tracks by vm.tracks.collectAsState()
+    val uiTracks by vm.uiTracks.collectAsState()
     val isLoading by vm.isLoading.collectAsState()
     LaunchedEffect(Unit) {
         vm.loadTracks(limit = 8)
@@ -253,22 +278,23 @@ fun HomeScreenContent(
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-                items(tracks) { track ->
-                    val songCardVm: SongCardViewModel = viewModel(
-                        factory = SongCardViewModelFactory(
-                            storageKey = track.storageKey,
-                            coverImageKey = track.coverImageKey
-                        )
-                    )
-                    val artistString = track.artists?.joinToString(", ") ?: "Unknown artist"
+                items(uiTracks) { trackUiModel ->
+                    val track = trackUiModel.trackInfo
+                    val artistString = track.artists?.joinToString(", ") ?: "Unknown"
 
                     SongCard(
-                        viewModel = songCardVm,
                         songName = track.title,
                         artistName = artistString,
-                        urlKey = track.storageKey,
-                        imageKey = track.coverImageKey ?: "",
-                        navController = bottomNavController
+                        coverImageUrl = trackUiModel.coverImageUrl,
+                        onClick = {
+                            val encodedUrlKey = URLEncoder.encode(track.storageKey, StandardCharsets.UTF_8.toString())
+                            val encodedSongName = URLEncoder.encode(track.title, StandardCharsets.UTF_8.toString())
+                            val encodedArtistName = URLEncoder.encode(artistString, StandardCharsets.UTF_8.toString())
+                            val encodedImageKey = URLEncoder.encode(track.coverImageKey ?: "no_image", StandardCharsets.UTF_8.toString())
+
+                            val route = "track/${track.id}/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
+                            bottomNavController.navigate(route)
+                        }
                     )
                 }
             }
@@ -297,22 +323,23 @@ fun HomeScreenContent(
                 modifier = Modifier
                     .padding(8.dp)
             ) {
-                items(tracks) { track ->
-                    val songCardVm: SongCardViewModel = viewModel(
-                        factory = SongCardViewModelFactory(
-                            storageKey = track.storageKey,
-                            coverImageKey = track.coverImageKey
-                        )
-                    )
-                    val artistString = track.artists?.joinToString(", ") ?: "Unknown artist"
+                items(uiTracks) { trackUiModel ->
+                    val track = trackUiModel.trackInfo
+                    val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+
                     SongCard(
-                        viewModel = songCardVm,
                         songName = track.title,
                         artistName = artistString,
-                        // Truyền các key cần thiết cho navigation
-                        urlKey = track.storageKey,
-                        imageKey = track.coverImageKey ?: "",
-                        navController = bottomNavController
+                        coverImageUrl = trackUiModel.coverImageUrl,
+                        onClick = {
+                            val encodedUrlKey = URLEncoder.encode(track.storageKey, StandardCharsets.UTF_8.toString())
+                            val encodedSongName = URLEncoder.encode(track.title, StandardCharsets.UTF_8.toString())
+                            val encodedArtistName = URLEncoder.encode(artistString, StandardCharsets.UTF_8.toString())
+                            val encodedImageKey = URLEncoder.encode(track.coverImageKey ?: "no_image", StandardCharsets.UTF_8.toString())
+
+                            val route = "track/${track.id}/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
+                            bottomNavController.navigate(route)
+                        }
                     )
                 }
             }

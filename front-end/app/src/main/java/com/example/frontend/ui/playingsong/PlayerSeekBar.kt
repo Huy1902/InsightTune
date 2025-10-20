@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -46,9 +47,9 @@ fun PlayerSeekBar(
 
         val trackHeight: Dp = 3.dp
         val thumbDiameter: Dp = 16.dp
-        val activeTrackColor: Color = Color.White
+        val activeTrackColor: Color = MaterialTheme.colorScheme.onBackground
         val inactiveTrackColor: Color = Color(0xFF888888)
-        val thumbColor: Color = Color.White
+        val thumbColor: Color = MaterialTheme.colorScheme.onBackground
 
         Slider(
             value = sliderValue,
@@ -118,12 +119,12 @@ fun PlayerSeekBar(
         ) {
             Text(
                 text = formatTime(sliderValue.toLong()),
-                color = Color.White.copy(alpha = 0.7f),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 12.sp
             )
             Text(
                 text = formatTime(playerState.totalDuration),
-                color = Color.White.copy(alpha = 0.7f),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 12.sp
             )
         }

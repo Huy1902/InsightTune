@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// State để chứa dữ liệu cho SongCard
 data class SongCardUiState(
     val coverImageUrl: String? = null,
     val isLoading: Boolean = true
@@ -27,7 +26,6 @@ class SongCardViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        // Gọi API ngay khi ViewModel được tạo
         viewModelScope.launch {
             val response = playingRepo.getUrlTrack(storageKey, coverImageKey)
             _uiState.value = SongCardUiState(
@@ -38,7 +36,6 @@ class SongCardViewModel(
     }
 }
 
-// Factory để tạo SongCardViewModel với tham số
 class SongCardViewModelFactory(
     private val storageKey: String,
     private val coverImageKey: String?
