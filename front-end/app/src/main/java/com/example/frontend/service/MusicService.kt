@@ -3,9 +3,11 @@ package com.example.frontend.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
@@ -28,7 +30,6 @@ class MusicService : MediaSessionService() {
         player = ExoPlayer.Builder(this).build()
         mediaSession = MediaSession.Builder(this, player!!).build()
 
-        // 🔹 Quản lý notification tự động với điều khiển Play/Pause/Next
         playerNotificationManager = PlayerNotificationManager.Builder(
             this,
             NOTIFICATION_ID,
@@ -43,16 +44,33 @@ class MusicService : MediaSessionService() {
             }
     }
 
-    override fun onStartCommand(intent: android.content.Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val songUrl = intent?.getStringExtra("song_url")
+        val songTitle = intent?.getStringExtra("song_title") ?: "Unknown"
+        val songArtist = intent?.getStringExtra("song_artist") ?: "Unknown"
+
         if (!songUrl.isNullOrEmpty()) {
-            val mediaItem = MediaItem.fromUri(songUrl)
-            player?.setMediaItem(mediaItem)
-            player?.prepare()
-            player?.play()
+            val currentMedia = player?.currentMediaItem
+            if (currentMedia == null || currentMedia.mediaId != songUrl) {
+                val metadata = MediaMetadata.Builder()
+                    .setTitle(songTitle)
+                    .setArtist(songArtist)
+                    .build()
+
+                val item = MediaItem.Builder()
+                    .setUri(songUrl)
+                    .setMediaId(songUrl)
+                    .setMediaMetadata(metadata)
+                    .build()
+                player?.setMediaItem(item)
+                player?.prepare()
+            }
+            player?.playWhenReady = true
         }
+
         return super.onStartCommand(intent, flags, startId)
     }
+
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

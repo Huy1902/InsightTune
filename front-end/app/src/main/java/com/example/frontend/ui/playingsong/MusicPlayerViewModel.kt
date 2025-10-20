@@ -78,7 +78,6 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
             _playerState.value = _playerState.value.copy(mediaMetadata = mediaMetadata)
         }
     }
-    val exoPlayer = ExoPlayer.Builder(context).build()
 
     init {
         viewModelScope.launch {
@@ -199,14 +198,23 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
             if (it.isPlaying) it.pause() else it.play()
         }
     }
-    fun onPlayNextSong() {
-        exoPlayer.seekToNext()
-        exoPlayer.play()
+
+    fun seekToPosition(position: Long) {
+        viewModelScope.launch {
+            val ctrl = controller
+            if (ctrl != null && ctrl.duration > 0) {
+                try {
+                    ctrl.seekTo(position)
+                    Log.d("PlayerSeek", "Seek to position: $position")
+                } catch (e: Exception) {
+                    Log.e("PlayerSeek", "Seek failed: ${e.message}")
+                }
+            } else {
+                Log.w("PlayerSeek", "Controller not ready or no media loaded")
+            }
+        }
     }
 
-    fun seekToPosition(position : Long) {
-        exoPlayer.seekTo(position)
-    }
 
     fun onToggleFavorite() {
         viewModelScope.launch {
@@ -224,11 +232,5 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
                 Log.e("MusicPlayerVM", "Failed to toggle favorite", e)
             }
         }
-    }
-
-
-    override fun onCleared() {
-        exoPlayer.removeListener(listener)
-        exoPlayer.release()
     }
 }
