@@ -92,4 +92,13 @@ public class TrackService {
             .distinct()
             .toList();
   }
+
+  public List<TrackResponseDto> getAllTrackByIds(Set<UUID> ids) {
+    List<Track> tracks =  trackRepository.findTracksByIdIn(ids);
+
+    return tracks.stream()
+            .distinct()
+            .map(TrackMapper::toTrackResponseDto)
+            .toList();
+  }
 }

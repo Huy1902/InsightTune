@@ -91,6 +91,14 @@ spring:
                       filters:
                         - StripPrefix=0
 
+                    - id: favorite-service
+                      uri: lb://favorite-service
+                      predicates:
+                        - Path=/favorite/**
+                      filters:
+                        - StripPrefix=0
+
+
 
                     - id: docs-catalog
                       uri: lb://catalog-service
@@ -125,6 +133,12 @@ spring:
                     - id: docs-history
                       uri: lb://history-service
                       predicates: [ Path=/_docs/history ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-favorite
+                      uri: lb://favorite-service
+                      predicates: [ Path=/_docs/favorite ]
                       filters:
                         - SetPath=/v3/api-docs
           default-filters:
@@ -166,3 +180,5 @@ springdoc:
         url: /_docs/auth
       - name: History Service
         url: /_docs/history
+      - name: Favorite Service
+        url: /_docs/favorite
