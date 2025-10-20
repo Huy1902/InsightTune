@@ -71,4 +71,8 @@ public class FavoriteService {
     public void deleteFavorite(String email, UUID id) {
         favoriteRepository.deleteByEmailAndSongId(email, id);
     }
+
+    public boolean checkExist(String email, UUID id) {
+        return favoriteRepository.existsByEmailAndSongId(email, id);
+    }
 }

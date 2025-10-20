@@ -27,7 +27,7 @@ public class FavoriteController {
     }
 
     @PostMapping("/add")
-    @Operation(summary = "need token", description = "need token")
+    @Operation(summary = "Add favorite song", description = "need token")
     public ResponseEntity<FavoriteResponseDto> addFavorite(Authentication authentication
             ,@Valid @RequestBody CreateFavoriteRequestDto createFavoriteRequestDto) {
         String email = authentication.getName();
@@ -36,7 +36,7 @@ public class FavoriteController {
     }
 
     @GetMapping
-    @Operation(summary = "need token", description = "need token")
+    @Operation(summary = "Get all favorite songs", description = "need token")
     public ResponseEntity<List<TrackResponseDto>> getFavorites(Authentication authentication) {
         String email = authentication.getName();
 
@@ -46,11 +46,19 @@ public class FavoriteController {
     }
 
     @PostMapping("/delete")
-    @Operation(summary = "need token", description = "need token")
+    @Operation(summary = "Delete favorite song", description = "need token")
     public ResponseEntity<String> deleteFavorite(Authentication authentication
             ,@Valid @RequestBody DeleteFavoriteRequestDto  deleteFavoriteRequestDto) {
         String email = authentication.getName();
         favoriteService.deleteFavorite(email, deleteFavoriteRequestDto.getSongId());
         return ResponseEntity.ok().body("Successfully deleted favorite");
+    }
+
+    @GetMapping("/check/{id}")
+    @Operation(summary = "Check favorite song in db", description = "need token, songId")
+    public ResponseEntity<Boolean> checkFavorite(Authentication authentication, @PathVariable UUID id) {
+        String email = authentication.getName();
+        boolean check = favoriteService.checkExist(email, id);
+        return ResponseEntity.ok().body(check);
     }
 }

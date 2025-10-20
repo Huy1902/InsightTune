@@ -18,4 +18,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     Set<UUID> findSongIdsByEmail(@Param("email") String email);
 
     void deleteByEmailAndSongId(String email, UUID songId);
+
+    boolean existsByEmailAndSongId(String email, UUID songId);
 }
