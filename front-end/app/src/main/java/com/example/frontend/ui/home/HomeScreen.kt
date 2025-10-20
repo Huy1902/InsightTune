@@ -61,6 +61,9 @@ import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.ui.AppGraph
 import com.example.frontend.ui.NavRoutes
+import com.example.frontend.ui.favorite.FavoriteScreen
+import com.example.frontend.ui.favorite.FavoriteViewModel
+import com.example.frontend.ui.favorite.FavoriteViewModelFactory
 import com.example.frontend.ui.playingsong.MusicPlayer
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import com.example.frontend.ui.playingsong.MusicPlayerViewModelFactory
@@ -126,7 +129,18 @@ fun HomeScreen(
                     onCancel = { bottomNavController.popBackStack() }
                 )
             }
-            composable(BottomNavItem.Favorites.route) { /* TODO */ }
+            composable(BottomNavItem.Favorites.route) {
+                val favoriteRepo = FavoriteRepositoryImpl(ApiClient.favoriteApi)
+                val playingRepo = PlayingRepositoryImpl(ApiClient.playingApi)
+
+                val favoriteViewModelFactory =
+                    FavoriteViewModelFactory(favoriteRepo, playingRepo)
+                val vm: FavoriteViewModel = viewModel(factory = favoriteViewModelFactory)
+                FavoriteScreen(
+                    vm,
+                    bottomNavController
+                )
+            }
             composable(BottomNavItem.ChatBot.route) { /* TODO */ }
             composable (
                 BottomNavItem.Track.route,
@@ -313,7 +327,7 @@ fun HomeScreenContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = AppTheme.color().Primary)
+               // CircularProgressIndicator(color = AppTheme.color().Primary)
             }
         } else {
             LazyVerticalGrid(

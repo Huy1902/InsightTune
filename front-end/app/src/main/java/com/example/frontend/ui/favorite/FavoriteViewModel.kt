@@ -6,7 +6,6 @@ import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.domain.repositories.FavoriteRepository
 import com.example.frontend.domain.repositories.PlayingRepository
 import com.example.frontend.domain.repositories.TrackRepository
-import com.example.frontend.ui.home.TrackUiModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,8 +24,13 @@ class FavoriteViewModel(
 ) : ViewModel() {
     private val _uiTracks = MutableStateFlow<List<TrackUiModel>>(emptyList())
     val uiTracks = _uiTracks.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     fun loadFavorites() {
         viewModelScope.launch {
+            _isLoading.value = true
             val initialTracks = favoriteRepository.getFavorites()
 
             val tracksWithUrls = initialTracks.map { track ->
@@ -37,6 +41,7 @@ class FavoriteViewModel(
             }.awaitAll()
 
             _uiTracks.value = tracksWithUrls
+            _isLoading.value = false
         }
     }
 }

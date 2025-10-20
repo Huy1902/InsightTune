@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -40,7 +41,7 @@ fun SongCard(
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF2C2C2C)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = modifier
             .width(160.dp)
             .padding(8.dp)
@@ -59,6 +60,7 @@ fun SongCard(
                     .data(coverImageUrl ?: R.drawable.spotube)
                     .crossfade(true)
                     .build(),
+                placeholder = painterResource(id = R.drawable.spotube),
                 contentDescription = "Cover of $songName",
                 modifier = Modifier
                     .size(120.dp)
@@ -70,7 +72,7 @@ fun SongCard(
 
             Text(
                 text = songName,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -78,7 +80,7 @@ fun SongCard(
 
             Text(
                 text = artistName,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -97,7 +99,6 @@ fun HorizontalSongCard(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
             .padding(vertical = AppTheme.spacing().S)
             .clickable(onClick = {
                 onClick()
@@ -109,6 +110,7 @@ fun HorizontalSongCard(
                 .data(coverImageUrl ?: R.drawable.spotube)
                 .crossfade(true)
                 .build(),
+            placeholder = painterResource(id = R.drawable.spotube),
             contentDescription = "Cover of $songName",
             modifier = Modifier
                 .size(56.dp)
