@@ -5,6 +5,8 @@ import com.example.frontend.core.AuthInterceptor
 import com.example.frontend.core.Constants
 import com.example.frontend.data.models.user.GoogleResponse
 import com.example.frontend.data.models.user.GoogleResponseResult
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
@@ -13,6 +15,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
 import kotlin.getValue
+import com.google.gson.*
+import java.lang.reflect.Type
+import java.time.Instant
+import java.time.ZoneId
+import java.util.*
 
 object ApiClient {
 
@@ -26,6 +33,24 @@ object ApiClient {
             .addInterceptor(logging)
             .build()
     }
+    private val gson = GsonBuilder()
+        .registerTypeAdapter(Date::class.java, JsonDeserializer<Date> { json, _, _ ->
+            val dateStr = json.asString
+            try {
+                val normalized = if (dateStr.endsWith("Z") || dateStr.contains("+")) {
+                    dateStr
+                } else {
+                    "${dateStr}Z"
+                }
+
+                val sdf = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSX", Locale.getDefault())
+                sdf.timeZone = java.util.TimeZone.getTimeZone("UTC")
+                sdf.parse(normalized)
+            } catch (e: Exception) {
+                null
+            }
+        })
+        .create()
 
     private val refreshClient by lazy {
         val logging = HttpLoggingInterceptor().apply {
@@ -94,6 +119,15 @@ object ApiClient {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(HistoryApi::class.java)
+    }
+
+    val favoriteApi: FavoriteApi by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.FAVORITE_SERVICE_BASE_URL)
+            .client(mainClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+            .create(FavoriteApi::class.java)
     }
 
     fun init(prefs: AppPreferences) {

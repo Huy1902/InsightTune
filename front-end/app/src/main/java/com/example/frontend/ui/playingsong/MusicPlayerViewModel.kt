@@ -12,8 +12,10 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.data.models.song.PlayingResponse
 import com.example.frontend.data.remote.ApiClient
+import com.example.frontend.data.remote.FavoriteRepositoryImpl
 import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
+import com.example.frontend.domain.repositories.FavoriteRepository
 import com.example.frontend.domain.repositories.PlayingRepository
 import com.example.frontend.domain.repositories.TrackRepository
 import kotlinx.coroutines.delay
@@ -28,20 +30,25 @@ data class PlayerState(
     val currentPosition: Long = 0L,
     val totalDuration: Long = 0L,
     val mediaMetadata: MediaMetadata = MediaMetadata.EMPTY,
+    val coverImageUrl: String? = null,
     val currentTrack: GetTracksResponse? = null,
     val isFavorite: Boolean = false
 )
 
 class MusicPlayerViewModel (
+    private val trackId: String,
+    private val favoriteRepo: FavoriteRepository,
+    private val playingRepo: PlayingRepository,
     private val urlKey: String,
     private val title: String,
     private val artist: String,
     private val imageKey: String,
-    private val context: Context
+    context: Context
 ) : ViewModel() {
 
-    private val playingRepo: PlayingRepository = PlayingRepositoryImpl(ApiClient.playingApi)
+    private val tracksRepo : TrackRepository = TrackRepositoryImpl(ApiClient.trackApi)
     private val _playerState = MutableStateFlow(PlayerState())
+
     val playerState = _playerState.asStateFlow()
 
     private val listener = object : Player.Listener {
@@ -57,6 +64,9 @@ class MusicPlayerViewModel (
 
     init {
         exoPlayer.addListener(listener)
+        loadPlaying()
+        loadCoverImage()
+     //   checkIfFavorite()
         viewModelScope.launch {
 
             while (isActive) {
@@ -68,34 +78,51 @@ class MusicPlayerViewModel (
                 delay(500)
             }
         }
-        loadPlaying()
     }
-   // val urlR = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
 
+    private fun checkIfFavorite() {
+        viewModelScope.launch {
+            try {
+                val favorites = favoriteRepo.getFavorites()
+                val isFav = favorites.any { it.id == trackId }
+                _playerState.value = _playerState.value.copy(isFavorite = isFav)
+            } catch (e: Exception) {
+                Log.e("MusicPlayerVM", "Failed to check favorite status", e)
+            }
+        }
+    }
     fun loadPlaying() {
-        // Kiểm tra key hợp lệ
         if (urlKey.isBlank()) return
 
         viewModelScope.launch {
-            // Gọi API để lấy URL thật
             val response = playingRepo.getUrlTrack(urlKey, imageKey)
 
-            // Chỉ chạy nhạc khi có URL hợp lệ
             if (response.trackUrl.isNotEmpty()) {
                 val mediaItem = MediaItem.fromUri(response.trackUrl)
                 exoPlayer.setMediaItem(mediaItem)
                 exoPlayer.prepare()
-                // exoPlayer.play() // Có thể bạn muốn người dùng tự bấm play
             }
         }
     }
 
-    fun getTitle(): String {
-        return title
+    private fun loadCoverImage() {
+        if (imageKey.isBlank() || imageKey == "no_image") return
+
+        viewModelScope.launch {
+            try {
+                val response = playingRepo.getImage(imageKey)
+                if (response.url.isNotEmpty()) {
+                    _playerState.value = _playerState.value.copy(coverImageUrl = response.url)
+                }
+            } catch (e: Exception) {
+                Log.e("MusicPlayerVM", "Error: ${e.message}")
+            }
+        }
     }
 
-    fun getImage(): String {
-        return ""
+
+    fun getTitle(): String {
+        return title
     }
 
     fun getArtist(): String {
@@ -116,11 +143,23 @@ class MusicPlayerViewModel (
     }
 
     fun onToggleFavorite() {
-        // Logic để thay đổi trạng thái isFavorite trong _playerState
-        val currentState = _playerState.value.isFavorite
-        _playerState.value = _playerState.value.copy(isFavorite = !currentState)
-        // TODO: Gọi repository để lưu trạng thái này vào database/server
+        viewModelScope.launch {
+            val isCurrentlyFavorite = _playerState.value.isFavorite
+            try {
+                if (isCurrentlyFavorite) {
+                    favoriteRepo.deleteFavorite(trackId)
+                    Log.d("FavoriteDebug", "Favorite deleted via API")
+                } else {
+                    favoriteRepo.addFavorite(trackId)
+                    Log.d("FavoriteDebug", "Favorite added via API")
+                }
+                _playerState.value = _playerState.value.copy(isFavorite = !isCurrentlyFavorite)
+            } catch (e: Exception) {
+                Log.e("MusicPlayerVM", "Failed to toggle favorite", e)
+            }
+        }
     }
+
 
     override fun onCleared() {
         exoPlayer.removeListener(listener)
