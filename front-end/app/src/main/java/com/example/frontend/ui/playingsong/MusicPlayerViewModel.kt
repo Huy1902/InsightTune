@@ -84,6 +84,7 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
             setupMediaController()
             loadPlaying()
             loadCoverImage()
+            checkIfFavorite()
             startProgressUpdater()
         }
     }
@@ -95,6 +96,8 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
 
         val intent = Intent(context, MusicService::class.java).apply {
             putExtra("song_url", songUrl)
+            putExtra("song_title", title)
+            putExtra("song_artist", artist)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
@@ -137,18 +140,20 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
         }
     }
 
-
     private fun checkIfFavorite() {
+        if (trackId.isBlank()) return
+
         viewModelScope.launch {
             try {
-                val favorites = favoriteRepo.getFavorites()
-                val isFav = favorites.any { it.id == trackId }
+                val isFav = favoriteRepo.isFavorite(trackId)
                 _playerState.value = _playerState.value.copy(isFavorite = isFav)
             } catch (e: Exception) {
-                Log.e("MusicPlayerVM", "Failed to check favorite status", e)
+                Log.e("MusicPlayerVM", "Không thể kiểm tra trạng thái favorite: ${e.message}", e)
+                _playerState.value = _playerState.value.copy(isFavorite = false)
             }
         }
     }
+
     private fun loadPlaying() {
         if (urlKey.isBlank()) return
 
@@ -159,7 +164,6 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
                     currentSongUrl = response.trackUrl
                     Log.d("MusicDebug", "Track URL: ${response.trackUrl}")
 
-                    // Gửi sang MusicService để phát
                     startMusicService(appContext, currentSongUrl!!)
                 }
             } catch (e: Exception) {

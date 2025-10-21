@@ -8,6 +8,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface FavoriteApi {
     @POST("favorites/delete")
@@ -18,5 +19,8 @@ interface FavoriteApi {
 
     @GET("favorites")
     suspend fun getFavorites() : List<GetTracksResponse>
+
+    @GET("favorites/check/{id}")
+    suspend fun isFavorite(@Path("id") id: String) : Boolean
 
 }

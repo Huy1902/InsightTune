@@ -120,12 +120,12 @@ fun PlayerSeekBar(
             Text(
                 text = formatTime(sliderValue.toLong()),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 12.sp
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = formatTime(playerState.totalDuration),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 12.sp
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }

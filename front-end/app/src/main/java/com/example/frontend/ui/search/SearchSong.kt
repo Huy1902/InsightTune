@@ -151,7 +151,7 @@ fun SearchScreenContent(
         } else {
             Text(
                 stringResource(R.string.recent_search),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold
             )
