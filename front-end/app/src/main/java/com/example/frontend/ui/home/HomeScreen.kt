@@ -64,6 +64,7 @@ import com.example.frontend.ui.NavRoutes
 import com.example.frontend.ui.favorite.FavoriteScreen
 import com.example.frontend.ui.favorite.FavoriteViewModel
 import com.example.frontend.ui.favorite.FavoriteViewModelFactory
+import com.example.frontend.ui.playingsong.MiniPlayerBar
 import com.example.frontend.ui.playingsong.MusicPlayer
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import com.example.frontend.ui.playingsong.MusicPlayerViewModelFactory
@@ -92,7 +93,32 @@ fun HomeScreen(
     Scaffold(
         containerColor = Color.Transparent,
         bottomBar = {
-            BottomNavigationBar(bottomNavController)
+            Column {
+                val context = LocalContext.current
+                val favoriteRepo = FavoriteRepositoryImpl(ApiClient.favoriteApi)
+                val playingRepo = PlayingRepositoryImpl(ApiClient.playingApi)
+
+                val miniPlayerVM: MusicPlayerViewModel = viewModel(
+                    factory = MusicPlayerViewModelFactory(
+                        trackId = "",
+                        favoriteRepo = favoriteRepo,
+                        playingRepo = playingRepo,
+                        urlKey = "",
+                        title = "",
+                        artist = "",
+                        imageKey = "",
+                        context = context
+                    )
+                )
+
+                MiniPlayerBar(
+                    viewModel = miniPlayerVM,
+                    onExpandPlayer = {
+                        bottomNavController.navigate(BottomNavItem.Track.route)
+                    }
+                )
+                BottomNavigationBar(bottomNavController)
+            }
         }
     ) { innerPadding ->
         NavHost(
