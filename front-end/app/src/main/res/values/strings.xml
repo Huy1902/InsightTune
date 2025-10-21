@@ -43,7 +43,7 @@
     <string name="close">Close</string>
     <string name="home">Home</string>
     <string name="search">Search</string>
-    <string name="playlist">Playlist</string>
+    <string name="playlist">Favorites</string>
     <string name="chat_bot">Chat bot</string>
     <string name="language">Language</string>
     <string name="camera">📷 Take a photo</string>

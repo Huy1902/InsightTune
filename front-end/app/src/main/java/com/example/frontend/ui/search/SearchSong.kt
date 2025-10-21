@@ -141,7 +141,11 @@ fun SearchScreenContent(
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(stringResource(R.string.no_result))
+                    Text(
+                        stringResource(R.string.no_result),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 }
             }
         } else {

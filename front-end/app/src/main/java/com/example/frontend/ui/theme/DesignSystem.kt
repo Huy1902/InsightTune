@@ -29,7 +29,7 @@ val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = Montserrat,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
@@ -77,7 +77,7 @@ object AppColor {
     val Primary = Color(0xFF1DB954)
     val Secondary = Color(0xFF191414)
     val Background = Color(0xFFF8F8F8)
-    val Surface = Color(0xFFA9A9A9)
+    val Surface = Color(0xFFC7C6C6)
     val TextPrimary = Color(0xFF000000)
     val TextDarkMode = Color(0xFFF0F0F0)
     val TextSecondary = Color(0xFF666666)
