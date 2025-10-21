@@ -1,6 +1,6 @@
 package com.pm.catalogservice.service;
 
-import com.pm.catalogservice.dto.request.NextSongRequestDto;
+
 import com.pm.catalogservice.dto.response.TrackResponseDto;
 import com.pm.catalogservice.mapper.TrackMapper;
 import com.pm.catalogservice.model.Artist;
@@ -44,9 +44,10 @@ public class TrackService {
             .toList();
   }
 
-  public List<TrackResponseDto> getNextSong(NextSongRequestDto nextSongRequestDto) {
-    UUID albumId = nextSongRequestDto.albumId();
-    UUID currentTrackId = nextSongRequestDto.currentTrackId();
+  public List<TrackResponseDto> getNextSong(UUID currentTrackId) {
+    Track track = trackRepository.findById(currentTrackId).orElseThrow(() -> new RuntimeException("Track not found"));
+    UUID albumId = track.getAlbum().getId();
+    Set<Artist> artists = track.getArtists();
 
     List<Track> nextTracks = new ArrayList<>();
     List<Track> albumTracks = trackRepository.findAllByAlbumOrdered(albumId);
@@ -66,7 +67,7 @@ public class TrackService {
     }
 
     if (nextTracks.size() < 5) {
-      List<Track> artistTracks = trackRepository.findAllByArtistsOrdered(nextSongRequestDto.artists());
+      List<Track> artistTracks = trackRepository.findAllByArtistsOrdered(artists);
 
       // tìm vị trí bài hiện tại trong danh sách nghệ sĩ
       int currentArtistIndex = IntStream.range(0, artistTracks.size())

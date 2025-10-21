@@ -33,13 +33,13 @@ public interface TrackRepository extends JpaRepository<Track, UUID> {
 
   // Lấy tất cả bài có cùng nghệ sĩ (trong set artist)
   @Query("""
-    SELECT DISTINCT t 
-    FROM Track t 
-    JOIN t.artists a 
-    WHERE LOWER(a.name) IN :artistNames 
+    SELECT DISTINCT t
+    FROM Track t
+    JOIN t.artists a
+    WHERE a IN :artists
     ORDER BY t.id
 """)
-  List<Track> findAllByArtistsOrdered(@Param("artistNames") Set<String> artistNames);
+  List<Track> findAllByArtistsOrdered(@Param("artists") Set<Artist> artists);
 
   @Query("""
     SELECT t FROM Track t
