@@ -2,11 +2,13 @@ package com.example.frontend.ui.profile
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.OptIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,13 +63,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.util.UnstableApi
 import coil.compose.AsyncImage
 import com.example.frontend.R
 import com.example.frontend.core.SessionManager
+import com.example.frontend.service.MusicService
 import com.example.frontend.ui.theme.AppTheme
 import com.example.frontend.ui.theme.ThemeSetting
 
 
+@OptIn(UnstableApi::class)
 @Composable
 fun ProfileScreen(
     vm: ProfileViewModel,
@@ -115,6 +120,10 @@ fun ProfileScreen(
         themeSetting = themeSetting,
         onBackClick = onBack,
         onLogoutClick = {
+            val stopIntent = Intent(context, MusicService::class.java).apply {
+                action = MusicService.ACTION_STOP_SERVICE
+            }
+            context.startService(stopIntent)
             vm.clearLocalTokens()
             onNavigateLogin()
         },

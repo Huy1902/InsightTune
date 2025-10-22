@@ -71,8 +71,16 @@ class MusicService : MediaSessionService() {
         startForeground(NOTIFICATION_ID, buildNotification())
     }
 
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+
+        if (intent?.action == ACTION_STOP_SERVICE) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+            player?.stop()
+            return START_NOT_STICKY
+        }
+
         startForeground(NOTIFICATION_ID, buildNotification())
 
         val songUrl = intent?.getStringExtra("song_url")
@@ -104,10 +112,8 @@ class MusicService : MediaSessionService() {
             }
         }
 
-        return super.onStartCommand(intent, flags, startId)
+        return START_NOT_STICKY
     }
-
-
 
     private fun buildNotification(): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
@@ -144,6 +150,7 @@ class MusicService : MediaSessionService() {
         private const val CHANNEL_ID = "music_channel"
         private const val NOTIFICATION_ID = 1
         private var playerInstance: ExoPlayer? = null
+        const val ACTION_STOP_SERVICE = "STOP_MUSIC_SERVICE"
     }
 
     private class DescriptionAdapter(private val context: Context) :
@@ -163,5 +170,18 @@ class MusicService : MediaSessionService() {
             player: androidx.media3.common.Player,
             callback: PlayerNotificationManager.BitmapCallback
         ) = null
+    }
+
+    fun stopMusic() {
+        player?.stop()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        player?.stop()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 }

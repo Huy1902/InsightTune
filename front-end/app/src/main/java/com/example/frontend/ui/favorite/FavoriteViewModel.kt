@@ -48,6 +48,7 @@ class FavoriteViewModel(
     fun deleteFavorite(trackId: String) {
         viewModelScope.launch {
             favoriteRepository.deleteFavorite(trackId)
+            FavoriteEventBus.emitFavoriteChange(trackId)
             loadFavorites()
         }
     }

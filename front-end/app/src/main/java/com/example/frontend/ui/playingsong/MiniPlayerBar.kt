@@ -1,5 +1,6 @@
 package com.example.frontend.ui.playingsong
 
+import android.R
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -30,9 +31,8 @@ fun MiniPlayerBar(
 ) {
     val playerState by viewModel.playerState.collectAsState()
 
-    // Chỉ hiển thị mini player nếu có bài hát đang được tải hoặc phát
     if (playerState.mediaMetadata.title == null) {
-        return // Ẩn thanh mini player nếu không có bài hát
+        return
     }
 
     val currentPos = playerState.currentPosition
@@ -48,7 +48,6 @@ fun MiniPlayerBar(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Ảnh bìa
             Image(
                 painter = rememberAsyncImagePainter(playerState.coverImageUrl ?: ""),
                 contentDescription = "Cover",
@@ -60,29 +59,27 @@ fun MiniPlayerBar(
 
             Spacer(Modifier.width(10.dp))
 
-            // Tên bài hát + nghệ sĩ
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = playerState.mediaMetadata.title?.toString() ?: "Đang phát nhạc",
-                    fontSize = 15.sp,
+                    text = playerState.mediaMetadata.title?.toString() ?: "On Playing",
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 1
                 )
                 Text(
                     text = playerState.mediaMetadata.artist?.toString() ?: "",
-                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray,
                     maxLines = 1
                 )
             }
 
-            // ==================== CÁC NÚT ĐIỀU KHIỂN MỚI ====================
-            // Nút Previous
+
             IconButton(
-                onClick = { /* TODO: viewModel.onPlayPreviousSong() */ },
+                onClick = { viewModel.playPreviousTrack() },
                 modifier = Modifier.size(36.dp)
             ) {
                 Icon(
@@ -92,7 +89,6 @@ fun MiniPlayerBar(
                 )
             }
 
-            // Nút Play/Pause
             IconButton(
                 onClick = { viewModel.onPlayPauseClick() },
                 modifier = Modifier.size(36.dp)
@@ -104,9 +100,8 @@ fun MiniPlayerBar(
                 )
             }
 
-            // Nút Next
             IconButton(
-                onClick = { /* TODO: viewModel.onPlayNextSong() */ },
+                onClick = { viewModel.playNextTrack() },
                 modifier = Modifier.size(36.dp)
             ) {
                 Icon(
@@ -115,10 +110,8 @@ fun MiniPlayerBar(
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
-            // =================================================================
         }
 
-        // Thanh tiến trình
         val activeTrackColor = MaterialTheme.colorScheme.primary
         val inactiveTrackColor = Color.Gray.copy(alpha = 0.4f)
         Canvas(
@@ -150,7 +143,6 @@ fun MiniPlayerBar(
             )
         }
 
-        // ==================== THỜI GIAN HIỆN TẠI / TỔNG ====================
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -159,16 +151,15 @@ fun MiniPlayerBar(
         ) {
             Text(
                 text = formatTime(currentPos),
-                fontSize = 11.sp,
+                style = MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
             Text(
                 text = formatTime(totalDur),
-                fontSize = 11.sp,
+                style = MaterialTheme.typography.bodyLarge,
                 color = Color.Gray
             )
         }
-        // ===================================================================
     }
 }
 

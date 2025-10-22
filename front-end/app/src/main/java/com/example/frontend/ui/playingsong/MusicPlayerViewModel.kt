@@ -20,6 +20,7 @@ import com.example.frontend.domain.repositories.FavoriteRepository
 import com.example.frontend.domain.repositories.PlayingRepository
 import com.example.frontend.domain.repositories.TrackRepository
 import com.example.frontend.service.MusicService
+import com.example.frontend.ui.favorite.FavoriteEventBus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,7 +58,6 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
 
     private val nextTracks: MutableList<NextTracksResponse> = mutableListOf()
 
-//    private val currentTrack = if (trackList.isEmpty()) {null} else { trackList[currentIndex]}
     private var currentIndexSong: Int = -1
 
     private var controller: MediaController? = null
@@ -85,7 +85,6 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
         newImageKey: String
     ) {
         viewModelScope.launch {
-            // Tìm vị trí bài hát được chọn trong danh sách
             val index = nextTracks.indexOfFirst { it.id == newTrackId }
             if (index != -1) {
                 currentIndexSong = index
@@ -93,7 +92,6 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
                 loadPlaying(track)
                 checkIfFavorite(track.id)
             } else {
-                // Nếu không tìm thấy, phát riêng lẻ
                 val single = NextTracksResponse(
                     id = newTrackId,
                     title = newTitle,
@@ -107,12 +105,10 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
                 nextTracks.clear()
                 nextTracks.add(single)
                 loadPlaying(single)
-               // checkIfFavorite(single.id)
             }
         }
     }
 
-    // ✅ Cho phép HomeScreen chỉ định index hiện tại
     fun setCurrentIndex(index: Int) {
         currentIndexSong = index
     }
@@ -123,6 +119,11 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
             setupMediaController()
             if (currentTrack != null) loadPlaying(currentTrack)
             startProgressUpdater()
+            FavoriteEventBus.favoriteChanged.collect { changedTrackId ->
+                if (changedTrackId == trackId) {
+                    checkIfFavorite(trackId)
+                }
+            }
         }
     }
 
@@ -194,6 +195,8 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
             val response = playingRepo.getUrlTrack(track.storageKey, track.coverImageKey)
             if (response.trackUrl.isNotEmpty()) {
                 currentSongUrl = response.trackUrl
+                title = track.title
+                artist = track.artists.joinToString(", ")
                 Log.d("MusicDebug", "Track URL: ${response.trackUrl}")
                 _playerState.value = _playerState.value.copy(
                     mediaMetadata = MediaMetadata.Builder()
@@ -202,7 +205,7 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
                         .build()
                 )
                 loadCoverImage(track.coverImageKey)
-                // Gửi sang MusicService để phát
+                checkIfFavorite(track.id)
                 startMusicService(appContext, currentSongUrl!!)
             }
         } catch (e: Exception) {
@@ -263,25 +266,18 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
 
     fun onToggleFavorite() {
         viewModelScope.launch {
-            val isCurrentlyFavorite = _playerState.value.isFavorite
+            val current = getCurrentTrack() ?: return@launch
+            val isFav = _playerState.value.isFavorite
             try {
-                if (isCurrentlyFavorite) {
-                    if(currentTrack != null) {
-                        favoriteRepo.deleteFavorite(currentTrack.id)
-                    }
-                    Log.d("FavoriteDebug", "Favorite deleted via API")
-                } else {
-                    if (currentTrack != null) {
-                        favoriteRepo.addFavorite(currentTrack.id)
-                    }
-                    Log.d("FavoriteDebug", "Favorite added via API")
-                }
-                _playerState.value = _playerState.value.copy(isFavorite = !isCurrentlyFavorite)
+                if (isFav) favoriteRepo.deleteFavorite(current.id)
+                else favoriteRepo.addFavorite(current.id)
+                _playerState.value = _playerState.value.copy(isFavorite = !isFav)
             } catch (e: Exception) {
                 Log.e("MusicPlayerVM", "Failed to toggle favorite", e)
             }
         }
     }
+
 
     fun playNextTrack() {
         viewModelScope.launch {
