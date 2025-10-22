@@ -100,16 +100,22 @@ fun HomeScreen(
             urlKey = "", title = "", artist = "", imageKey = "", context = context
         )
     )
+    val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val showMiniPlayer =
+        currentRoute != BottomNavItem.Track.route && currentRoute != "track_player_screen"
     Scaffold(
         containerColor = Color.Transparent,
         bottomBar = {
             Column {
-                MiniPlayerBar(
-                    viewModel = playerViewModel,
-                    onExpandPlayer = {
-                        bottomNavController.navigate("track_player_screen")
-                    }
-                )
+                if (showMiniPlayer) {
+                    MiniPlayerBar(
+                        viewModel = playerViewModel,
+                        onExpandPlayer = {
+                            bottomNavController.navigate("track_player_screen")
+                        }
+                    )
+                }
                 BottomNavigationBar(bottomNavController)
             }
         }
@@ -121,7 +127,8 @@ fun HomeScreen(
         ) {
             composable(BottomNavItem.Home.route) {
 
-                val playingVmFactory: PlayingViewModelFactory = PlayingViewModelFactory(LocalContext.current)
+                val playingVmFactory: PlayingViewModelFactory =
+                    PlayingViewModelFactory(LocalContext.current)
                 val playingVm: PlayingViewModel = viewModel(factory = playingVmFactory)
 
                 HomeScreenContent(
@@ -138,7 +145,8 @@ fun HomeScreen(
                 val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
                 val prefs = AppPreferences(LocalContext.current)
                 val historyRepository = HistoryRepositoryImpl(ApiClient.historyApi, prefs)
-                val searchViewModelFactory = SearchViewModelFactory(trackRepository, historyRepository, prefs)
+                val searchViewModelFactory =
+                    SearchViewModelFactory(trackRepository, historyRepository, prefs)
 
                 val vm: SearchViewModel = viewModel(factory = searchViewModelFactory)
 
@@ -158,19 +166,20 @@ fun HomeScreen(
                 val vm: FavoriteViewModel = viewModel(factory = favoriteViewModelFactory)
                 FavoriteScreen(
                     vm,
+                    playerViewModel,
                     bottomNavController
                 )
             }
             composable(BottomNavItem.ChatBot.route) { /* TODO */ }
-            composable (
+            composable(
                 BottomNavItem.Track.route,
                 arguments = listOf(
-                    navArgument("urlKey") {type = NavType.StringType},
-                    navArgument("title") {type = NavType.StringType},
-                    navArgument("artist") {type = NavType.StringType},
-                    navArgument("imageKey") {type = NavType.StringType},
+                    navArgument("urlKey") { type = NavType.StringType },
+                    navArgument("title") { type = NavType.StringType },
+                    navArgument("artist") { type = NavType.StringType },
+                    navArgument("imageKey") { type = NavType.StringType },
                 )
-            ) { backStackEntry  ->
+            ) { backStackEntry ->
                 val context = LocalContext.current
                 val trackId = backStackEntry.arguments?.getString("trackId") ?: ""
 
@@ -356,7 +365,7 @@ fun HomeScreenContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-               // CircularProgressIndicator(color = AppTheme.color().Primary)
+                // CircularProgressIndicator(color = AppTheme.color().Primary)
             }
         } else {
             LazyVerticalGrid(
@@ -408,7 +417,12 @@ fun BottomNavigationBar(navController: NavController) {
 
         items.forEach { item ->
             NavigationBarItem(
-                icon = { Icon(item.icon ?: Icons.Default.AccountCircle, contentDescription = null) },
+                icon = {
+                    Icon(
+                        item.icon ?: Icons.Default.AccountCircle,
+                        contentDescription = null
+                    )
+                },
                 label = { Text(stringResource(id = item.labelResId ?: R.drawable.spotube)) },
                 selected = currentRoute == item.route,
                 onClick = {

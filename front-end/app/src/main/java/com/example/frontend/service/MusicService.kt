@@ -98,7 +98,6 @@ class MusicService : MediaSessionService() {
                 player?.prepare()
                 player?.playWhenReady = true
             } else {
-                // 🔹 Nếu đang pause thì resume thôi
                 if (player?.isPlaying == false) {
                     player?.play()
                 }
@@ -144,7 +143,6 @@ class MusicService : MediaSessionService() {
     companion object {
         private const val CHANNEL_ID = "music_channel"
         private const val NOTIFICATION_ID = 1
-
         private var playerInstance: ExoPlayer? = null
     }
 
@@ -152,7 +150,7 @@ class MusicService : MediaSessionService() {
         PlayerNotificationManager.MediaDescriptionAdapter {
 
         override fun getCurrentContentTitle(player: androidx.media3.common.Player): CharSequence {
-            return player.mediaMetadata.title ?: "Đang phát nhạc"
+            return player.mediaMetadata.title ?: "On playing"
         }
 
         override fun createCurrentContentIntent(player: androidx.media3.common.Player) = null

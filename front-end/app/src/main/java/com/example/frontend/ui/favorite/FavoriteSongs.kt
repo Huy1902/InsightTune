@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import com.example.frontend.R
 import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.ui.home.HorizontalSongCard
+import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import com.example.frontend.ui.theme.AppTheme
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -26,6 +27,7 @@ import java.nio.charset.StandardCharsets
 @Composable
 fun FavoriteScreen(
     vm: FavoriteViewModel,
+    playerViewModel: MusicPlayerViewModel,
     navController: NavController
 ) {
     val tracks by vm.uiTracks.collectAsState()
@@ -37,6 +39,7 @@ fun FavoriteScreen(
 
     FavoriteScreenContent(
         vm,
+        playerViewModel,
         tracks = tracks,
         isLoading = isLoading,
         navController = navController
@@ -46,6 +49,7 @@ fun FavoriteScreen(
 @Composable
 fun FavoriteScreenContent(
     vm: FavoriteViewModel,
+    playerViewModel: MusicPlayerViewModel,
     tracks: List<TrackUiModel>,
     isLoading: Boolean,
     navController: NavController
@@ -83,6 +87,7 @@ fun FavoriteScreenContent(
                 items(tracks) { track ->
                     FavoriteSongItem(
                         trackModel = track,
+                        playerViewModel = playerViewModel,
                         onRemoveClick = { vm.deleteFavorite(track.trackInfo.id) },
                         navController = navController
                     )
@@ -95,6 +100,7 @@ fun FavoriteScreenContent(
 @Composable
 private fun FavoriteSongItem(
     trackModel: TrackUiModel,
+    playerViewModel: MusicPlayerViewModel,
     onRemoveClick: () -> Unit,
     navController: NavController
 ) {
@@ -112,20 +118,14 @@ private fun FavoriteSongItem(
             artistName = artistString,
             coverImageUrl = trackModel.coverImageUrl,
             onClick = {
-                val encodedUrlKey =
-                    URLEncoder.encode(track.storageKey, StandardCharsets.UTF_8.toString())
-                val encodedSongName =
-                    URLEncoder.encode(track.title, StandardCharsets.UTF_8.toString())
-                val encodedArtistName =
-                    URLEncoder.encode(artistString, StandardCharsets.UTF_8.toString())
-                val encodedImageKey = URLEncoder.encode(
-                    track.coverImageKey ?: "no_image",
-                    StandardCharsets.UTF_8.toString()
+                playerViewModel.playSong(
+                    newTrackId = track.id,
+                    newUrlKey = track.storageKey,
+                    newTitle = track.title,
+                    newArtist = artistString,
+                    newImageKey = track.coverImageKey ?: "no_image"
                 )
-
-                val route =
-                    "track/${track.id}/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
-                navController.navigate(route)
+                navController.navigate("track_player_screen")
             }
         )
         IconButton(onClick = onRemoveClick) {
