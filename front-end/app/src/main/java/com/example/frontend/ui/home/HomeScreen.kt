@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -98,8 +99,7 @@ fun HomeScreen(
 
     val playerViewModel: MusicPlayerViewModel = viewModel(
         factory = MusicPlayerViewModelFactory(
-            trackId = "", favoriteRepo = favoriteRepo, playingRepo = playingRepo,
-            urlKey = "", title = "", artist = "", imageKey = "", context = context
+            favoriteRepo = favoriteRepo, playingRepo = playingRepo, context = context
         )
     )
     val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
@@ -340,7 +340,7 @@ fun HomeScreenContent(
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-                items(uiTracks) { trackUiModel ->
+                itemsIndexed(uiTracks) { index, trackUiModel ->
                     val track = trackUiModel.trackInfo
                     val artistString = track.artists?.joinToString(", ") ?: "Unknown"
 
@@ -349,6 +349,7 @@ fun HomeScreenContent(
                         artistName = artistString,
                         coverImageUrl = trackUiModel.coverImageUrl,
                         onClick = {
+                            playerViewModel.setCurrentIndex(index)
                             playerViewModel.playSong(
                                 newTrackId = track.id,
                                 newUrlKey = track.storageKey,
