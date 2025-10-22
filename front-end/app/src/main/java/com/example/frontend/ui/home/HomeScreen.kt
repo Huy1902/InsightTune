@@ -66,6 +66,7 @@ import com.example.frontend.ui.NavRoutes
 import com.example.frontend.ui.favorite.FavoriteScreen
 import com.example.frontend.ui.favorite.FavoriteViewModel
 import com.example.frontend.ui.favorite.FavoriteViewModelFactory
+import com.example.frontend.ui.playingsong.MiniPlayerBar
 import com.example.frontend.ui.playingsong.MusicPlayer
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import com.example.frontend.ui.playingsong.MusicPlayerViewModelFactory
@@ -91,10 +92,34 @@ fun HomeScreen(
 ) {
     val bottomNavController = rememberNavController()
 
+    val context = LocalContext.current
+    val favoriteRepo = FavoriteRepositoryImpl(ApiClient.favoriteApi)
+    val playingRepo = PlayingRepositoryImpl(ApiClient.playingApi)
+
+    val playerViewModel: MusicPlayerViewModel = viewModel(
+        factory = MusicPlayerViewModelFactory(
+            trackId = "", favoriteRepo = favoriteRepo, playingRepo = playingRepo,
+            urlKey = "", title = "", artist = "", imageKey = "", context = context
+        )
+    )
+    val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val showMiniPlayer =
+        currentRoute != BottomNavItem.Track.route && currentRoute != "track_player_screen"
     Scaffold(
         containerColor = Color.Transparent,
         bottomBar = {
-            BottomNavigationBar(bottomNavController)
+            Column {
+                if (showMiniPlayer) {
+                    MiniPlayerBar(
+                        viewModel = playerViewModel,
+                        onExpandPlayer = {
+                            bottomNavController.navigate("track_player_screen")
+                        }
+                    )
+                }
+                BottomNavigationBar(bottomNavController)
+            }
         }
     ) { innerPadding ->
         NavHost(
@@ -104,12 +129,13 @@ fun HomeScreen(
         ) {
             composable(BottomNavItem.Home.route) {
 
-                val playingVmFactory: PlayingViewModelFactory = PlayingViewModelFactory(LocalContext.current)
+                val playingVmFactory: PlayingViewModelFactory =
+                    PlayingViewModelFactory(LocalContext.current)
                 val playingVm: PlayingViewModel = viewModel(factory = playingVmFactory)
 
                 HomeScreenContent(
                     vm,
-                //    playingVm,
+                    playerViewModel,
                     appNavController,
                     onProfileClick = {
                         bottomNavController.navigate(BottomNavItem.Profile.route)
@@ -121,12 +147,14 @@ fun HomeScreen(
                 val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
                 val prefs = AppPreferences(LocalContext.current)
                 val historyRepository = HistoryRepositoryImpl(ApiClient.historyApi, prefs)
-                val searchViewModelFactory = SearchViewModelFactory(trackRepository, historyRepository, prefs)
+                val searchViewModelFactory =
+                    SearchViewModelFactory(trackRepository, historyRepository, prefs)
 
                 val vm: SearchViewModel = viewModel(factory = searchViewModelFactory)
 
                 SearchScreen(
                     vm = vm,
+                    playerViewModel,
                     navController = bottomNavController,
                     onCancel = { bottomNavController.popBackStack() }
                 )
@@ -140,19 +168,20 @@ fun HomeScreen(
                 val vm: FavoriteViewModel = viewModel(factory = favoriteViewModelFactory)
                 FavoriteScreen(
                     vm,
+                    playerViewModel,
                     bottomNavController
                 )
             }
             composable(BottomNavItem.ChatBot.route) { /* TODO */ }
-            composable (
+            composable(
                 BottomNavItem.Track.route,
                 arguments = listOf(
-                    navArgument("urlKey") {type = NavType.StringType},
-                    navArgument("title") {type = NavType.StringType},
-                    navArgument("artist") {type = NavType.StringType},
-                    navArgument("imageKey") {type = NavType.StringType},
+                    navArgument("urlKey") { type = NavType.StringType },
+                    navArgument("title") { type = NavType.StringType },
+                    navArgument("artist") { type = NavType.StringType },
+                    navArgument("imageKey") { type = NavType.StringType },
                 )
-            ) { backStackEntry  ->
+            ) { backStackEntry ->
                 val context = LocalContext.current
                 val trackId = backStackEntry.arguments?.getString("trackId") ?: ""
                 val storageKey = backStackEntry.arguments?.getString("urlKey") ?: ""
@@ -195,6 +224,14 @@ fun HomeScreen(
                     onBack = { bottomNavController.popBackStack() }
                 )
             }
+
+            composable("track_player_screen") {
+                MusicPlayer(
+                    viewModel = playerViewModel,
+                    onBack = { bottomNavController.popBackStack() }
+                )
+            }
+
             composable(BottomNavItem.Profile.route) {
                 val vm: ProfileViewModel =
                     viewModel(factory = ProfileViewModelFactory(LocalContext.current))
@@ -219,7 +256,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     vm: HomeViewModel,
-    //playingVm: PlayingViewModel,
+    playerViewModel: MusicPlayerViewModel,
     appNavController: NavController,
     onProfileClick: () -> Unit,
     bottomNavController: NavController
@@ -312,13 +349,14 @@ fun HomeScreenContent(
                         artistName = artistString,
                         coverImageUrl = trackUiModel.coverImageUrl,
                         onClick = {
-                            val encodedUrlKey = URLEncoder.encode(track.storageKey, StandardCharsets.UTF_8.toString())
-                            val encodedSongName = URLEncoder.encode(track.title, StandardCharsets.UTF_8.toString())
-                            val encodedArtistName = URLEncoder.encode(artistString, StandardCharsets.UTF_8.toString())
-                            val encodedImageKey = URLEncoder.encode(track.coverImageKey ?: "no_image", StandardCharsets.UTF_8.toString())
-
-                            val route = "track/${track.id}/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
-                            bottomNavController.navigate(route)
+                            playerViewModel.playSong(
+                                newTrackId = track.id,
+                                newUrlKey = track.storageKey,
+                                newTitle = track.title,
+                                newArtist = artistString,
+                                newImageKey = track.coverImageKey ?: "no_image"
+                            )
+                            bottomNavController.navigate("track_player_screen")
                         }
                     )
                 }
@@ -338,7 +376,7 @@ fun HomeScreenContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-               // CircularProgressIndicator(color = AppTheme.color().Primary)
+                // CircularProgressIndicator(color = AppTheme.color().Primary)
             }
         } else {
             LazyVerticalGrid(
@@ -357,13 +395,14 @@ fun HomeScreenContent(
                         artistName = artistString,
                         coverImageUrl = trackUiModel.coverImageUrl,
                         onClick = {
-                            val encodedUrlKey = URLEncoder.encode(track.storageKey, StandardCharsets.UTF_8.toString())
-                            val encodedSongName = URLEncoder.encode(track.title, StandardCharsets.UTF_8.toString())
-                            val encodedArtistName = URLEncoder.encode(artistString, StandardCharsets.UTF_8.toString())
-                            val encodedImageKey = URLEncoder.encode(track.coverImageKey ?: "no_image", StandardCharsets.UTF_8.toString())
-
-                            val route = "track/${track.id}/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
-                            bottomNavController.navigate(route)
+                            playerViewModel.playSong(
+                                newTrackId = track.id,
+                                newUrlKey = track.storageKey,
+                                newTitle = track.title,
+                                newArtist = artistString,
+                                newImageKey = track.coverImageKey ?: "no_image"
+                            )
+                            bottomNavController.navigate("track_player_screen")
                         }
                     )
                 }
@@ -389,7 +428,12 @@ fun BottomNavigationBar(navController: NavController) {
 
         items.forEach { item ->
             NavigationBarItem(
-                icon = { Icon(item.icon ?: Icons.Default.AccountCircle, contentDescription = null) },
+                icon = {
+                    Icon(
+                        item.icon ?: Icons.Default.AccountCircle,
+                        contentDescription = null
+                    )
+                },
                 label = { Text(stringResource(id = item.labelResId ?: R.drawable.spotube)) },
                 selected = currentRoute == item.route,
                 onClick = {

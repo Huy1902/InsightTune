@@ -46,6 +46,12 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
     context: Context
 ) : ViewModel() {
 
+    private var trackId: String = ""
+    private var urlKey: String = ""
+    private var title: String = ""
+    private var artist: String = ""
+    private var imageKey: String = ""
+
     private val tracksRepo : TrackRepository = TrackRepositoryImpl(ApiClient.trackApi)
     private var _playerState = MutableStateFlow(PlayerState())
 
@@ -62,6 +68,27 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
 
     val playerState = _playerState.asStateFlow()
 
+    fun playSong(
+        newTrackId: String,
+        newUrlKey: String,
+        newTitle: String,
+        newArtist: String,
+        newImageKey: String
+    ) {
+        this.trackId = newTrackId
+        this.urlKey = newUrlKey
+        this.title = newTitle
+        this.artist = newArtist
+        this.imageKey = newImageKey
+
+        _playerState.value = PlayerState()
+        viewModelScope.launch {
+            loadPlaying()
+            loadCoverImage()
+            checkIfFavorite()
+        }
+    }
+
     private val listener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             _playerState.value = _playerState.value.copy(isPlaying = isPlaying)
@@ -76,6 +103,8 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
         viewModelScope.launch {
             nextTracks.addAll(trackList)
             setupMediaController()
+            loadCoverImage()
+            checkIfFavorite()
             loadPlaying(currentTrack)
             startProgressUpdater()
         }
@@ -88,6 +117,8 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
 
         val intent = Intent(context, MusicService::class.java).apply {
             putExtra("song_url", songUrl)
+            putExtra("song_title", title)
+            putExtra("song_artist", artist)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
@@ -130,15 +161,17 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
         }
     }
 
-
     private fun checkIfFavorite() {
+        if (trackId.isBlank()) return
+
         viewModelScope.launch {
             try {
                 val favorites = favoriteRepo.getFavorites()
                 val isFav = favorites.any { it.id == currentTrack.id }
                 _playerState.value = _playerState.value.copy(isFavorite = isFav)
             } catch (e: Exception) {
-                Log.e("MusicPlayerVM", "Failed to check favorite status", e)
+                Log.e("MusicPlayerVM", "Không thể kiểm tra trạng thái favorite: ${e.message}", e)
+                _playerState.value = _playerState.value.copy(isFavorite = false)
             }
         }
     }

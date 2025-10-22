@@ -24,4 +24,8 @@ class FavoriteRepositoryImpl(private val api: FavoriteApi) : FavoriteRepository 
         val response = api.getFavorites()
         return response
     }
+
+    override suspend fun isFavorite(songId: String): Boolean {
+        return api.isFavorite(songId)
+    }
 }

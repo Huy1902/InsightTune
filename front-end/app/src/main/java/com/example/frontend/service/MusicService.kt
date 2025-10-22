@@ -1,11 +1,16 @@
 package com.example.frontend.service
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.app.NotificationCompat
+import androidx.media3.common.AudioAttributes
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
@@ -14,6 +19,8 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.PlayerNotificationManager
 import com.example.frontend.R
+import androidx.media3.common.C
+import androidx.media3.common.Player
 
 @UnstableApi
 class MusicService : MediaSessionService() {
@@ -24,11 +31,28 @@ class MusicService : MediaSessionService() {
 
     override fun onCreate() {
         super.onCreate()
-
         createNotificationChannel()
 
-        player = ExoPlayer.Builder(this).build()
-        mediaSession = MediaSession.Builder(this, player!!).build()
+        if (playerInstance == null) {
+            playerInstance = ExoPlayer.Builder(this)
+                .build()
+                .apply {
+                    setAudioAttributes(
+                        AudioAttributes.Builder()
+                            .setUsage(C.USAGE_MEDIA)
+                            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                            .build(),
+                        true
+                    )
+                    setHandleAudioBecomingNoisy(true)
+                }
+        }
+
+        player = playerInstance
+
+        mediaSession = MediaSession.Builder(this, player!!)
+            .setId("SpotubeSession")
+            .build()
 
         playerNotificationManager = PlayerNotificationManager.Builder(
             this,
@@ -36,41 +60,63 @@ class MusicService : MediaSessionService() {
             CHANNEL_ID
         )
             .setMediaDescriptionAdapter(DescriptionAdapter(this))
-            .setSmallIconResourceId(android.R.drawable.star_on)
+            .setSmallIconResourceId(com.example.frontend.R.drawable.music_note)
+            .setChannelImportance(NotificationManager.IMPORTANCE_LOW)
             .build()
             .apply {
                 setMediaSessionToken(mediaSession!!.sessionCompatToken)
                 setPlayer(player)
             }
+
+        startForeground(NOTIFICATION_ID, buildNotification())
     }
 
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        startForeground(NOTIFICATION_ID, buildNotification())
+
         val songUrl = intent?.getStringExtra("song_url")
         val songTitle = intent?.getStringExtra("song_title") ?: "Unknown"
         val songArtist = intent?.getStringExtra("song_artist") ?: "Unknown"
 
         if (!songUrl.isNullOrEmpty()) {
-            val currentMedia = player?.currentMediaItem
-            if (currentMedia == null || currentMedia.mediaId != songUrl) {
+            val current = player?.currentMediaItem
+
+            if (current == null || current.mediaId != songUrl) {
                 val metadata = MediaMetadata.Builder()
                     .setTitle(songTitle)
                     .setArtist(songArtist)
                     .build()
 
-                val item = MediaItem.Builder()
+                val mediaItem = MediaItem.Builder()
                     .setUri(songUrl)
                     .setMediaId(songUrl)
                     .setMediaMetadata(metadata)
                     .build()
-                player?.setMediaItem(item)
+
+                player?.setMediaItem(mediaItem)
                 player?.prepare()
+                player?.playWhenReady = true
+            } else {
+                if (player?.isPlaying == false) {
+                    player?.play()
+                }
             }
-            player?.playWhenReady = true
         }
 
         return super.onStartCommand(intent, flags, startId)
     }
 
+
+
+    private fun buildNotification(): Notification {
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Đang phát nhạc")
+            .setContentText("Ứng dụng SpoTube")
+            .setSmallIcon(android.R.drawable.ic_media_play)
+            .setOngoing(true)
+            .build()
+    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -90,23 +136,24 @@ class MusicService : MediaSessionService() {
         playerNotificationManager?.setPlayer(null)
         mediaSession?.release()
         player?.release()
+        playerInstance = null
         super.onDestroy()
     }
 
     companion object {
         private const val CHANNEL_ID = "music_channel"
         private const val NOTIFICATION_ID = 1
+        private var playerInstance: ExoPlayer? = null
     }
 
     private class DescriptionAdapter(private val context: Context) :
         PlayerNotificationManager.MediaDescriptionAdapter {
 
         override fun getCurrentContentTitle(player: androidx.media3.common.Player): CharSequence {
-            return player.mediaMetadata.title ?: "Đang phát nhạc"
+            return player.mediaMetadata.title ?: "On playing"
         }
 
-        override fun createCurrentContentIntent(player: androidx.media3.common.Player) =
-            null
+        override fun createCurrentContentIntent(player: androidx.media3.common.Player) = null
 
         override fun getCurrentContentText(player: androidx.media3.common.Player): CharSequence? {
             return player.mediaMetadata.artist

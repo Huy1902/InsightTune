@@ -319,7 +319,7 @@ fun ProfileItem(text: String, onClick: () -> Unit) {
         Text(
             text,
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 16.sp
+            style = MaterialTheme.typography.bodyLarge
         )
         Icon(
             imageVector = Icons.Default.ArrowForwardIos,
