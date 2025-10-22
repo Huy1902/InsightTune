@@ -1,27 +1,20 @@
 package com.example.frontend.ui.playingsong
 
-import android.R
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.annotation.OptIn
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.example.frontend.data.models.song.GetTracksResponse
-import com.example.frontend.data.models.song.PlayingResponse
+import com.example.frontend.data.models.song.NextTracksResponse
 import com.example.frontend.data.remote.ApiClient
-import com.example.frontend.data.remote.FavoriteRepositoryImpl
-import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.domain.repositories.FavoriteRepository
 import com.example.frontend.domain.repositories.PlayingRepository
@@ -33,7 +26,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import retrofit2.http.Url
 
 data class PlayerState(
     val isPlaying: Boolean = false,
@@ -41,28 +33,29 @@ data class PlayerState(
     val totalDuration: Long = 0L,
     val mediaMetadata: MediaMetadata = MediaMetadata.EMPTY,
     val coverImageUrl: String? = null,
-    val currentTrack: GetTracksResponse? = null,
+//    val currentTrack: GetTracksResponse? = null,
     val isFavorite: Boolean = false
 )
 
 class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class) constructor
     (
-    private val trackId: String,
+    trackList: List<NextTracksResponse> = emptyList(),
+    currentIndex: Int,
     private val favoriteRepo: FavoriteRepository,
     private val playingRepo: PlayingRepository,
-    private val urlKey: String,
-    private val title: String,
-    private val artist: String,
-    private val imageKey: String,
     context: Context
 ) : ViewModel() {
 
     private val tracksRepo : TrackRepository = TrackRepositoryImpl(ApiClient.trackApi)
-    private val _playerState = MutableStateFlow(PlayerState())
+    private var _playerState = MutableStateFlow(PlayerState())
+
+    private val nextTracks: MutableList<NextTracksResponse> = mutableListOf()
+
+    private var currentIndexSong: Int = 0
 
     private var controller: MediaController? = null
 
-
+    private val currentTrack = trackList[currentIndex]
     private var currentSongUrl: String = ""
 
     private val appContext = context.applicationContext
@@ -81,9 +74,9 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
 
     init {
         viewModelScope.launch {
+            nextTracks.addAll(trackList)
             setupMediaController()
-            loadPlaying()
-            loadCoverImage()
+            loadPlaying(currentTrack)
             startProgressUpdater()
         }
     }
@@ -142,37 +135,37 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
         viewModelScope.launch {
             try {
                 val favorites = favoriteRepo.getFavorites()
-                val isFav = favorites.any { it.id == trackId }
+                val isFav = favorites.any { it.id == currentTrack.id }
                 _playerState.value = _playerState.value.copy(isFavorite = isFav)
             } catch (e: Exception) {
                 Log.e("MusicPlayerVM", "Failed to check favorite status", e)
             }
         }
     }
-    private fun loadPlaying() {
-        if (urlKey.isBlank()) return
-
-        viewModelScope.launch {
-            try {
-                val response = playingRepo.getUrlTrack(urlKey, imageKey)
-                if (response.trackUrl.isNotEmpty()) {
-                    currentSongUrl = response.trackUrl
-                    Log.d("MusicDebug", "Track URL: ${response.trackUrl}")
-
-                    // Gửi sang MusicService để phát
-                    startMusicService(appContext, currentSongUrl!!)
-                }
-            } catch (e: Exception) {
-                Log.e("MusicPlayerVM", "Error loading track URL: ${e.message}")
+    private suspend fun loadPlaying(track: NextTracksResponse) {
+        try {
+            val response = playingRepo.getUrlTrack(track.storageKey, track.coverImageKey)
+            if (response.trackUrl.isNotEmpty()) {
+                currentSongUrl = response.trackUrl
+                Log.d("MusicDebug", "Track URL: ${response.trackUrl}")
+                _playerState.value = _playerState.value.copy(
+                    mediaMetadata = MediaMetadata.Builder()
+                        .setTitle(track.title)
+                        .setArtist(track.artists.joinToString(", "))
+                        .build()
+                )
+                loadCoverImage(track.coverImageKey)
+                // Gửi sang MusicService để phát
+                startMusicService(appContext, currentSongUrl!!)
             }
+        } catch (e: Exception) {
+            Log.e("MusicPlayerVM", "Error loading track URL: ${e.message}")
         }
     }
 
 
 
-    private fun loadCoverImage() {
-        if (imageKey.isBlank() || imageKey == "no_image") return
-
+    private fun loadCoverImage(imageKey: String) {
         viewModelScope.launch {
             try {
                 val response = playingRepo.getImage(imageKey)
@@ -185,14 +178,19 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
         }
     }
 
-
-    fun getTitle(): String {
-        return title
+    private suspend fun fetchNextTracks() {
+        val lastTrackId = nextTracks.lastOrNull()?.id ?: return
+        try {
+            val response = tracksRepo.nextTracks(currentTrackId = lastTrackId)
+            if (response.isNotEmpty()) {
+                nextTracks.addAll(response)
+                Log.d("MusicPlayerVM", "Fetched ${response.size} next tracks.")
+            }
+        } catch (e: Exception) {
+            Log.e("MusicPlayerVM", "Error fetching next tracks: ${e.message}")
+        }
     }
 
-    fun getArtist(): String {
-        return artist
-    }
     fun onPlayPauseClick() {
         controller?.let {
             if (it.isPlaying) it.pause() else it.play()
@@ -221,16 +219,61 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
             val isCurrentlyFavorite = _playerState.value.isFavorite
             try {
                 if (isCurrentlyFavorite) {
-                    favoriteRepo.deleteFavorite(trackId)
+                    favoriteRepo.deleteFavorite(currentTrack.id)
                     Log.d("FavoriteDebug", "Favorite deleted via API")
                 } else {
-                    favoriteRepo.addFavorite(trackId)
+                    favoriteRepo.addFavorite(currentTrack.id)
                     Log.d("FavoriteDebug", "Favorite added via API")
                 }
                 _playerState.value = _playerState.value.copy(isFavorite = !isCurrentlyFavorite)
             } catch (e: Exception) {
                 Log.e("MusicPlayerVM", "Failed to toggle favorite", e)
             }
+        }
+    }
+
+    fun playNextTrack() {
+        viewModelScope.launch {
+            if (nextTracks.isEmpty()) {
+                fetchNextTracks()
+                if (nextTracks.isEmpty()) return@launch
+            }
+            currentIndexSong++
+            if (currentIndexSong >= nextTracks.size) {
+                fetchNextTracks()
+            }
+            val nextTrack = nextTracks[currentIndexSong]
+            loadPlaying(
+                NextTracksResponse(
+                    id = nextTrack.id,
+                    title = nextTrack.title,
+                    artists = nextTrack.artists,
+                    albumId = nextTrack.albumId,
+                    storageKey = nextTrack.storageKey,
+                    durationMs = nextTrack.durationMs,
+                    coverImageKey = nextTrack.coverImageKey
+                )
+            )
+        }
+
+    }
+
+    fun playPreviousTrack() {
+        viewModelScope.launch {
+            currentIndexSong--
+            if (currentIndexSong < 0) currentIndexSong = 0
+            val prevTrack = nextTracks[currentIndexSong]
+            loadPlaying(
+                NextTracksResponse (
+                    id = prevTrack.id,
+                    title = prevTrack.title,
+                    artists = prevTrack.artists,
+                    albumId = prevTrack.albumId,
+                    storageKey = prevTrack.storageKey,
+                    durationMs = prevTrack.durationMs,
+                    coverImageKey = prevTrack.coverImageKey
+                )
+            )
         }
     }
 }

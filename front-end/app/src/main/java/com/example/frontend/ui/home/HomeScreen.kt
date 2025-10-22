@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
@@ -54,6 +55,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.frontend.R
 import com.example.frontend.core.AppPreferences
+import com.example.frontend.data.models.song.NextTracksResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.FavoriteRepositoryImpl
 import com.example.frontend.data.remote.HistoryRepositoryImpl
@@ -153,29 +155,38 @@ fun HomeScreen(
             ) { backStackEntry  ->
                 val context = LocalContext.current
                 val trackId = backStackEntry.arguments?.getString("trackId") ?: ""
-
-                val encodedUrl = backStackEntry.arguments?.getString("urlKey") ?: ""
-                val encodedTitle = backStackEntry.arguments?.getString("title") ?: ""
-                val encodedArtist = backStackEntry.arguments?.getString("artist") ?: ""
-                val encodedImageUrl = backStackEntry.arguments?.getString("imageKey") ?: ""
-
-                val url = URLDecoder.decode(encodedUrl, StandardCharsets.UTF_8.toString())
-                val title = URLDecoder.decode(encodedTitle, StandardCharsets.UTF_8.toString())
-                val artist = URLDecoder.decode(encodedArtist, StandardCharsets.UTF_8.toString())
-                val imageUrl = URLDecoder.decode(encodedImageUrl, StandardCharsets.UTF_8.toString())
+                val storageKey = backStackEntry.arguments?.getString("urlKey") ?: ""
+                val title = backStackEntry.arguments?.getString("title") ?: ""
+                val artistStr = backStackEntry.arguments?.getString("artist") ?: ""
+                val artists = artistStr.split(",").map { it.trim()}
+                val albumId = backStackEntry.arguments?.getString("durationMs") ?: ""
+                val durationMs = backStackEntry.arguments?.getLong("durationMs") ?: 0
+                val coverImageKey = backStackEntry.arguments?.getString("coverImageKey") ?: ""
+//                val url = URLDecoder.decode(encodedUrl, StandardCharsets.UTF_8.toString())
+//                val title = URLDecoder.decode(encodedTitle, StandardCharsets.UTF_8.toString())
+//                val artist = URLDecoder.decode(encodedArtist, StandardCharsets.UTF_8.toString())
+//                val imageUrl = URLDecoder.decode(encodedImageUrl, StandardCharsets.UTF_8.toString())
 
                 val favoriteRepo = FavoriteRepositoryImpl(ApiClient.favoriteApi)
                 val playingRepo = PlayingRepositoryImpl(ApiClient.playingApi)
 
+                val singleTrackList = listOf(
+                    NextTracksResponse(
+                        id = trackId,
+                        title = title,
+                        artists = artists,
+                        albumId = albumId,
+                        storageKey = storageKey,
+                        durationMs = durationMs,
+                        coverImageKey = coverImageKey
+                    )
+                )
+
                 val vm: MusicPlayerViewModel = viewModel(
                     factory = MusicPlayerViewModelFactory(
-                        trackId = trackId,
+                        trackList = singleTrackList,
                         favoriteRepo = favoriteRepo,
                         playingRepo = playingRepo,
-                        urlKey = url,
-                        title = title,
-                        artist = artist,
-                        imageKey = imageUrl,
                         context = context
                     )
                 )

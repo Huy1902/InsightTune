@@ -1,8 +1,10 @@
 package com.example.frontend.data.remote
 
 import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.song.NextTracksResponse
 import okhttp3.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TrackApi {
@@ -13,4 +15,9 @@ interface TrackApi {
     suspend fun searchTracks(
         @Query("keyword") keyword: String
     ): List<GetTracksResponse>
+
+    @GET("tracks/next/{currentTrackId}")
+    suspend fun nextTracks(
+        @Path("currentTrackId") currentTrackId: String
+    ): List<NextTracksResponse>
 }

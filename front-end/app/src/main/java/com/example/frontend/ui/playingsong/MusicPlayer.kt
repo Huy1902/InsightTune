@@ -64,7 +64,7 @@ fun MusicPlayer(
 ) {
 
     val state by viewModel.playerState.collectAsState()
-    val currentTrack = state.currentTrack
+//    val currentTrack = state.currentTrack
 //    if (currentTrack != null) {
 //        return
 //    }
@@ -144,13 +144,13 @@ fun MusicPlayer(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = viewModel.getTitle(),
+                    text = state.mediaMetadata.title?.toString() ?: "Unknown Title",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = viewModel.getArtist(),
+                    text = state.mediaMetadata.artist?.toString() ?: "Unknown Artist",
                     modifier = Modifier.padding(top = 4.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 16.sp
@@ -188,9 +188,8 @@ fun MusicPlayer(
                     )
                 }
                 IconButton(
-//                    modifier = Modifier.fillMaxHeight(0.7f),
                     modifier = Modifier.size(56.dp),
-                    onClick = { /*TODO*/ }
+                    onClick = { viewModel.playPreviousTrack() }
                 ) {
                     Icon(
                         imageVector = Icons.Default.SkipPrevious,
@@ -211,9 +210,8 @@ fun MusicPlayer(
                     )
                 }
                 IconButton(
-                    onClick = { TODO() },
+                    onClick = { viewModel.playNextTrack() },
                     modifier = Modifier.size(56.dp),
-//                    modifier = Modifier.fillMaxHeight(0.7f)
                 ) {
                     Icon(
                         imageVector = Icons.Default.SkipNext,
@@ -223,7 +221,6 @@ fun MusicPlayer(
                     )
                 }
                 IconButton(
-//                    modifier = Modifier.fillMaxHeight(0.3f),
                     modifier = Modifier.size(28.dp),
                     onClick = {
                         viewModel.onToggleFavorite()
