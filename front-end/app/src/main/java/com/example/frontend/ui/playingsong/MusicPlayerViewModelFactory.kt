@@ -21,13 +21,8 @@ class MusicPlayerViewModelFactory(
         if (modelClass.isAssignableFrom(MusicPlayerViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return MusicPlayerViewModel(
-                trackId = trackId,
                 favoriteRepo = favoriteRepo,
                 playingRepo = playingRepo,
-                urlKey = urlKey,
-                title = title,
-                artist = artist,
-                imageKey = imageKey,
                 context = context
             ) as T
         }

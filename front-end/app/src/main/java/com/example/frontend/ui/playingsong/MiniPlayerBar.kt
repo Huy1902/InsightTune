@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,13 +23,17 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import java.util.concurrent.TimeUnit
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MiniPlayerBar(
     viewModel: MusicPlayerViewModel,
     onExpandPlayer: () -> Unit
 ) {
     val playerState by viewModel.playerState.collectAsState()
+
+    // Chỉ hiển thị mini player nếu có bài hát đang được tải hoặc phát
+    if (playerState.mediaMetadata.title == null) {
+        return // Ẩn thanh mini player nếu không có bài hát
+    }
 
     val currentPos = playerState.currentPosition
     val totalDur = playerState.totalDuration.coerceAtLeast(1L)
@@ -38,7 +44,6 @@ fun MiniPlayerBar(
             .clickable { onExpandPlayer() }
             .padding(horizontal = 10.dp, vertical = 6.dp)
     ) {
-        // Hàng thông tin nhạc
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -74,25 +79,52 @@ fun MiniPlayerBar(
                 )
             }
 
-            // Nút play/pause
-            IconButton(onClick = { viewModel.onPlayPauseClick() }) {
+            // ==================== CÁC NÚT ĐIỀU KHIỂN MỚI ====================
+            // Nút Previous
+            IconButton(
+                onClick = { /* TODO: viewModel.onPlayPreviousSong() */ },
+                modifier = Modifier.size(36.dp)
+            ) {
                 Icon(
-                    imageVector = if (playerState.isPlaying)
-                        Icons.Default.Pause
-                    else
-                        Icons.Default.PlayArrow,
-                    contentDescription = null,
+                    imageVector = Icons.Default.SkipPrevious,
+                    contentDescription = "Previous",
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
+
+            // Nút Play/Pause
+            IconButton(
+                onClick = { viewModel.onPlayPauseClick() },
+                modifier = Modifier.size(36.dp)
+            ) {
+                Icon(
+                    imageVector = if (playerState.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                    contentDescription = "Play/Pause",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+
+            // Nút Next
+            IconButton(
+                onClick = { /* TODO: viewModel.onPlayNextSong() */ },
+                modifier = Modifier.size(36.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.SkipNext,
+                    contentDescription = "Next",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+            // =================================================================
         }
 
+        // Thanh tiến trình
         val activeTrackColor = MaterialTheme.colorScheme.primary
         val inactiveTrackColor = Color.Gray.copy(alpha = 0.4f)
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(3.dp)
+                .height(2.dp)
                 .padding(top = 4.dp)
         ) {
             val progress = (currentPos.toFloat() / totalDur.toFloat()).coerceIn(0f, 1f)
@@ -105,7 +137,7 @@ fun MiniPlayerBar(
                 color = inactiveTrackColor,
                 start = activeEnd,
                 end = trackEnd,
-                strokeWidth = 3.dp.toPx(),
+                strokeWidth = 2.dp.toPx(),
                 cap = StrokeCap.Round
             )
 
@@ -113,10 +145,30 @@ fun MiniPlayerBar(
                 color = activeTrackColor,
                 start = trackStart,
                 end = activeEnd,
-                strokeWidth = 3.dp.toPx(),
+                strokeWidth = 2.dp.toPx(),
                 cap = StrokeCap.Round
             )
         }
+
+        // ==================== THỜI GIAN HIỆN TẠI / TỔNG ====================
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 2.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = formatTime(currentPos),
+                fontSize = 11.sp,
+                color = Color.Gray
+            )
+            Text(
+                text = formatTime(totalDur),
+                fontSize = 11.sp,
+                color = Color.Gray
+            )
+        }
+        // ===================================================================
     }
 }
 

@@ -80,38 +80,34 @@ class MusicService : MediaSessionService() {
         val songArtist = intent?.getStringExtra("song_artist") ?: "Unknown"
 
         if (!songUrl.isNullOrEmpty()) {
-            val currentMedia = player?.currentMediaItem
+            val current = player?.currentMediaItem
 
-            if (currentMedia == null || currentMedia.mediaId != songUrl) {
-                try {
-                    val metadata = MediaMetadata.Builder()
-                        .setTitle(songTitle)
-                        .setArtist(songArtist)
-                        .build()
+            if (current == null || current.mediaId != songUrl) {
+                val metadata = MediaMetadata.Builder()
+                    .setTitle(songTitle)
+                    .setArtist(songArtist)
+                    .build()
 
-                    val mediaItem = MediaItem.Builder()
-                        .setUri(songUrl)
-                        .setMediaId(songUrl)
-                        .setMediaMetadata(metadata)
-                        .build()
+                val mediaItem = MediaItem.Builder()
+                    .setUri(songUrl)
+                    .setMediaId(songUrl)
+                    .setMediaMetadata(metadata)
+                    .build()
 
-                    player?.apply {
-                        stop()
-                        clearMediaItems()
-                        setMediaItem(mediaItem)
-                        prepare()
-                        playWhenReady = true
-                    }
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                player?.setMediaItem(mediaItem)
+                player?.prepare()
+                player?.playWhenReady = true
             } else {
-                if (player?.isPlaying == false) player?.play()
+                // 🔹 Nếu đang pause thì resume thôi
+                if (player?.isPlaying == false) {
+                    player?.play()
+                }
             }
         }
+
         return super.onStartCommand(intent, flags, startId)
     }
+
 
 
     private fun buildNotification(): Notification {

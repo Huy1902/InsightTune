@@ -27,6 +27,7 @@ import com.example.frontend.data.models.song.SearchHistoryResponse
 import com.example.frontend.ui.home.HorizontalSongCard
 import com.example.frontend.ui.home.SongCard
 import com.example.frontend.ui.home.SongCardLayout
+import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import com.example.frontend.ui.theme.AppTheme
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -34,6 +35,7 @@ import java.nio.charset.StandardCharsets
 @Composable
 fun SearchScreen(
     vm: SearchViewModel,
+    playerViewModel: MusicPlayerViewModel,
     navController: NavController,
     onCancel: () -> Unit
 ) {
@@ -53,6 +55,7 @@ fun SearchScreen(
             vm.loadRecentSearches(10)
         },
         navController = navController,
+        playerViewModel,
         onCancel = onCancel
     )
 }
@@ -67,6 +70,7 @@ fun SearchScreenContent(
     recentSearches: List<SearchHistoryResponse>,
     onSearch: (String) -> Unit,
     navController: NavController,
+    playerViewModel: MusicPlayerViewModel,
     onCancel: () -> Unit
 ) {
 
@@ -128,13 +132,14 @@ fun SearchScreenContent(
                             artistName = artistString,
                             coverImageUrl = trackModel.coverImageUrl,
                             onClick = {
-                                val encodedUrlKey = URLEncoder.encode(track.storageKey, StandardCharsets.UTF_8.toString())
-                                val encodedSongName = URLEncoder.encode(track.title, StandardCharsets.UTF_8.toString())
-                                val encodedArtistName = URLEncoder.encode(artistString, StandardCharsets.UTF_8.toString())
-                                val encodedImageKey = URLEncoder.encode(track.coverImageKey ?: "no_image", StandardCharsets.UTF_8.toString())
-
-                                val route = "track/${track.id}/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
-                                navController.navigate(route)
+                                playerViewModel.playSong(
+                                    newTrackId = track.id,
+                                    newUrlKey = track.storageKey,
+                                    newTitle = track.title,
+                                    newArtist = artistString,
+                                    newImageKey = track.coverImageKey ?: "no_image"
+                                )
+                                navController.navigate("track_player_screen")
                             }
                         )
                     }

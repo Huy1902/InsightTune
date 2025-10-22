@@ -47,15 +47,16 @@ data class PlayerState(
 
 class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class) constructor
     (
-    private val trackId: String,
     private val favoriteRepo: FavoriteRepository,
     private val playingRepo: PlayingRepository,
-    private val urlKey: String,
-    private val title: String,
-    private val artist: String,
-    private val imageKey: String,
     context: Context
 ) : ViewModel() {
+
+    private var trackId: String = ""
+    private var urlKey: String = ""
+    private var title: String = ""
+    private var artist: String = ""
+    private var imageKey: String = ""
 
     private val tracksRepo : TrackRepository = TrackRepositoryImpl(ApiClient.trackApi)
     private val _playerState = MutableStateFlow(PlayerState())
@@ -68,6 +69,27 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
     private val appContext = context.applicationContext
 
     val playerState = _playerState.asStateFlow()
+
+    fun playSong(
+        newTrackId: String,
+        newUrlKey: String,
+        newTitle: String,
+        newArtist: String,
+        newImageKey: String
+    ) {
+        this.trackId = newTrackId
+        this.urlKey = newUrlKey
+        this.title = newTitle
+        this.artist = newArtist
+        this.imageKey = newImageKey
+
+        _playerState.value = PlayerState()
+        viewModelScope.launch {
+            loadPlaying()
+            loadCoverImage()
+            checkIfFavorite()
+        }
+    }
 
     private val listener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {

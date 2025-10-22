@@ -90,31 +90,24 @@ fun HomeScreen(
 ) {
     val bottomNavController = rememberNavController()
 
+    val context = LocalContext.current
+    val favoriteRepo = FavoriteRepositoryImpl(ApiClient.favoriteApi)
+    val playingRepo = PlayingRepositoryImpl(ApiClient.playingApi)
+
+    val playerViewModel: MusicPlayerViewModel = viewModel(
+        factory = MusicPlayerViewModelFactory(
+            trackId = "", favoriteRepo = favoriteRepo, playingRepo = playingRepo,
+            urlKey = "", title = "", artist = "", imageKey = "", context = context
+        )
+    )
     Scaffold(
         containerColor = Color.Transparent,
         bottomBar = {
             Column {
-                val context = LocalContext.current
-                val favoriteRepo = FavoriteRepositoryImpl(ApiClient.favoriteApi)
-                val playingRepo = PlayingRepositoryImpl(ApiClient.playingApi)
-
-                val miniPlayerVM: MusicPlayerViewModel = viewModel(
-                    factory = MusicPlayerViewModelFactory(
-                        trackId = "",
-                        favoriteRepo = favoriteRepo,
-                        playingRepo = playingRepo,
-                        urlKey = "",
-                        title = "",
-                        artist = "",
-                        imageKey = "",
-                        context = context
-                    )
-                )
-
                 MiniPlayerBar(
-                    viewModel = miniPlayerVM,
+                    viewModel = playerViewModel,
                     onExpandPlayer = {
-                        bottomNavController.navigate(BottomNavItem.Track.route)
+                        bottomNavController.navigate("track_player_screen")
                     }
                 )
                 BottomNavigationBar(bottomNavController)
@@ -133,7 +126,7 @@ fun HomeScreen(
 
                 HomeScreenContent(
                     vm,
-                //    playingVm,
+                    playerViewModel,
                     appNavController,
                     onProfileClick = {
                         bottomNavController.navigate(BottomNavItem.Profile.route)
@@ -151,6 +144,7 @@ fun HomeScreen(
 
                 SearchScreen(
                     vm = vm,
+                    playerViewModel,
                     navController = bottomNavController,
                     onCancel = { bottomNavController.popBackStack() }
                 )
@@ -210,6 +204,14 @@ fun HomeScreen(
                     onBack = { bottomNavController.popBackStack() }
                 )
             }
+
+            composable("track_player_screen") {
+                MusicPlayer(
+                    viewModel = playerViewModel,
+                    onBack = { bottomNavController.popBackStack() }
+                )
+            }
+
             composable(BottomNavItem.Profile.route) {
                 val vm: ProfileViewModel =
                     viewModel(factory = ProfileViewModelFactory(LocalContext.current))
@@ -234,7 +236,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     vm: HomeViewModel,
-    //playingVm: PlayingViewModel,
+    playerViewModel: MusicPlayerViewModel,
     appNavController: NavController,
     onProfileClick: () -> Unit,
     bottomNavController: NavController
@@ -327,13 +329,14 @@ fun HomeScreenContent(
                         artistName = artistString,
                         coverImageUrl = trackUiModel.coverImageUrl,
                         onClick = {
-                            val encodedUrlKey = URLEncoder.encode(track.storageKey, StandardCharsets.UTF_8.toString())
-                            val encodedSongName = URLEncoder.encode(track.title, StandardCharsets.UTF_8.toString())
-                            val encodedArtistName = URLEncoder.encode(artistString, StandardCharsets.UTF_8.toString())
-                            val encodedImageKey = URLEncoder.encode(track.coverImageKey ?: "no_image", StandardCharsets.UTF_8.toString())
-
-                            val route = "track/${track.id}/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
-                            bottomNavController.navigate(route)
+                            playerViewModel.playSong(
+                                newTrackId = track.id,
+                                newUrlKey = track.storageKey,
+                                newTitle = track.title,
+                                newArtist = artistString,
+                                newImageKey = track.coverImageKey ?: "no_image"
+                            )
+                            bottomNavController.navigate("track_player_screen")
                         }
                     )
                 }
@@ -372,13 +375,14 @@ fun HomeScreenContent(
                         artistName = artistString,
                         coverImageUrl = trackUiModel.coverImageUrl,
                         onClick = {
-                            val encodedUrlKey = URLEncoder.encode(track.storageKey, StandardCharsets.UTF_8.toString())
-                            val encodedSongName = URLEncoder.encode(track.title, StandardCharsets.UTF_8.toString())
-                            val encodedArtistName = URLEncoder.encode(artistString, StandardCharsets.UTF_8.toString())
-                            val encodedImageKey = URLEncoder.encode(track.coverImageKey ?: "no_image", StandardCharsets.UTF_8.toString())
-
-                            val route = "track/${track.id}/$encodedUrlKey/$encodedSongName/$encodedArtistName/$encodedImageKey"
-                            bottomNavController.navigate(route)
+                            playerViewModel.playSong(
+                                newTrackId = track.id,
+                                newUrlKey = track.storageKey,
+                                newTitle = track.title,
+                                newArtist = artistString,
+                                newImageKey = track.coverImageKey ?: "no_image"
+                            )
+                            bottomNavController.navigate("track_player_screen")
                         }
                     )
                 }
