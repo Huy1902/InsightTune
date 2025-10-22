@@ -112,6 +112,7 @@ fun StartScreenContent(
                 Text(
                     stringResource(R.string.sign_up),
                     color = MaterialTheme.colorScheme.onPrimary,
+                    style = AppTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
                 )
@@ -137,6 +138,7 @@ fun StartScreenContent(
                     )
                     Text(
                         stringResource(R.string.Google),
+                        style = AppTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onBackground
@@ -166,6 +168,7 @@ fun StartScreenContent(
                         stringResource(R.string.Facebook),
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
+                        style = AppTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -175,6 +178,7 @@ fun StartScreenContent(
                 Text(
                     stringResource(R.string.Log_in),
                     color = MaterialTheme.colorScheme.onBackground,
+                    style = AppTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
             }

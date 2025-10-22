@@ -1,5 +1,6 @@
 package com.example.frontend.data.remote
 
+import android.util.Log
 import com.example.frontend.data.models.song.FavoriteRequest
 import com.example.frontend.data.models.song.FavoriteResponse
 import com.example.frontend.data.models.song.GetTracksResponse
@@ -13,11 +14,18 @@ class FavoriteRepositoryImpl(private val api: FavoriteApi) : FavoriteRepository 
 
     override suspend fun deleteFavorite(songId: String): String {
         val request = FavoriteRequest(songId)
-        return api.deleteFavorite(request)
+        val response = api.deleteFavorite(request)
+        val message = response.body()?.string() ?: throw Exception("Failed to delete favorite")
+        Log.d("FavoriteRepo", "Delete response: $message")
+        return message
     }
 
     override suspend fun getFavorites(): List<GetTracksResponse> {
         val response = api.getFavorites()
         return response
+    }
+
+    override suspend fun isFavorite(songId: String): Boolean {
+        return api.isFavorite(songId)
     }
 }

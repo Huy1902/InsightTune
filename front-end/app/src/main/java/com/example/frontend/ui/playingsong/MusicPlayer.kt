@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Favorite
@@ -43,6 +44,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,7 +64,7 @@ fun MusicPlayer(
 ) {
 
     val state by viewModel.playerState.collectAsState()
-    val currentTrack = state.currentTrack
+//    val currentTrack = state.currentTrack
 //    if (currentTrack != null) {
 //        return
 //    }
@@ -80,9 +82,10 @@ fun MusicPlayer(
                 .padding(10.dp, 0.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row (modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -113,24 +116,26 @@ fun MusicPlayer(
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
-            Box (
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(4f)
                     .padding(horizontal = 32.dp, vertical = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                AsyncImage (
+                AsyncImage(
                     model = state.coverImageUrl ?: R.drawable.spotube,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f),
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(8.dp)),
+                    placeholder = painterResource(id = R.drawable.spotube),
                     contentScale = ContentScale.Crop
                 )
             }
 
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1.5f)
@@ -139,19 +144,19 @@ fun MusicPlayer(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = viewModel.getTitle(),
+                    text = state.mediaMetadata.title?.toString() ?: "Unknown Title",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = viewModel.getArtist(),
+                    text = state.mediaMetadata.artist?.toString() ?: "Unknown Artist",
                     modifier = Modifier.padding(top = 4.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 16.sp
                 )
             }
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
@@ -159,11 +164,11 @@ fun MusicPlayer(
             ) {
                 PlayerSeekBar(
                     playerState = state,
-                    onSeek = {newPosition -> viewModel.seekToPosition(newPosition) }
+                    onSeek = { newPosition -> viewModel.seekToPosition(newPosition) }
                 )
             }
 
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -173,7 +178,7 @@ fun MusicPlayer(
                 IconButton(
 //                    modifier = Modifier.fillMaxHeight(0.3f),
                     modifier = Modifier.size(28.dp),
-                    onClick =  {}
+                    onClick = {}
                 ) {
                     Icon(
                         imageVector = Icons.Default.Shuffle,
@@ -183,9 +188,8 @@ fun MusicPlayer(
                     )
                 }
                 IconButton(
-//                    modifier = Modifier.fillMaxHeight(0.7f),
                     modifier = Modifier.size(56.dp),
-                    onClick = { /*TODO*/ }
+                    onClick = { viewModel.playPreviousTrack() }
                 ) {
                     Icon(
                         imageVector = Icons.Default.SkipPrevious,
@@ -194,10 +198,10 @@ fun MusicPlayer(
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
-                IconButton (
-                    onClick = {viewModel.onPlayPauseClick() },
+                IconButton(
+                    onClick = { viewModel.onPlayPauseClick() },
                     modifier = Modifier.size(72.dp)
-                    ) {
+                ) {
                     Icon(
                         imageVector = if (state.isPlaying) Icons.Default.PauseCircle else Icons.Default.PlayCircle,
                         modifier = Modifier.fillMaxSize(),
@@ -206,9 +210,8 @@ fun MusicPlayer(
                     )
                 }
                 IconButton(
-                    onClick = {viewModel.onPlayNextSong() },
+                    onClick = { viewModel.playNextTrack() },
                     modifier = Modifier.size(56.dp),
-//                    modifier = Modifier.fillMaxHeight(0.7f)
                 ) {
                     Icon(
                         imageVector = Icons.Default.SkipNext,
@@ -218,7 +221,6 @@ fun MusicPlayer(
                     )
                 }
                 IconButton(
-//                    modifier = Modifier.fillMaxHeight(0.3f),
                     modifier = Modifier.size(28.dp),
                     onClick = {
                         viewModel.onToggleFavorite()

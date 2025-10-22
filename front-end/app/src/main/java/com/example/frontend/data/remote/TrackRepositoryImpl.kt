@@ -2,7 +2,9 @@ package com.example.frontend.data.remote
 
 import android.util.Log
 import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.song.NextTracksResponse
 import com.example.frontend.domain.repositories.TrackRepository
+import kotlin.reflect.typeOf
 
 class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {
 
@@ -40,5 +42,18 @@ class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {
             emptyList()
         }
         Log.d(TAG, "End of searchTracks()")
+    }
+
+    override suspend fun nextTracks(currentTrackId: String): List<NextTracksResponse> {
+        return try {
+            Log.d(TAG, "call API nextTracks()...")
+            val response = trackApi.nextTracks(currentTrackId)
+            Log.d(TAG, "API response: ${response} songs")
+            response
+        } catch (e: Exception) {
+            Log.e(TAG, "Error when calling API: ${e.message}", e)
+            emptyList()
+        }
+        Log.d(TAG, "End of nextTracks()")
     }
 }
