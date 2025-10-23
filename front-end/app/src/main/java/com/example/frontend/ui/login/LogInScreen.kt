@@ -178,7 +178,8 @@ fun LogInScreenContent(
             Spacer(modifier = Modifier.height(AppTheme.spacing().M))
             Text(
                 text = stringResource(R.string.log_in_error),
-                style = AppTheme.typography.labelSmall,
+                style = AppTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
                 color = AppTheme.color().Error
             )
         }

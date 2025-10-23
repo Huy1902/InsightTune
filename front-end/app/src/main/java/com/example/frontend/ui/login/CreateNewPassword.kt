@@ -171,8 +171,7 @@ fun CreateNewPasswordContent(
             Text(
                 stringResource(R.string.confirm),
                 fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.labelSmall,
-                fontSize = 14.sp,
+                style = AppTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimary,
             )
         }

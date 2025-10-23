@@ -129,10 +129,10 @@ fun SignUpStep2Content(
         ) {
             Text(
                 stringResource(R.string.register_password),
-                style = AppTheme.typography.titleLarge,
+                style = AppTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(modifier = Modifier.size(4.dp))
+            Spacer(modifier = Modifier.size(AppTheme.spacing().M))
             AppTextField(
                 value = password,
                 onValueChange = onPasswordChange,
@@ -150,10 +150,10 @@ fun SignUpStep2Content(
             Spacer(modifier = Modifier.size(15.dp))
             Text(
                 stringResource(R.string.register_password_confirmation),
-                style = AppTheme.typography.titleLarge,
+                style = AppTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(modifier = Modifier.size(4.dp))
+            Spacer(modifier = Modifier.size(AppTheme.spacing().M))
             AppTextField(
                 value = confirmPassword,
                 onValueChange = onConfirmPasswordChange,
@@ -172,8 +172,7 @@ fun SignUpStep2Content(
             Text(
                 stringResource(R.string.next),
                 fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.labelSmall,
-                fontSize = 14.sp,
+                style = AppTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimary,
             )
         }

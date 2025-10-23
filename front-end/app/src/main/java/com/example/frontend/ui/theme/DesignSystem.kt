@@ -77,7 +77,7 @@ object AppColor {
     val Primary = Color(0xFF1DB954)
     val Secondary = Color(0xFF191414)
     val Background = Color(0xFFF8F8F8)
-    val Surface = Color(0xFFC7C6C6)
+    val Surface = Color(0xFFEAEAEA)
     val TextPrimary = Color(0xFF000000)
     val TextDarkMode = Color(0xFFF0F0F0)
     val TextSecondary = Color(0xFF666666)

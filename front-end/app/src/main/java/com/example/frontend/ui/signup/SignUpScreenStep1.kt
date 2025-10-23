@@ -106,12 +106,12 @@ fun SignUpStep1Content(
         ) {
             Text(
                 stringResource(R.string.register_email),
-                style = AppTheme.typography.titleLarge,
+                style = AppTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.align(Alignment.Start)
             )
 
-            Spacer(modifier = Modifier.size(4.dp))
+            Spacer(modifier = Modifier.size(AppTheme.spacing().M))
 
             AppTextField(
                 value = email,
@@ -122,13 +122,13 @@ fun SignUpStep1Content(
 
             Spacer(modifier = Modifier.size(4.dp))
 
-            Text(
-                stringResource(R.string.register_email_details),
-                fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.align(Alignment.Start)
-            )
+//            Text(
+//                stringResource(R.string.register_email_details),
+//                fontWeight = FontWeight.Bold,
+//                style = AppTheme.typography.labelSmall,
+//                color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                modifier = Modifier.align(Alignment.Start)
+//            )
         }
 
         Spacer(modifier = Modifier.size(30.dp))
@@ -136,7 +136,7 @@ fun SignUpStep1Content(
         Button(
             onClick = onNextClick,
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            enabled = !isLoading
+            enabled = !isLoading,
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
@@ -156,8 +156,7 @@ fun SignUpStep1Content(
                 Text(
                     stringResource(R.string.next),
                     fontWeight = FontWeight.Bold,
-                    style = AppTheme.typography.labelSmall,
-                    fontSize = 14.sp,
+                    style = AppTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
             }

@@ -25,7 +25,6 @@ import com.example.frontend.R
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.ui.theme.AppTheme
 
-// Stateful Composable (chứa logic)
 @Composable
 fun StartScreen(
     onNextSignUp: () -> Unit,

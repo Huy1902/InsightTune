@@ -124,10 +124,10 @@ fun SignUpStep3Content(
         ) {
             Text(
                 stringResource(R.string.register_first_name),
-                style = AppTheme.typography.titleLarge,
+                style = AppTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
-
+            Spacer(modifier = Modifier.size(AppTheme.spacing().M))
             AppTextField(
                 value = firstName,
                 onValueChange = onFirstNameChange,
@@ -139,9 +139,11 @@ fun SignUpStep3Content(
 
             Text(
                 stringResource(R.string.register_last_name),
-                style = AppTheme.typography.titleLarge,
+                style = AppTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
+
+            Spacer(modifier = Modifier.size(AppTheme.spacing().M))
 
             AppTextField(
                 value = lastName,
@@ -171,6 +173,7 @@ fun SignUpStep3Content(
                     stringResource(R.string.register_confirmation),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary,
+                    style = AppTheme.typography.titleMedium
                 )
             }
         }

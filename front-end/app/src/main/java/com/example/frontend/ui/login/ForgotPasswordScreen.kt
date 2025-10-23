@@ -91,6 +91,7 @@ fun ForgetPasswordScreenContent(
             Text(
                 stringResource(R.string.forgot_password),
                 style = AppTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.Center)
             )
@@ -99,6 +100,7 @@ fun ForgetPasswordScreenContent(
         Text(
             stringResource(R.string.login_email),
             style = AppTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(AppTheme.spacing().S))

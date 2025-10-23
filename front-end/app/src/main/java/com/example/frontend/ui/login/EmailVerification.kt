@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
@@ -122,7 +124,7 @@ fun OtpScreenContent(
             style = AppTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(AppTheme.spacing().S))
+        Spacer(modifier = Modifier.height(AppTheme.spacing().M))
         Text(
             stringResource(R.string.otp_title),
             style = AppTheme.typography.bodyLarge,
@@ -139,7 +141,7 @@ fun OtpScreenContent(
         OtpInputRow(otpValue = otpValue, onOtpChange = onOtpChange)
         Spacer(modifier = Modifier.height(AppTheme.spacing().M))
         ResendCodeText(timer = timer, canResend = canResend, onClick = onResendClick)
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.size(30.dp))
         Button(
             onClick = onVerifyClick,
             enabled = !isLoading && otpValue.joinToString("").length == 6,
@@ -147,7 +149,11 @@ fun OtpScreenContent(
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
             } else {
-                Text(stringResource(R.string.verify))
+                Text(
+                    stringResource(R.string.verify),
+                    style = AppTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
         errorMessage?.let {
@@ -207,7 +213,8 @@ private fun OtpCell(text: String, modifier: Modifier = Modifier) {
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline
             )
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .clip(RoundedCornerShape(12.dp)),
         contentAlignment = Alignment.Center
     ) {
         Text(

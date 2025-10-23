@@ -143,23 +143,23 @@ fun MiniPlayerBar(
             )
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 2.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = formatTime(currentPos),
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Gray
-            )
-            Text(
-                text = formatTime(totalDur),
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Gray
-            )
-        }
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 2.dp),
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Text(
+//                text = formatTime(currentPos),
+//                style = MaterialTheme.typography.bodyLarge,
+//                color = Color.Gray
+//            )
+//            Text(
+//                text = formatTime(totalDur),
+//                style = MaterialTheme.typography.bodyLarge,
+//                color = Color.Gray
+//            )
+//        }
     }
 }
 

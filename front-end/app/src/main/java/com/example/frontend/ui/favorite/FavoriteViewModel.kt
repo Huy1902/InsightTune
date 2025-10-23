@@ -39,7 +39,6 @@ class FavoriteViewModel(
                     TrackUiModel(trackInfo = track, coverImageUrl = response.coverImageUrl)
                 }
             }.awaitAll()
-
             _uiTracks.value = tracksWithUrls
             _isLoading.value = false
         }

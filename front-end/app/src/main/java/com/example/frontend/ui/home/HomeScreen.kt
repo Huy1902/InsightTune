@@ -423,36 +423,45 @@ fun BottomNavigationBar(navController: NavController) {
 
     NavigationBar(
         containerColor = Color.Transparent,
+        modifier = Modifier.height(80.dp)
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        item.icon ?: Icons.Default.AccountCircle,
-                        contentDescription = null
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            items.forEach { item ->
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            item.icon ?: Icons.Default.AccountCircle,
+                            contentDescription = null
+                        )
+                    },
+                    label = {
+                        Text(stringResource(id = item.labelResId ?: R.drawable.spotube))
+                    },
+                    selected = currentRoute == item.route,
+                    onClick = {
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedTextColor = MaterialTheme.colorScheme.onBackground,
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onBackground,
+                        indicatorColor = Color.Transparent
                     )
-                },
-                label = { Text(stringResource(id = item.labelResId ?: R.drawable.spotube)) },
-                selected = currentRoute == item.route,
-                onClick = {
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onBackground,
-                    indicatorColor = Color.Transparent
                 )
-            )
+            }
         }
     }
+
 }
 
 

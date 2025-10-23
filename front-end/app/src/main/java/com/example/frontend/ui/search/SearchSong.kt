@@ -158,7 +158,6 @@ fun SearchScreenContent(
                 stringResource(R.string.recent_search),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(AppTheme.spacing().M))
             LazyColumn {

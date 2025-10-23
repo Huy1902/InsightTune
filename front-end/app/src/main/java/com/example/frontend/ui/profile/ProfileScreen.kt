@@ -220,7 +220,7 @@ fun ProfileScreenContent(
                     model = uiState.avatarUrl ?: R.drawable.spotube_cropped,
                     contentDescription = "Avatar",
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(81.dp)
                         .clip(CircleShape)
                         .clickable(onClick = onAvatarClick)
                 )
@@ -237,25 +237,25 @@ fun ProfileScreenContent(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                    if (uiState.phone.isNotBlank()) {
-                        Text(
-                            stringResource(R.string.phone, uiState.phone),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    if (uiState.address.isNotBlank()) {
-                        Text(
-                            stringResource(R.string.address, uiState.address),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    Text(
-                        stringResource(R.string.role, uiState.role),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+//                    if (uiState.phone.isNotBlank()) {
+//                        Text(
+//                            stringResource(R.string.phone, uiState.phone),
+//                            style = MaterialTheme.typography.bodyMedium,
+//                            color = MaterialTheme.colorScheme.onBackground
+//                        )
+//                    }
+//                    if (uiState.address.isNotBlank()) {
+//                        Text(
+//                            stringResource(R.string.address, uiState.address),
+//                            style = MaterialTheme.typography.bodyMedium,
+//                            color = MaterialTheme.colorScheme.onBackground
+//                        )
+//                    }
+//                    Text(
+//                        stringResource(R.string.role, uiState.role),
+//                        style = MaterialTheme.typography.bodyMedium,
+//                        color = MaterialTheme.colorScheme.onBackground
+//                    )
                 }
             }
             Spacer(modifier = Modifier.height(AppTheme.spacing().L))
@@ -309,6 +309,7 @@ fun ProfileScreenContent(
                 Text(
                     stringResource(R.string.log_out),
                     fontWeight = FontWeight.Bold,
+                    style = AppTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
@@ -328,7 +329,8 @@ fun ProfileItem(text: String, onClick: () -> Unit) {
         Text(
             text,
             color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold
         )
         Icon(
             imageVector = Icons.Default.ArrowForwardIos,
