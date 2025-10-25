@@ -61,6 +61,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.3")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.media:media:1.7.0")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha11")
     // Accompanist Navigation Animation
     implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.7.3")
