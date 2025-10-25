@@ -65,50 +65,58 @@ fun ChangeProfileDialog(
 
                 var expanded by remember { mutableStateOf(false) }
 
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded }
-                ) {
-                    AppTextField(
-                        value = role,
-                        onValueChange = {},
-                        readOnly = true,
-                        placeholderText = stringResource(R.string.select_role),
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor()
-                            .clickable { expanded = true }
+//                ExposedDropdownMenuBox(
+//                    expanded = expanded,
+//                    onExpandedChange = { expanded = !expanded }
+//                ) {
+//                    AppTextField(
+//                        value = role,
+//                        onValueChange = {},
+//                        readOnly = true,
+//                        placeholderText = stringResource(R.string.select_role),
+//                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .menuAnchor()
+//                            .clickable { expanded = true }
+//                    )
+//
+//                    ExposedDropdownMenu(
+//                        expanded = expanded,
+//                        onDismissRequest = { expanded = false },
+//                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+//                    ) {
+//                        DropdownMenuItem(
+//                            text = { Text("USER") },
+//                            onClick = {
+//                                role = "USER"
+//                                expanded = false
+//                            },
+//                            enabled = uiState.role != "ADMIN"
+//                        )
+//                        DropdownMenuItem(
+//                            text = { Text("ADMIN") },
+//                            onClick = {
+//                                role = "ADMIN"
+//                                expanded = false
+//                            }
+//                        )
+//                    }
+//                }
+                if (uiState.error != null) {
+                    Text(
+                        text = uiState.error,
+                        color = MaterialTheme.colorScheme.error,
                     )
-
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("USER") },
-                            onClick = {
-                                role = "USER"
-                                expanded = false
-                            },
-                            enabled = uiState.role != "ADMIN"
-                        )
-                        DropdownMenuItem(
-                            text = { Text("ADMIN") },
-                            onClick = {
-                                role = "ADMIN"
-                                expanded = false
-                            }
-                        )
-                    }
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = {
                 onConfirm(firstName, lastName, phone, address, role)
-                onDismiss()
+                if (uiState.error != null) {
+                    onDismiss()
+                }
             }) {
                 Text(
                     stringResource(R.string.save),

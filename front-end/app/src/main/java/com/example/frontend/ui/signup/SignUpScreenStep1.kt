@@ -136,6 +136,8 @@ fun SignUpStep1Content(
         Button(
             onClick = onNextClick,
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            modifier = Modifier
+                .height(56.dp),
             enabled = !isLoading,
         ) {
             if (isLoading) {
@@ -156,7 +158,7 @@ fun SignUpStep1Content(
                 Text(
                     stringResource(R.string.next),
                     fontWeight = FontWeight.Bold,
-                    style = AppTheme.typography.titleMedium,
+                    style = AppTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
@@ -166,7 +168,7 @@ fun SignUpStep1Content(
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 it,
-                style = AppTheme.typography.labelSmall,
+                style = AppTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.error,
             )
         }

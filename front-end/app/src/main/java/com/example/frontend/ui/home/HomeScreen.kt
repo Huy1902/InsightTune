@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -304,21 +305,19 @@ fun HomeScreenContent(
                 color = MaterialTheme.colorScheme.onBackground,
             )
 
-            Row(
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton(
+                onClick = { onProfileClick() },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp),
-                horizontalArrangement = Arrangement.End
+                    .padding(end = 8.dp)
+                    .size(60.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = null,
+                    contentDescription = "User Profile",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clickable {
-                            onProfileClick()
-                        }
+                    modifier = Modifier.size(80.dp)
                 )
             }
         }

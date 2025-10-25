@@ -85,24 +85,24 @@ fun FavoriteScreenContent(
                 )
             }
         } else {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = AppTheme.spacing().M, end = AppTheme.spacing().M),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(onClick = { playerViewModel.toggleFavoriteShuffle() }) {
-                    Icon(
-                        imageVector = Icons.Default.Shuffle,
-                        contentDescription = "Shuffle Favorites",
-                        tint = if (playerViewModel.isFavoriteShuffleOn())
-                            MaterialTheme.colorScheme.primary
-                        else
-                            MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(start = AppTheme.spacing().M, end = AppTheme.spacing().M),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically,
+//            ) {
+//                IconButton(onClick = { playerViewModel.toggleFavoriteShuffle() }) {
+//                    Icon(
+//                        imageVector = Icons.Default.Shuffle,
+//                        contentDescription = "Shuffle Favorites",
+//                        tint = if (playerViewModel.isFavoriteShuffleOn())
+//                            MaterialTheme.colorScheme.primary
+//                        else
+//                            MaterialTheme.colorScheme.onBackground
+//                    )
+//                }
+//            }
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = AppTheme.spacing().M)
