@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.R
+import com.example.frontend.ui.theme.AppTheme
 
 @Composable
 fun ChatBotScreen() {
@@ -36,28 +37,23 @@ fun ChatBotScreen() {
     Scaffold(
         topBar = { TopBar() },
         content = { padding ->
-            // Sử dụng Column để sắp xếp ChatSection và MessageInput theo chiều dọc
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(Color.Black)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
-                // Áp dụng Modifier.weight(1f) cho LazyColumn
-                // để nó chiếm hết không gian có sẵn, đẩy MessageInput xuống dưới cùng.
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f) // SỬA LỖI Ở ĐÂY
+                        .weight(1f)
                         .padding(horizontal = 16.dp)
                 ) {
                     item {
                         MessageBubble(text = "What should we make?", isFromUser = false)
                         Spacer(modifier = Modifier.height(8.dp))
-                        // Đây là nơi bạn sẽ hiển thị các tin nhắn khác
                     }
                 }
-                // MessageInput sẽ được đặt ở dưới cùng
                 MessageInput(
                     text = textInput,
                     onTextChange = {newText -> textInput = newText},
@@ -79,26 +75,26 @@ fun TopBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Black)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.spotube), // Thay thế bằng logo của bạn
+            painter = painterResource(id = R.drawable.spotube),
             contentDescription = "Logo",
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier.size(60.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = "SpoTube",
-            color = Color.Red,
-            fontSize = 24.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = AppTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
         Text(
             text = " AI",
-            color = Color.Red,
-            fontSize = 24.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = AppTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
     }
@@ -114,13 +110,13 @@ fun MessageBubble(text: String, isFromUser: Boolean) {
             modifier = Modifier.padding(8.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = if (isFromUser) Color(0xFF3C3C3C) else Color.DarkGray
+                containerColor = if (isFromUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
             )
         ) {
             Text(
                 text = text,
                 modifier = Modifier.padding(12.dp),
-                color = Color.White
+                color = if (isFromUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -142,14 +138,14 @@ fun MessageInput(
         Icon(
             imageVector = Icons.Default.Add,
             contentDescription = "Add",
-            tint = Color.Gray,
+            tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Icon(
             imageVector = Icons.Default.Face,
             contentDescription = "Emoji",
-            tint = Color.Gray,
+            tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -159,21 +155,20 @@ fun MessageInput(
             placeholder = { Text(text = "Message...", color = Color.Gray) },
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(24.dp),
-            // SỬA LỖI Ở ĐÂY
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFF3C3C3C),    // Màu nền khi được chọn
-                unfocusedContainerColor = Color(0xFF3C3C3C),  // Màu nền khi không được chọn
-                focusedIndicatorColor = Color.Transparent,    // Bỏ đường viền khi được chọn
-                unfocusedIndicatorColor = Color.Transparent,  // Bỏ đường viền khi không được chọn
-                cursorColor = Color.White,                    // Màu con trỏ
-                focusedTextColor = Color.White                // Màu chữ khi nhập
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = MaterialTheme.colorScheme.onSurface,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
             ),
             trailingIcon = {
                 IconButton(onClick = onSendClick) {
                     Icon(
                         imageVector = Icons.Filled.Send,
                         contentDescription = "Send",
-                        tint = Color.Gray
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 }
             }
