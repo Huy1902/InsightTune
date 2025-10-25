@@ -56,6 +56,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.frontend.R
 import com.example.frontend.core.AppPreferences
+import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.data.models.song.NextTracksResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.FavoriteRepositoryImpl
@@ -96,10 +97,12 @@ fun HomeScreen(
     val context = LocalContext.current
     val favoriteRepo = FavoriteRepositoryImpl(ApiClient.favoriteApi)
     val playingRepo = PlayingRepositoryImpl(ApiClient.playingApi)
+    val prefs = AppPreferences(LocalContext.current)
+    val historyRepository = HistoryRepositoryImpl(ApiClient.historyApi, prefs)
 
     val playerViewModel: MusicPlayerViewModel = viewModel(
         factory = MusicPlayerViewModelFactory(
-            favoriteRepo = favoriteRepo, playingRepo = playingRepo, context = context
+            favoriteRepo = favoriteRepo, playingRepo = playingRepo, historyRepo = historyRepository, context = context
         )
     )
     val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
@@ -145,8 +148,6 @@ fun HomeScreen(
             }
             composable(BottomNavItem.Search.route) {
                 val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
-                val prefs = AppPreferences(LocalContext.current)
-                val historyRepository = HistoryRepositoryImpl(ApiClient.historyApi, prefs)
                 val searchViewModelFactory =
                     SearchViewModelFactory(trackRepository, historyRepository, prefs)
 
@@ -216,6 +217,7 @@ fun HomeScreen(
                         trackList = singleTrackList,
                         favoriteRepo = favoriteRepo,
                         playingRepo = playingRepo,
+                        historyRepo = historyRepository,
                         context = context
                     )
                 )
@@ -264,8 +266,13 @@ fun HomeScreenContent(
     val tracks by vm.tracks.collectAsState()
     val uiTracks by vm.uiTracks.collectAsState()
     val isLoading by vm.isLoading.collectAsState()
+    val history by vm.history.collectAsState()
     LaunchedEffect(Unit) {
-        vm.loadTracks(limit = 8)
+        vm.loadTracks()
+    }
+
+    LaunchedEffect(Unit) {
+        vm.loadHistory(limit = 8)
     }
 
     Column(
@@ -340,16 +347,15 @@ fun HomeScreenContent(
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-                itemsIndexed(uiTracks) { index, trackUiModel ->
+                itemsIndexed(history) { index, trackUiModel ->
                     val track = trackUiModel.trackInfo
                     val artistString = track.artists?.joinToString(", ") ?: "Unknown"
-
+                    Log.d("HistoryDebug", "title=${track.title}, artist=$artistString, image=${trackUiModel.coverImageUrl}")
                     SongCard(
                         songName = track.title,
                         artistName = artistString,
                         coverImageUrl = trackUiModel.coverImageUrl,
                         onClick = {
-                            playerViewModel.setCurrentIndex(index)
                             playerViewModel.playSong(
                                 newTrackId = track.id,
                                 newUrlKey = track.storageKey,
@@ -473,4 +479,17 @@ fun PreviewHomeScreen() {
     val sampleViewModel =
         remember { HomeViewModel(context) }
     // HomeScreen(sampleViewModel, navController)
+}
+
+// Hàm chuyển đổi Model
+fun GetTracksResponse.toNextTracksResponse(): NextTracksResponse {
+    return NextTracksResponse(
+        id = this.id,
+        title = this.title,
+        artists = this.artists ?: emptyList(),
+        albumId = this.albumId,
+        storageKey = this.storageKey,
+        durationMs = this.durationMs,
+        coverImageKey = this.coverImageKey?: ""
+    )
 }

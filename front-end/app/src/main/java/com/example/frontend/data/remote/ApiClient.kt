@@ -64,7 +64,7 @@ object ApiClient {
     private val gatewayRetrofit by lazy {
         Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
-            .client(mainClient) // Dùng mainClient
+            .client(mainClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -72,7 +72,7 @@ object ApiClient {
     private val refreshRetrofit by lazy {
         Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
-            .client(refreshClient) // Dùng refreshClient
+            .client(refreshClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -116,7 +116,7 @@ object ApiClient {
         Retrofit.Builder()
             .baseUrl(Constants.HISTORY_SERVICE_BASE_URL)
             .client(mainClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(HistoryApi::class.java)
     }

@@ -103,7 +103,7 @@ fun LogInScreenContent(
         ) {
             Text(
                 stringResource(R.string.login_email),
-                style = AppTheme.typography.titleLarge,
+                style = AppTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
             )
 
@@ -120,7 +120,7 @@ fun LogInScreenContent(
 
             Text(
                 stringResource(R.string.login_password),
-                style = AppTheme.typography.titleLarge,
+                style = AppTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
             )
 

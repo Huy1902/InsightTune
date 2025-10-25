@@ -5,19 +5,24 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.frontend.R
 import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.song.NextTracksResponse
 import com.example.frontend.ui.home.HorizontalSongCard
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import com.example.frontend.ui.theme.AppTheme
@@ -77,19 +82,46 @@ fun FavoriteScreenContent(
                     stringResource(R.string.no_favorite_songs),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground
-                    )
+                )
             }
         } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = AppTheme.spacing().M, end = AppTheme.spacing().M),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(onClick = { playerViewModel.toggleFavoriteShuffle() }) {
+                    Icon(
+                        imageVector = Icons.Default.Shuffle,
+                        contentDescription = "Shuffle Favorites",
+                        tint = if (playerViewModel.isFavoriteShuffleOn())
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = AppTheme.spacing().M)
             ) {
-                items(tracks) { track ->
+                itemsIndexed(tracks) { index, trackUiModel ->
                     FavoriteSongItem(
-                        trackModel = track,
-                        playerViewModel = playerViewModel,
-                        onRemoveClick = { vm.deleteFavorite(track.trackInfo.id) },
-                        navController = navController
+                        trackModel = trackUiModel,
+                        onRemoveClick = { vm.deleteFavorite(trackUiModel.trackInfo.id) },
+                        onClick = {
+                            val favoritePlaylist =
+                                tracks.map { it.trackInfo.toNextTracksResponse() }
+
+                            playerViewModel.setPlaylist(
+                                newTracks = favoritePlaylist,
+                                startIndex = index,
+                                allowFetching = false
+                            )
+                            navController.navigate("track_player_screen")
+                        }
                     )
                 }
             }
@@ -100,9 +132,8 @@ fun FavoriteScreenContent(
 @Composable
 private fun FavoriteSongItem(
     trackModel: TrackUiModel,
-    playerViewModel: MusicPlayerViewModel,
     onRemoveClick: () -> Unit,
-    navController: NavController
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -117,16 +148,7 @@ private fun FavoriteSongItem(
             songName = track.title,
             artistName = artistString,
             coverImageUrl = trackModel.coverImageUrl,
-            onClick = {
-                playerViewModel.playSong(
-                    newTrackId = track.id,
-                    newUrlKey = track.storageKey,
-                    newTitle = track.title,
-                    newArtist = artistString,
-                    newImageKey = track.coverImageKey ?: "no_image"
-                )
-                navController.navigate("track_player_screen")
-            }
+            onClick = onClick
         )
         IconButton(onClick = onRemoveClick) {
             Icon(
@@ -138,3 +160,14 @@ private fun FavoriteSongItem(
     }
 }
 
+private fun GetTracksResponse.toNextTracksResponse(): NextTracksResponse {
+    return NextTracksResponse(
+        id = this.id,
+        title = this.title,
+        artists = this.artists ?: emptyList(),
+        albumId = this.albumId,
+        storageKey = this.storageKey,
+        durationMs = this.durationMs,
+        coverImageKey = this.coverImageKey ?: "no_image"
+    )
+}
