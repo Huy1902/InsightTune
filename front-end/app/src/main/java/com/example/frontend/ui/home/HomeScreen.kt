@@ -66,6 +66,7 @@ import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.ui.AppGraph
 import com.example.frontend.ui.NavRoutes
+import com.example.frontend.ui.chatbot.ChatBotScreen
 import com.example.frontend.ui.favorite.FavoriteScreen
 import com.example.frontend.ui.favorite.FavoriteViewModel
 import com.example.frontend.ui.favorite.FavoriteViewModelFactory
@@ -174,7 +175,9 @@ fun HomeScreen(
                     bottomNavController
                 )
             }
-            composable(BottomNavItem.ChatBot.route) { /* TODO */ }
+            composable(BottomNavItem.ChatBot.route) {
+                ChatBotScreen()
+            }
             composable(
                 BottomNavItem.Track.route,
                 arguments = listOf(
