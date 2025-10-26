@@ -74,8 +74,8 @@ val AppShapes = Shapes(
 
 // -------------------- COLORS --------------------
 object AppColor {
-    val PrimaryLight = Color(0xFF009688)
-    val PrimaryDark = Color(0xFF26A69A)
+    val PrimaryLight = Color(0xFF006A62)
+    val PrimaryDark = Color(0xFF74D8CC)
 
     val AltPrimaryLight = Color(0xFFFF7043)
     val AltPrimaryDark = Color(0xFFEF4510)

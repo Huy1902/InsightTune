@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 
 // -------------------- COLOR SCHEME --------------------
 private val LightColors = lightColorScheme(
-    primary = AppColor.AltPrimaryLight,
+    primary = AppColor.PrimaryLight,
     secondary = AppColor.Secondary,
     background = AppColor.Background,
     surface = AppColor.Surface,
@@ -22,7 +22,7 @@ private val LightColors = lightColorScheme(
 )
 
 private val DarkColors = darkColorScheme(
-    primary = AppColor.AltPrimaryDark,
+    primary = AppColor.PrimaryDark,
     secondary = AppColor.Secondary,
     background = Color(0xFF121212),
     surface = Color(0xFF1E1E1E),

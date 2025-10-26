@@ -104,7 +104,7 @@ fun TopBar() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.spotube),
+            painter = painterResource(id = R.drawable.spotube_cropped),
             contentDescription = "Logo",
             modifier = Modifier.size(60.dp)
         )

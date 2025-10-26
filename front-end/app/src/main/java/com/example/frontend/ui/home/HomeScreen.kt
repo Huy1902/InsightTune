@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -309,12 +310,18 @@ fun HomeScreenContent(
 
             Spacer(modifier = Modifier.size(14.dp))
 
-            Text(
-                "SpoTube",
-                fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
+            Box(
+                modifier = Modifier.height(80.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "SpoTube",
+                    fontWeight = FontWeight.Bold,
+                    style = AppTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.offset(y = (-3).dp)
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -328,11 +335,10 @@ fun HomeScreenContent(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = "User Profile",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(80.dp)
+                    modifier = Modifier.size(80.dp) // Lưu ý: Icon 80dp trong button 60dp sẽ bị cắt
                 )
             }
         }
-
         Spacer(modifier = Modifier.size(10.dp))
 
 

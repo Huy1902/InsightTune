@@ -131,13 +131,13 @@ fun MusicPlayer(
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
-                    model = state.coverImageUrl ?: R.drawable.spotube,
+                    model = state.coverImageUrl ?: R.drawable.spotube_cropped,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(8.dp)),
-                    placeholder = painterResource(id = R.drawable.spotube),
+                    placeholder = painterResource(id = R.drawable.spotube_cropped),
                     contentScale = ContentScale.Crop
                 )
             }
