@@ -67,6 +67,8 @@ import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.ui.AppGraph
 import com.example.frontend.ui.NavRoutes
 import com.example.frontend.ui.chatbot.ChatBotScreen
+import com.example.frontend.ui.chatbot.ChatbotViewModel
+import com.example.frontend.ui.chatbot.ChatbotViewModelFactory
 import com.example.frontend.ui.favorite.FavoriteScreen
 import com.example.frontend.ui.favorite.FavoriteViewModel
 import com.example.frontend.ui.favorite.FavoriteViewModelFactory
@@ -179,7 +181,10 @@ fun HomeScreen(
                 )
             }
             composable(BottomNavItem.ChatBot.route) {
-                ChatBotScreen()
+                val chatbotApi = ApiClient.chatbotApi
+                val chatbotViewModelFactory = ChatbotViewModelFactory(chatbotApi)
+                val vm: ChatbotViewModel = viewModel(factory = chatbotViewModelFactory)
+                ChatBotScreen(vm)
             }
             composable(
                 BottomNavItem.Track.route,

@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -14,6 +15,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,13 +29,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontend.R
 import com.example.frontend.ui.theme.AppTheme
 
 @Composable
-fun ChatBotScreen() {
+fun ChatBotScreen(viewModel: ChatbotViewModel) {
 
     var textInput by remember {mutableStateOf("")}
+
+    val messages by viewModel.messages.collectAsState()
+    val isBotTyping by viewModel.isBotTyping.collectAsState()
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty()) {
+            listState.animateScrollToItem(messages.size - 1)
+        }
+    }
 
     Scaffold(
         topBar = { TopBar() },
@@ -44,14 +58,23 @@ fun ChatBotScreen() {
                     .background(MaterialTheme.colorScheme.background)
             ) {
                 LazyColumn(
+                    state= listState,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                         .padding(horizontal = 16.dp)
                 ) {
-                    item {
-                        MessageBubble(text = "What should we make?", isFromUser = false)
+                    items(messages.size) { index ->
+                        val msg = messages[index]
+                        MessageBubble(text = msg.text, isFromUser = msg.isFromUser)
                         Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    if (isBotTyping) {
+                        item {
+                            MessageBubble(text = "Bot đang soạn tin...", isFromUser = false)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
                     }
                 }
                 MessageInput(
@@ -60,6 +83,7 @@ fun ChatBotScreen() {
                     onSendClick = {
                         if (textInput.isNotBlank()) {
                             Log.d(TAG, "Tin nhắn đã gửi: ${textInput}")
+                            viewModel.sendMessage(textInput)
                             textInput = ""
 
                         }
@@ -135,19 +159,6 @@ fun MessageInput(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = "Add",
-            tint = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Icon(
-            imageVector = Icons.Default.Face,
-            contentDescription = "Emoji",
-            tint = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.size(24.dp)
-        )
         Spacer(modifier = Modifier.width(8.dp))
         OutlinedTextField(
             value = text,
@@ -180,5 +191,5 @@ fun MessageInput(
 @Preview(showBackground = true)
 @Composable
 fun ChatBotScreenPreview() {
-    ChatBotScreen()
+  //  ChatBotScreen()
 }

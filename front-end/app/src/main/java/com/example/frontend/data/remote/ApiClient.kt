@@ -121,6 +121,15 @@ object ApiClient {
             .create(HistoryApi::class.java)
     }
 
+    val chatbotApi: ChatbotApi by lazy {
+        Retrofit.Builder()
+            .baseUrl(Constants.CHATBOT_URL)
+            .client(mainClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+            .create(ChatbotApi::class.java)
+    }
+
     val favoriteApi: FavoriteApi by lazy {
         Retrofit.Builder()
             .baseUrl(Constants.FAVORITE_SERVICE_BASE_URL)
