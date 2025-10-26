@@ -11,7 +11,8 @@ public class HistoryMapper {
 
     public History convertHistoryRequestToHistory(HistoryRequest historyRequest){
       return History.builder()
-              .storageKey(historyRequest.getTrackId())
+              .trackId(historyRequest.getTrackId())
+              .storageKey(historyRequest.getStorageKey())
               .playedAt(LocalDateTime.now()).build();
     }
 }
