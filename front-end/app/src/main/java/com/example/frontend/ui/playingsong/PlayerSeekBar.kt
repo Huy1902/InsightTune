@@ -47,9 +47,9 @@ fun PlayerSeekBar(
 
         val trackHeight: Dp = 3.dp
         val thumbDiameter: Dp = 16.dp
-        val activeTrackColor: Color = MaterialTheme.colorScheme.onBackground
+        val activeTrackColor: Color = MaterialTheme.colorScheme.primary
         val inactiveTrackColor: Color = Color(0xFF888888)
-        val thumbColor: Color = MaterialTheme.colorScheme.onBackground
+        val thumbColor: Color = MaterialTheme.colorScheme.primary
 
         Slider(
             value = sliderValue,

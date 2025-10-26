@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 
 // -------------------- COLOR SCHEME --------------------
 private val LightColors = lightColorScheme(
-    primary = AppColor.Primary,
+    primary = AppColor.AltPrimaryLight,
     secondary = AppColor.Secondary,
     background = AppColor.Background,
     surface = AppColor.Surface,
@@ -22,15 +22,16 @@ private val LightColors = lightColorScheme(
 )
 
 private val DarkColors = darkColorScheme(
-    primary = AppColor.Primary,
+    primary = AppColor.AltPrimaryDark,
     secondary = AppColor.Secondary,
-    background = Color(0xFF191414),
+    background = Color(0xFF121212),
     surface = Color(0xFF1E1E1E),
     onPrimary = Color.Black,
     onSecondary = Color.White,
     onBackground = Color.White,
     onSurface = Color.White,
 )
+
 
 // -------------------- LOCAL PROVIDERS --------------------
 private val LocalAppSpacing = staticCompositionLocalOf { AppSpacing }

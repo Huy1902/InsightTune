@@ -61,7 +61,9 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
     private val nextTracks: MutableList<NextTracksResponse> = mutableListOf()
 
     private val _history = MutableStateFlow<List<NextTracksResponse>>(emptyList())
-    val history = _history.asStateFlow()
+
+    private val _isRepeatOne = MutableStateFlow(false)
+    val isRepeatOne = _isRepeatOne.asStateFlow()
 
     private var currentIndexSong: Int = -1
 
@@ -181,7 +183,21 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
                 override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                     _playerState.value = _playerState.value.copy(mediaMetadata = mediaMetadata)
                 }
+
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    if (playbackState == Player.STATE_ENDED) {
+                        viewModelScope.launch {
+                            if (_isRepeatOne.value) {
+                                Log.d("MusicPlayerVM", "Repeat one → replay current track")
+                                getCurrentTrack()?.let { loadPlaying(it) }
+                            } else {
+                                playNextTrack()
+                            }
+                        }
+                    }
+                }
             })
+
         } catch (e: Exception) {
             Log.e("MusicPlayerVM", "Failed to create MediaController: ${e.message}")
         }
@@ -370,5 +386,10 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
     }
 
     fun isFavoriteShuffleOn(): Boolean = isFavoriteShuffleEnabled
+
+    fun toggleRepeatOne() {
+        _isRepeatOne.value = !_isRepeatOne.value
+        Log.d("MusicPlayerVM", "Repeat One mode: ${_isRepeatOne.value}")
+    }
 
 }

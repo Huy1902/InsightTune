@@ -6,19 +6,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PauseCircle
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.SkipNext
@@ -54,6 +58,7 @@ import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.domain.repositories.TrackRepository
+import com.example.frontend.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -64,6 +69,8 @@ fun MusicPlayer(
 ) {
 
     val state by viewModel.playerState.collectAsState()
+    val isRepeatOne by viewModel.isRepeatOne.collectAsState()
+
 //    val currentTrack = state.currentTrack
 //    if (currentTrack != null) {
 //        return
@@ -176,15 +183,15 @@ fun MusicPlayer(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-//                    modifier = Modifier.fillMaxHeight(0.3f),
                     modifier = Modifier.size(28.dp),
-                    onClick = {}
+                    onClick = { viewModel.toggleRepeatOne() }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Shuffle,
                         modifier = Modifier.fillMaxSize(),
-                        contentDescription = "Shuffle",
-                        tint = MaterialTheme.colorScheme.onBackground
+                        contentDescription = "Repeat One",
+                        tint = if (isRepeatOne) MaterialTheme.colorScheme.onBackground
+                        else MaterialTheme.colorScheme.primary
                     )
                 }
                 IconButton(
@@ -198,17 +205,25 @@ fun MusicPlayer(
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
-                IconButton(
-                    onClick = { viewModel.onPlayPauseClick() },
-                    modifier = Modifier.size(72.dp)
+                Box(
+                    modifier = Modifier
+                        .size(72.dp)
+                        .background(MaterialTheme.colorScheme.primary, shape = CircleShape),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = if (state.isPlaying) Icons.Default.PauseCircle else Icons.Default.PlayCircle,
-                        modifier = Modifier.fillMaxSize(),
-                        contentDescription = "Play/Pause",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
+                    IconButton(
+                        onClick = { viewModel.onPlayPauseClick() },
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Icon(
+                            imageVector = if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                            contentDescription = "Play/Pause",
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
                 }
+
                 IconButton(
                     onClick = { viewModel.playNextTrack() },
                     modifier = Modifier.size(56.dp),
@@ -234,6 +249,7 @@ fun MusicPlayer(
                     )
                 }
             }
+            Spacer(modifier = Modifier.size(AppTheme.spacing().M))
         }
 
     }

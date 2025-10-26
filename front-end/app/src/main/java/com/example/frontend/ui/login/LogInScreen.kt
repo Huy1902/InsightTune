@@ -153,7 +153,7 @@ fun LogInScreenContent(
             onClick = onLoginClick,
             enabled = uiState !is Resource.Loading,
             colors = ButtonDefaults.buttonColors(
-                containerColor = AppTheme.color().Primary
+                containerColor = MaterialTheme.colorScheme.primary,
             ),
             modifier = Modifier
                 .height(56.dp)

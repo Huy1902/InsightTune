@@ -104,7 +104,10 @@ fun HomeScreen(
 
     val playerViewModel: MusicPlayerViewModel = viewModel(
         factory = MusicPlayerViewModelFactory(
-            favoriteRepo = favoriteRepo, playingRepo = playingRepo, historyRepo = historyRepository, context = context
+            favoriteRepo = favoriteRepo,
+            playingRepo = playingRepo,
+            historyRepo = historyRepository,
+            context = context
         )
     )
     val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
@@ -192,7 +195,7 @@ fun HomeScreen(
                 val storageKey = backStackEntry.arguments?.getString("urlKey") ?: ""
                 val title = backStackEntry.arguments?.getString("title") ?: ""
                 val artistStr = backStackEntry.arguments?.getString("artist") ?: ""
-                val artists = artistStr.split(",").map { it.trim()}
+                val artists = artistStr.split(",").map { it.trim() }
                 val albumId = backStackEntry.arguments?.getString("durationMs") ?: ""
                 val durationMs = backStackEntry.arguments?.getLong("durationMs") ?: 0
                 val coverImageKey = backStackEntry.arguments?.getString("coverImageKey") ?: ""
@@ -327,93 +330,98 @@ fun HomeScreenContent(
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        Text(
-            stringResource(R.string.recently_played),
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
-            style = AppTheme.typography.bodyLarge,
-            modifier = Modifier
-                .padding(start = 16.dp)
-        )
 
         if (isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = AppTheme.color().Primary)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                itemsIndexed(history) { index, trackUiModel ->
-                    val track = trackUiModel.trackInfo
-                    val artistString = track.artists?.joinToString(", ") ?: "Unknown"
-                    Log.d("HistoryDebug", "title=${track.title}, artist=$artistString, image=${trackUiModel.coverImageUrl}")
-                    SongCard(
-                        songName = track.title,
-                        artistName = artistString,
-                        coverImageUrl = trackUiModel.coverImageUrl,
-                        onClick = {
-                            playerViewModel.playSong(
-                                newTrackId = track.id,
-                                newUrlKey = track.storageKey,
-                                newTitle = track.title,
-                                newArtist = artistString,
-                                newImageKey = track.coverImageKey ?: "no_image"
-                            )
-                            bottomNavController.navigate("track_player_screen")
-                        }
-                    )
+            if (history.isNotEmpty()) {
+                Text(
+                    stringResource(R.string.recently_played),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold,
+                    style = AppTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                )
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    itemsIndexed(history) { index, trackUiModel ->
+                        val track = trackUiModel.trackInfo
+                        val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+                        Log.d(
+                            "HistoryDebug",
+                            "title=${track.title}, artist=$artistString, image=${trackUiModel.coverImageUrl}"
+                        )
+                        SongCard(
+                            songName = track.title,
+                            artistName = artistString,
+                            coverImageUrl = trackUiModel.coverImageUrl,
+                            onClick = {
+                                playerViewModel.playSong(
+                                    newTrackId = track.id,
+                                    newUrlKey = track.storageKey,
+                                    newTitle = track.title,
+                                    newArtist = artistString,
+                                    newImageKey = track.coverImageKey ?: "no_image"
+                                )
+                                bottomNavController.navigate("track_player_screen")
+                            }
+                        )
+                    }
                 }
             }
-        }
-        Text(
-            stringResource(R.string.editor_picks),
-            style = AppTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier
-                .padding(start = 16.dp)
-        )
-
-        if (isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                // CircularProgressIndicator(color = AppTheme.color().Primary)
-            }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            Text(
+                stringResource(R.string.editor_picks),
+                style = AppTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
-                    .padding(8.dp)
-            ) {
-                items(uiTracks) { trackUiModel ->
-                    val track = trackUiModel.trackInfo
-                    val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+                    .padding(start = 16.dp)
+            )
 
-                    SongCard(
-                        songName = track.title,
-                        artistName = artistString,
-                        coverImageUrl = trackUiModel.coverImageUrl,
-                        onClick = {
-                            playerViewModel.playSong(
-                                newTrackId = track.id,
-                                newUrlKey = track.storageKey,
-                                newTitle = track.title,
-                                newArtist = artistString,
-                                newImageKey = track.coverImageKey ?: "no_image"
-                            )
-                            bottomNavController.navigate("track_player_screen")
-                        }
-                    )
+            if (isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // CircularProgressIndicator(color = AppTheme.color().Primary)
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .padding(8.dp)
+                ) {
+                    items(uiTracks) { trackUiModel ->
+                        val track = trackUiModel.trackInfo
+                        val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+
+                        SongCard(
+                            songName = track.title,
+                            artistName = artistString,
+                            coverImageUrl = trackUiModel.coverImageUrl,
+                            onClick = {
+                                playerViewModel.playSong(
+                                    newTrackId = track.id,
+                                    newUrlKey = track.storageKey,
+                                    newTitle = track.title,
+                                    newArtist = artistString,
+                                    newImageKey = track.coverImageKey ?: "no_image"
+                                )
+                                bottomNavController.navigate("track_player_screen")
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -492,6 +500,6 @@ fun GetTracksResponse.toNextTracksResponse(): NextTracksResponse {
         albumId = this.albumId,
         storageKey = this.storageKey,
         durationMs = this.durationMs,
-        coverImageKey = this.coverImageKey?: ""
+        coverImageKey = this.coverImageKey ?: ""
     )
 }

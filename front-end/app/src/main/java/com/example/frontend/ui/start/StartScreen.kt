@@ -104,7 +104,7 @@ fun StartScreenContent(
             Button(
                 onClick = onSignUpClick,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AppTheme.color().Primary
+                    containerColor = MaterialTheme.colorScheme.primary
                 ),
                 modifier = Modifier.width(250.dp)
             ) {
