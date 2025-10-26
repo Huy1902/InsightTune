@@ -1,0 +1,21 @@
+package com.example.frontend.data.remote
+
+import com.example.frontend.core.AppPreferences
+import com.example.frontend.data.models.Chatbot.ChatbotRequest
+import com.example.frontend.data.models.Chatbot.ChatbotResponse
+import com.example.frontend.domain.repositories.ChatbotRepository
+
+class ChatbotRepositoryImpl (
+    private val chatbotApi: ChatbotApi,
+    private val prefs: AppPreferences
+) : ChatbotRepository {
+    override suspend fun getResponseChatbot(message: String, thread_id: String?): ChatbotResponse {
+        return try {
+            val request = ChatbotRequest(message, thread_id)
+            val response = chatbotApi.getResponseChatbot(request)
+            response
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+}
