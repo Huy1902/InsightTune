@@ -103,7 +103,7 @@ fun LogInScreenContent(
         ) {
             Text(
                 stringResource(R.string.login_email),
-                style = AppTheme.typography.titleLarge,
+                style = AppTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
             )
 
@@ -120,7 +120,7 @@ fun LogInScreenContent(
 
             Text(
                 stringResource(R.string.login_password),
-                style = AppTheme.typography.titleLarge,
+                style = AppTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
             )
 
@@ -153,8 +153,10 @@ fun LogInScreenContent(
             onClick = onLoginClick,
             enabled = uiState !is Resource.Loading,
             colors = ButtonDefaults.buttonColors(
-                containerColor = AppTheme.color().Primary
-            )
+                containerColor = MaterialTheme.colorScheme.primary,
+            ),
+            modifier = Modifier
+                .height(56.dp)
         ) {
             if (uiState is Resource.Loading) {
                 CircularProgressIndicator(
@@ -168,7 +170,7 @@ fun LogInScreenContent(
                 Text(
                     stringResource(R.string.Log_in),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    style = AppTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
@@ -178,7 +180,7 @@ fun LogInScreenContent(
             Spacer(modifier = Modifier.height(AppTheme.spacing().M))
             Text(
                 text = stringResource(R.string.log_in_error),
-                style = AppTheme.typography.titleMedium,
+                style = AppTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
                 color = AppTheme.color().Error
             )

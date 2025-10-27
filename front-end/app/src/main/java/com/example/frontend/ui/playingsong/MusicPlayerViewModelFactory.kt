@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.frontend.data.models.song.NextTracksResponse
 import com.example.frontend.domain.repositories.FavoriteRepository
+import com.example.frontend.domain.repositories.HistoryRepository
 import com.example.frontend.domain.repositories.PlayingRepository
 
 class MusicPlayerViewModelFactory(
@@ -12,6 +13,7 @@ class MusicPlayerViewModelFactory(
     private val currentIndex: Int = 0,
     private val favoriteRepo: FavoriteRepository,
     private val playingRepo: PlayingRepository,
+    private val historyRepo: HistoryRepository,
     private val context: Context
 ) : ViewModelProvider.Factory {
 
@@ -19,10 +21,11 @@ class MusicPlayerViewModelFactory(
         if (modelClass.isAssignableFrom(MusicPlayerViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return MusicPlayerViewModel(
-                trackList = trackList,
-                currentIndex = currentIndex,
+//                trackList = trackList,
+//                currentIndex = currentIndex,
                 favoriteRepo = favoriteRepo,
                 playingRepo = playingRepo,
+                historyRepo = historyRepo,
                 context = context
             ) as T
         }

@@ -15,8 +15,10 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.example.frontend.data.models.song.NextTracksResponse
 import com.example.frontend.data.remote.ApiClient
+import com.example.frontend.data.remote.HistoryRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.domain.repositories.FavoriteRepository
+import com.example.frontend.domain.repositories.HistoryRepository
 import com.example.frontend.domain.repositories.PlayingRepository
 import com.example.frontend.domain.repositories.TrackRepository
 import com.example.frontend.service.MusicService
@@ -40,23 +42,28 @@ data class PlayerState(
 
 class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class) constructor
     (
-    trackList: List<NextTracksResponse> = emptyList(),
-    currentIndex: Int,
+//    trackList: List<NextTracksResponse> = emptyList(),
+//    currentIndex: Int,
     private val favoriteRepo: FavoriteRepository,
     private val playingRepo: PlayingRepository,
+    private val historyRepo: HistoryRepository,
     context: Context
 ) : ViewModel() {
 
-    private var trackId: String = ""
-    private var urlKey: String = ""
+    private var isFavoriteShuffleEnabled = false
+    private var originalFavoriteTracks: List<NextTracksResponse> = emptyList()
     private var title: String = ""
     private var artist: String = ""
-    private var imageKey: String = ""
-
     private val tracksRepo : TrackRepository = TrackRepositoryImpl(ApiClient.trackApi)
+
     private var _playerState = MutableStateFlow(PlayerState())
 
     private val nextTracks: MutableList<NextTracksResponse> = mutableListOf()
+
+    private val _history = MutableStateFlow<List<NextTracksResponse>>(emptyList())
+
+    private val _isRepeatOne = MutableStateFlow(false)
+    val isRepeatOne = _isRepeatOne.asStateFlow()
 
     private var currentIndexSong: Int = -1
 
@@ -67,6 +74,8 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
     private val appContext = context.applicationContext
 
     val playerState = _playerState.asStateFlow()
+
+    private var canFetchNextTracks: Boolean = true
 
     private fun getCurrentTrack(): NextTracksResponse? {
         return if (currentIndexSong in nextTracks.indices) {
@@ -85,6 +94,8 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
         newImageKey: String
     ) {
         viewModelScope.launch {
+            canFetchNextTracks = true
+
             val index = nextTracks.indexOfFirst { it.id == newTrackId }
             if (index != -1) {
                 currentIndexSong = index
@@ -106,6 +117,20 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
                 nextTracks.add(single)
                 loadPlaying(single)
             }
+            historyRepo.addHistory(newTrackId, newUrlKey)
+        }
+    }
+    fun setPlaylist(newTracks: List<NextTracksResponse>, startIndex: Int, allowFetching: Boolean) {
+        viewModelScope.launch {
+            nextTracks.clear()
+            nextTracks.addAll(newTracks)
+            currentIndexSong = startIndex
+            canFetchNextTracks = allowFetching // <-- Cờ quan trọng nhất
+
+            if (currentIndexSong in nextTracks.indices) {
+                val track = nextTracks[currentIndexSong]
+                loadPlaying(track)
+            }
         }
     }
 
@@ -115,13 +140,13 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
 
     init {
         viewModelScope.launch {
-            nextTracks.addAll(trackList)
+            // nextTracks.addAll(trackList) // Xóa dòng này
             setupMediaController()
-            if (currentTrack != null) loadPlaying(currentTrack)
+            // if (currentTrack != null) loadPlaying(currentTrack) // Xóa dòng này
             startProgressUpdater()
             FavoriteEventBus.favoriteChanged.collect { changedTrackId ->
-                if (changedTrackId == trackId) {
-                    checkIfFavorite(trackId)
+                if (changedTrackId == getCurrentTrack()?.id) {
+                    checkIfFavorite(changedTrackId)
                 }
             }
         }
@@ -158,7 +183,21 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
                 override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                     _playerState.value = _playerState.value.copy(mediaMetadata = mediaMetadata)
                 }
+
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    if (playbackState == Player.STATE_ENDED) {
+                        viewModelScope.launch {
+                            if (_isRepeatOne.value) {
+                                Log.d("MusicPlayerVM", "Repeat one → replay current track")
+                                getCurrentTrack()?.let { loadPlaying(it) }
+                            } else {
+                                playNextTrack()
+                            }
+                        }
+                    }
+                }
             })
+
         } catch (e: Exception) {
             Log.e("MusicPlayerVM", "Failed to create MediaController: ${e.message}")
         }
@@ -202,11 +241,14 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
                     mediaMetadata = MediaMetadata.Builder()
                         .setTitle(track.title)
                         .setArtist(track.artists.joinToString(", "))
-                        .build()
+                        .build(),
+                    coverImageUrl = response.coverImageUrl
                 )
-                loadCoverImage(track.coverImageKey)
+                //loadCoverImage(track.coverImageKey)
                 checkIfFavorite(track.id)
                 startMusicService(appContext, currentSongUrl!!)
+                //historyRepo.addHistory(track.id, track.storageKey)
+                Log.d("MusicPlayerVM", "Add to history: ${track.id}")
             }
         } catch (e: Exception) {
             Log.e("MusicPlayerVM", "Error loading track URL: ${e.message}")
@@ -278,49 +320,76 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
         }
     }
 
-
     fun playNextTrack() {
         viewModelScope.launch {
-            if (nextTracks.isEmpty()) {
-                fetchNextTracks()
-                if (nextTracks.isEmpty()) return@launch
+            if (nextTracks.isEmpty()) return@launch
+
+            if (currentIndexSong + 1 >= nextTracks.size) {
+                if (canFetchNextTracks) {
+                    fetchNextTracks()
+
+                    if (currentIndexSong + 1 >= nextTracks.size) {
+                        currentIndexSong = -1
+                    }
+                } else {
+                    currentIndexSong = -1
+                }
             }
             currentIndexSong++
-            if (currentIndexSong >= nextTracks.size) {
-                fetchNextTracks()
-            }
             val nextTrack = nextTracks[currentIndexSong]
-            loadPlaying(
-                NextTracksResponse(
-                    id = nextTrack.id,
-                    title = nextTrack.title,
-                    artists = nextTrack.artists,
-                    albumId = nextTrack.albumId,
-                    storageKey = nextTrack.storageKey,
-                    durationMs = nextTrack.durationMs,
-                    coverImageKey = nextTrack.coverImageKey
-                )
-            )
+            loadPlaying(nextTrack)
         }
-
     }
 
     fun playPreviousTrack() {
         viewModelScope.launch {
-            currentIndexSong--
-            if (currentIndexSong < 0) currentIndexSong = 0
+            if (nextTracks.isEmpty()) return@launch
+
+            if (currentIndexSong - 1 >= 0) {
+                currentIndexSong--
+            } else {
+                currentIndexSong = nextTracks.size - 1
+            }
             val prevTrack = nextTracks[currentIndexSong]
-            loadPlaying(
-                NextTracksResponse (
-                    id = prevTrack.id,
-                    title = prevTrack.title,
-                    artists = prevTrack.artists,
-                    albumId = prevTrack.albumId,
-                    storageKey = prevTrack.storageKey,
-                    durationMs = prevTrack.durationMs,
-                    coverImageKey = prevTrack.coverImageKey
-                )
-            )
+            loadPlaying(prevTrack)
         }
     }
+
+    fun toggleFavoriteShuffle() {
+        viewModelScope.launch {
+            isFavoriteShuffleEnabled = !isFavoriteShuffleEnabled
+            if (isFavoriteShuffleEnabled) {
+                originalFavoriteTracks = nextTracks.toList()
+                nextTracks.shuffle()
+            } else {
+                if (originalFavoriteTracks.isNotEmpty()) {
+                    nextTracks.clear()
+                    nextTracks.addAll(originalFavoriteTracks)
+                }
+            }
+
+            if (currentIndexSong >= nextTracks.size) {
+                currentIndexSong = 0
+            }
+
+            val current = getCurrentTrack()
+            if (current != null) {
+                _playerState.value = _playerState.value.copy(
+                    mediaMetadata = _playerState.value.mediaMetadata
+                        .buildUpon()
+                        .setTitle(current.title)
+                        .setArtist(current.artists.joinToString(", "))
+                        .build()
+                )
+            }
+        }
+    }
+
+    fun isFavoriteShuffleOn(): Boolean = isFavoriteShuffleEnabled
+
+    fun toggleRepeatOne() {
+        _isRepeatOne.value = !_isRepeatOne.value
+        Log.d("MusicPlayerVM", "Repeat One mode: ${_isRepeatOne.value}")
+    }
+
 }

@@ -304,12 +304,14 @@ fun ProfileScreenContent(
             }
             Button(
                 onClick = onLogoutClick,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                modifier = Modifier
+                    .height(56.dp)
             ) {
                 Text(
                     stringResource(R.string.log_out),
                     fontWeight = FontWeight.Bold,
-                    style = AppTheme.typography.titleMedium,
+                    style = AppTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }

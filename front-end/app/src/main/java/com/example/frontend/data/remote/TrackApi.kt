@@ -3,7 +3,9 @@ package com.example.frontend.data.remote
 import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.data.models.song.NextTracksResponse
 import okhttp3.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -20,4 +22,8 @@ interface TrackApi {
     suspend fun nextTracks(
         @Path("currentTrackId") currentTrackId: String
     ): List<NextTracksResponse>
+
+    @POST("tracks/by-ids")
+    suspend fun getTracksById(@Body trackIds: List<String>): List<GetTracksResponse>
+
 }

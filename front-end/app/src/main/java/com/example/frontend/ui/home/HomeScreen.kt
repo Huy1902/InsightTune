@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -56,6 +58,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.frontend.R
 import com.example.frontend.core.AppPreferences
+import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.data.models.song.NextTracksResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.FavoriteRepositoryImpl
@@ -64,6 +67,9 @@ import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.ui.AppGraph
 import com.example.frontend.ui.NavRoutes
+import com.example.frontend.ui.chatbot.ChatBotScreen
+import com.example.frontend.ui.chatbot.ChatbotViewModel
+import com.example.frontend.ui.chatbot.ChatbotViewModelFactory
 import com.example.frontend.ui.favorite.FavoriteScreen
 import com.example.frontend.ui.favorite.FavoriteViewModel
 import com.example.frontend.ui.favorite.FavoriteViewModelFactory
@@ -96,10 +102,15 @@ fun HomeScreen(
     val context = LocalContext.current
     val favoriteRepo = FavoriteRepositoryImpl(ApiClient.favoriteApi)
     val playingRepo = PlayingRepositoryImpl(ApiClient.playingApi)
+    val prefs = AppPreferences(LocalContext.current)
+    val historyRepository = HistoryRepositoryImpl(ApiClient.historyApi, prefs)
 
     val playerViewModel: MusicPlayerViewModel = viewModel(
         factory = MusicPlayerViewModelFactory(
-            favoriteRepo = favoriteRepo, playingRepo = playingRepo, context = context
+            favoriteRepo = favoriteRepo,
+            playingRepo = playingRepo,
+            historyRepo = historyRepository,
+            context = context
         )
     )
     val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
@@ -145,8 +156,6 @@ fun HomeScreen(
             }
             composable(BottomNavItem.Search.route) {
                 val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
-                val prefs = AppPreferences(LocalContext.current)
-                val historyRepository = HistoryRepositoryImpl(ApiClient.historyApi, prefs)
                 val searchViewModelFactory =
                     SearchViewModelFactory(trackRepository, historyRepository, prefs)
 
@@ -172,7 +181,12 @@ fun HomeScreen(
                     bottomNavController
                 )
             }
-            composable(BottomNavItem.ChatBot.route) { /* TODO */ }
+            composable(BottomNavItem.ChatBot.route) {
+                val chatbotApi = ApiClient.chatbotApi
+                val chatbotViewModelFactory = ChatbotViewModelFactory(chatbotApi)
+                val vm: ChatbotViewModel = viewModel(factory = chatbotViewModelFactory)
+                ChatBotScreen(vm)
+            }
             composable(
                 BottomNavItem.Track.route,
                 arguments = listOf(
@@ -187,7 +201,7 @@ fun HomeScreen(
                 val storageKey = backStackEntry.arguments?.getString("urlKey") ?: ""
                 val title = backStackEntry.arguments?.getString("title") ?: ""
                 val artistStr = backStackEntry.arguments?.getString("artist") ?: ""
-                val artists = artistStr.split(",").map { it.trim()}
+                val artists = artistStr.split(",").map { it.trim() }
                 val albumId = backStackEntry.arguments?.getString("durationMs") ?: ""
                 val durationMs = backStackEntry.arguments?.getLong("durationMs") ?: 0
                 val coverImageKey = backStackEntry.arguments?.getString("coverImageKey") ?: ""
@@ -216,6 +230,7 @@ fun HomeScreen(
                         trackList = singleTrackList,
                         favoriteRepo = favoriteRepo,
                         playingRepo = playingRepo,
+                        historyRepo = historyRepository,
                         context = context
                     )
                 )
@@ -264,8 +279,13 @@ fun HomeScreenContent(
     val tracks by vm.tracks.collectAsState()
     val uiTracks by vm.uiTracks.collectAsState()
     val isLoading by vm.isLoading.collectAsState()
+    val history by vm.history.collectAsState()
     LaunchedEffect(Unit) {
-        vm.loadTracks(limit = 8)
+        vm.loadTracks()
+    }
+
+    LaunchedEffect(Unit) {
+        vm.loadHistory(limit = 8)
     }
 
     Column(
@@ -290,122 +310,129 @@ fun HomeScreenContent(
 
             Spacer(modifier = Modifier.size(14.dp))
 
-            Text(
-                "SpoTube",
-                fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
+            Box(
+                modifier = Modifier.height(80.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "SpoTube",
+                    fontWeight = FontWeight.Bold,
+                    style = AppTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.offset(y = (-3).dp)
+                )
+            }
 
-            Row(
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton(
+                onClick = { onProfileClick() },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp),
-                horizontalArrangement = Arrangement.End
+                    .padding(end = 8.dp)
+                    .size(60.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = null,
+                    contentDescription = "User Profile",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clickable {
-                            onProfileClick()
-                        }
+                    modifier = Modifier.size(80.dp) // Lưu ý: Icon 80dp trong button 60dp sẽ bị cắt
                 )
             }
         }
-
         Spacer(modifier = Modifier.size(10.dp))
 
-        Text(
-            stringResource(R.string.recently_played),
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
-            style = AppTheme.typography.bodyLarge,
-            modifier = Modifier
-                .padding(start = 16.dp)
-        )
 
         if (isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = AppTheme.color().Primary)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                itemsIndexed(uiTracks) { index, trackUiModel ->
-                    val track = trackUiModel.trackInfo
-                    val artistString = track.artists?.joinToString(", ") ?: "Unknown"
-
-                    SongCard(
-                        songName = track.title,
-                        artistName = artistString,
-                        coverImageUrl = trackUiModel.coverImageUrl,
-                        onClick = {
-                            playerViewModel.setCurrentIndex(index)
-                            playerViewModel.playSong(
-                                newTrackId = track.id,
-                                newUrlKey = track.storageKey,
-                                newTitle = track.title,
-                                newArtist = artistString,
-                                newImageKey = track.coverImageKey ?: "no_image"
-                            )
-                            bottomNavController.navigate("track_player_screen")
-                        }
-                    )
+            if (history.isNotEmpty()) {
+                Text(
+                    stringResource(R.string.recently_played),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold,
+                    style = AppTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                )
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    itemsIndexed(history) { index, trackUiModel ->
+                        val track = trackUiModel.trackInfo
+                        val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+                        Log.d(
+                            "HistoryDebug",
+                            "title=${track.title}, artist=$artistString, image=${trackUiModel.coverImageUrl}"
+                        )
+                        SongCard(
+                            songName = track.title,
+                            artistName = artistString,
+                            coverImageUrl = trackUiModel.coverImageUrl,
+                            onClick = {
+                                playerViewModel.playSong(
+                                    newTrackId = track.id,
+                                    newUrlKey = track.storageKey,
+                                    newTitle = track.title,
+                                    newArtist = artistString,
+                                    newImageKey = track.coverImageKey ?: "no_image"
+                                )
+                                bottomNavController.navigate("track_player_screen")
+                            }
+                        )
+                    }
                 }
             }
-        }
-        Text(
-            stringResource(R.string.editor_picks),
-            style = AppTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier
-                .padding(start = 16.dp)
-        )
-
-        if (isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                // CircularProgressIndicator(color = AppTheme.color().Primary)
-            }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            Text(
+                stringResource(R.string.editor_picks),
+                style = AppTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
-                    .padding(8.dp)
-            ) {
-                items(uiTracks) { trackUiModel ->
-                    val track = trackUiModel.trackInfo
-                    val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+                    .padding(start = 16.dp)
+            )
 
-                    SongCard(
-                        songName = track.title,
-                        artistName = artistString,
-                        coverImageUrl = trackUiModel.coverImageUrl,
-                        onClick = {
-                            playerViewModel.playSong(
-                                newTrackId = track.id,
-                                newUrlKey = track.storageKey,
-                                newTitle = track.title,
-                                newArtist = artistString,
-                                newImageKey = track.coverImageKey ?: "no_image"
-                            )
-                            bottomNavController.navigate("track_player_screen")
-                        }
-                    )
+            if (isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // CircularProgressIndicator(color = AppTheme.color().Primary)
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .padding(8.dp)
+                ) {
+                    items(uiTracks) { trackUiModel ->
+                        val track = trackUiModel.trackInfo
+                        val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+
+                        SongCard(
+                            songName = track.title,
+                            artistName = artistString,
+                            coverImageUrl = trackUiModel.coverImageUrl,
+                            onClick = {
+                                playerViewModel.playSong(
+                                    newTrackId = track.id,
+                                    newUrlKey = track.storageKey,
+                                    newTitle = track.title,
+                                    newArtist = artistString,
+                                    newImageKey = track.coverImageKey ?: "no_image"
+                                )
+                                bottomNavController.navigate("track_player_screen")
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -473,4 +500,17 @@ fun PreviewHomeScreen() {
     val sampleViewModel =
         remember { HomeViewModel(context) }
     // HomeScreen(sampleViewModel, navController)
+}
+
+// Hàm chuyển đổi Model
+fun GetTracksResponse.toNextTracksResponse(): NextTracksResponse {
+    return NextTracksResponse(
+        id = this.id,
+        title = this.title,
+        artists = this.artists ?: emptyList(),
+        albumId = this.albumId,
+        storageKey = this.storageKey,
+        durationMs = this.durationMs,
+        coverImageKey = this.coverImageKey ?: ""
+    )
 }

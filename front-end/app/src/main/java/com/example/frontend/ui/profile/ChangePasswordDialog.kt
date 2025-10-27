@@ -41,6 +41,9 @@ fun ChangePasswordDialog(
 ) {
     var oldPass by remember { mutableStateOf("") }
     var newPass by remember { mutableStateOf("") }
+    var success by remember { mutableStateOf(false) }
+
+
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -68,6 +71,22 @@ fun ChangePasswordDialog(
                     isPassword = true,
                     textColor = MaterialTheme.colorScheme.onSurface
                 )
+//                if (oldPass.length < 8 || newPass.length < 8) {
+//                    Text(
+//                        text = stringResource(R.string.register_password_details),
+//                        color = MaterialTheme.colorScheme.error
+//                    )
+//                } else if (oldPass == newPass) {
+//                    Text(
+//                        text = stringResource(R.string.do_not_use_old_password),
+//                        color = MaterialTheme.colorScheme.error
+//                    )
+//                } else {
+//                    Text(
+//                        text = stringResource(R.string.wrong_password),
+//                        color = MaterialTheme.colorScheme.error
+//                    )
+//                }
             }
         },
         confirmButton = {
@@ -89,7 +108,6 @@ fun ChangePasswordDialog(
         titleContentColor = MaterialTheme.colorScheme.onBackground
     )
 }
-
 
 
 @Preview(showBackground = true)
