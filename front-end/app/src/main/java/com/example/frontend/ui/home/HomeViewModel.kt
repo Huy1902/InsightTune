@@ -53,7 +53,7 @@ class HomeViewModel(context: Context) : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val initialTracks = repo.getTracks().take(limit)
+                val initialTracks = repo.getTracks().shuffled().take(limit)
 
                 val tracksWithUrls = initialTracks.map { track ->
                     async {
