@@ -14,7 +14,7 @@ public class JwtDevTokenGenerator {
   public static void main(String[] args) {
     String secret = System.getenv().getOrDefault(
             "SUNNO_JWT_SHARED_SECRET",
-            "secret_key_change_me_please_32_bytes_min");
+            "Q+W+8at86K9vMPRa3ZZEHWOL6wiQzDmNS0X9Wu8omL2h5qgfIIb0oEchMm+v49MP");
 
     Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 

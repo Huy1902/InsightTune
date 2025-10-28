@@ -57,14 +57,18 @@ public class UploadService {
     }
     String baseKey = null;
     try {
-      String rawKey = Objects.requireNonNull(metaResponseDto).getArtists().getFirst().trim() + metaResponseDto.getTitle().trim();
+      if (Objects.equals(trackUploadRequestDto.getKey(), "")) {
+        String rawKey = Objects.requireNonNull(metaResponseDto).getArtists().getFirst().trim() + metaResponseDto.getTitle().trim();
 
-      MessageDigest md = MessageDigest.getInstance("SHA-256");
-      byte[] digest = md.digest(rawKey.getBytes());
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] digest = md.digest(rawKey.getBytes());
 
-      long value = new BigInteger(1, Arrays.copyOf(digest, 8)).longValue();
-      baseKey = String.format("%012d", value); // 12 digits
-
+        long value = new BigInteger(1, Arrays.copyOf(digest, 8)).longValue();
+        baseKey = String.format("%012d", value); // 12 digits
+      }
+      else {
+        baseKey = trackUploadRequestDto.getKey();
+      }
       log.info("baseKey: {}", baseKey);
     } catch (NoSuchAlgorithmException e) {
       log.error(e.getMessage());
