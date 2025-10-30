@@ -45,11 +45,6 @@ class ChatbotViewModel(
 
 
             val replyText = chatbotApi.getResponseChatbot(ChatbotRequest(userText, "default"))
-//            val replyText = when {
-//                userText.contains("hello", true) -> "Chào bạn 👋"
-//                userText.contains("music", true) -> "Mình có thể gợi ý nhạc cho bạn!"
-//                else -> "Mình chưa hiểu lắm 😅, bạn có thể nói rõ hơn không?"
-//            }
 
             val botMessage = Message(text = replyText.response, isFromUser = false)
             _messages.value = _messages.value + botMessage

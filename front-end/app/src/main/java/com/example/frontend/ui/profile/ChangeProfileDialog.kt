@@ -3,6 +3,7 @@ package com.example.frontend.ui.profile
 import android.content.ContentValues
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -114,7 +115,7 @@ fun ChangeProfileDialog(
         confirmButton = {
             TextButton(onClick = {
                 onConfirm(firstName, lastName, phone, address, role)
-                if (uiState.error != null) {
+                if (uiState.error == null) {
                     onDismiss()
                 }
             }) {

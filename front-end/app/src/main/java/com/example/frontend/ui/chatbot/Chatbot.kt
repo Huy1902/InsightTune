@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,7 +73,7 @@ fun ChatBotScreen(viewModel: ChatbotViewModel) {
 
                     if (isBotTyping) {
                         item {
-                            MessageBubble(text = "Bot đang soạn tin...", isFromUser = false)
+                            MessageBubble(text = stringResource(R.string.bot_thinking), isFromUser = false)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }

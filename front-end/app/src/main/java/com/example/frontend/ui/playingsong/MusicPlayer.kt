@@ -251,6 +251,5 @@ fun MusicPlayer(
             }
             Spacer(modifier = Modifier.size(AppTheme.spacing().M))
         }
-
     }
 }

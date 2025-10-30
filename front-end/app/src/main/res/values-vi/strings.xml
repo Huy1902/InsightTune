@@ -80,5 +80,8 @@
     <string name="no_favorite_songs">Bạn chưa có bài hát nào ở mục yêu thích.</string>
     <string name="do_not_use_old_password">Không được dùng mật khẩu cũ.</string>
     <string name="wrong_password">Sai mật khẩu hiện tại.</string>
+    <string name="bot_thinking">Bot đang soạn tin...</string>
+    <string name="message">Tin nhắn...</string>
+    <string name="chat_bot_hello">Xin chào! Tôi có thể giúp gì cho bạn?</string>
 
 </resources>

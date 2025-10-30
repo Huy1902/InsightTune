@@ -79,5 +79,8 @@
     <string name="no_favorite_songs">You have no favorite songs yet.</string>
     <string name="do_not_use_old_password">Do not use old password.</string>
     <string name="wrong_password">Wrong current password.</string>
+    <string name="bot_thinking">Bot is typing...</string>
+    <string name="message">Message...</string>
+    <string name="chat_bot_hello">Hello! How can I help you?</string>
 
 </resources>
