@@ -46,6 +46,8 @@ fun ChangeProfileDialog(
     var address by remember { mutableStateOf(uiState.address) }
     var role by remember { mutableStateOf(uiState.role) }
 
+    val context = LocalContext.current
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -115,13 +117,12 @@ fun ChangeProfileDialog(
         confirmButton = {
             TextButton(onClick = {
                 onConfirm(firstName, lastName, phone, address, role)
-                if (uiState.error == null) {
+                if (uiState.error != null) {
+                    Toast.makeText(context, context.getString(R.string.update_profile_successfully), Toast.LENGTH_SHORT).show()
                     onDismiss()
                 }
             }) {
-                Text(
-                    stringResource(R.string.save),
-                )
+                Text(stringResource(R.string.save))
             }
         },
         dismissButton = {

@@ -82,5 +82,6 @@
     <string name="bot_thinking">Bot is typing...</string>
     <string name="message">Message...</string>
     <string name="chat_bot_hello">Hello! How can I help you?</string>
+    <string name="update_profile_successfully">Update profile successfully!</string>
 
 </resources>
