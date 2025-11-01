@@ -27,10 +27,10 @@ public class KafkaService {
   private final Validator validator;
 
   /**
-   * Transfer created Track into event for sending to server
+   * Gửi sự kiện (event) thông báo một bài hát mới được tạo sang Kafka topic.
    *
-   * @param createdTrackRequestDto the created Track notify needed to be sent
-   * @return a {@link CreatedTrackResponseDto} contain kafka event sending status
+   * @param createdTrackRequestDto thông báo created track cần được gửi
+   * @return a {@link CreatedTrackResponseDto} chứa kafka event gửi status
    */
   public CreatedTrackResponseDto sendCreatedTrack(CreatedTrackRequestDto createdTrackRequestDto)
           throws KafkaServiceException {

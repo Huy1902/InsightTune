@@ -19,24 +19,25 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Represents metadata for a music track stored in object storage.
+ * Đại diện cho metadata của một bài hát được lưu trữ trong object storage.
  *
  * <ul>
- *   <li><b>storageKey</b> – The unique key or path in S3
- *       where the MP3 file is stored.</li>
- *   <li><b>title</b> – The track title parsed from ID3 metadata.
- *       May be {@code null} if unavailable.</li>
- *   <li><b>album</b> – The album name parsed from ID3 metadata.
- *       May be {@code null} for singles or non-album tracks.</li>
- *   <li><b>artists</b> – A list of contributing artists.
- *       Typically split from a raw artist string (e.g., “Artist feat. Guest”).</li>
- *   <li><b>durationMs</b> – The track duration in milliseconds.</li>
- *   <li><b>coverImageKey</b> – The key in S3
- *       where the track’s cover image is stored.</li>
+ *   <li><b>storageKey</b> – Key duy nhất hoặc đường dẫn trong S3
+ *       nơi file MP3 được lưu trữ.</li>
+ *   <li><b>title</b> – Tiêu đề bài hát được trích xuất từ metadata ID3.
+ *       Có thể {@code null} nếu không có sẵn.</li>
+ *   <li><b>album</b> – Tên album được trích xuất từ metadata ID3.
+ *       Có thể {@code null} đối với single hoặc các bài không thuộc album.</li>
+ *   <li><b>artists</b> – Danh sách các nghệ sĩ tham gia.
+ *       Thường được tách từ chuỗi nghệ sĩ thô (ví dụ: “Artist feat. Guest”).</li>
+ *   <li><b>durationMs</b> – Thời lượng bài hát tính bằng mili giây.</li>
+ *   <li><b>coverImageKey</b> – Key trong S3
+ *       nơi ảnh bìa của bài hát được lưu trữ.</li>
  * </ul>
  *
  * @author Huy1902
  */
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
