@@ -18,6 +18,7 @@
         <module>upload-service</module>
         <module>api-gateway</module>
         <module>history-service</module>
+        <module>recommend-service</module>
     </modules>
 
     <properties>

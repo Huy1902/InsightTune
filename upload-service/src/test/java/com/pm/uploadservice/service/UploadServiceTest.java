@@ -70,7 +70,7 @@ class UploadServiceTest {
   void givenValidMp3_whenUploadTrack_thenMetadataS3KafkaCalledAndResponseAssembled() throws Exception {
     // given
     var mp3 = new MockMultipartFile("file", "song.mp3", "audio/mpeg", "fake".getBytes());
-    var request = new TrackUploadRequestDto(mp3);
+    var request = new TrackUploadRequestDto(mp3, "");
 
     when(metadataService.buildMetadata(any(MetaRequestDto.class))).thenReturn(sampleMeta());
 
@@ -130,7 +130,7 @@ class UploadServiceTest {
   @Test
   void givenMetadataFails_whenUploadTrack_thenThrowsUploadServiceException_andNoDownstreamCalls() throws Exception {
     var mp3 = new MockMultipartFile("file", "bad.mp3", "audio/mpeg", new byte[]{1});
-    var request = new TrackUploadRequestDto(mp3);
+    var request = new TrackUploadRequestDto(mp3, "");
 
     when(metadataService.buildMetadata(any(MetaRequestDto.class)))
             .thenThrow(new MetaExtractException("bad meta"));
@@ -149,7 +149,7 @@ class UploadServiceTest {
   @Test
   void givenS3UploadThrows_whenUploadTrack_thenWrappedAsUploadServiceException_andKafkaNotCalled() throws Exception {
     var mp3 = new MockMultipartFile("file", "song.mp3", "audio/mpeg", new byte[]{1});
-    var request = new TrackUploadRequestDto(mp3);
+    var request = new TrackUploadRequestDto(mp3, "");
 
     when(metadataService.buildMetadata(any(MetaRequestDto.class))).thenReturn(sampleMeta());
     when(validator.validate(any())).thenAnswer(inv -> Collections.emptySet());
@@ -171,7 +171,7 @@ class UploadServiceTest {
   @Test
   void givenKafkaSendThrows_whenUploadTrack_thenWrappedAsUploadServiceException_afterS3Succeeded() throws Exception {
     var mp3 = new MockMultipartFile("file", "song.mp3", "audio/mpeg", new byte[]{1});
-    var request = new TrackUploadRequestDto(mp3);
+    var request = new TrackUploadRequestDto(mp3, "");
 
     when(metadataService.buildMetadata(any(MetaRequestDto.class))).thenReturn(sampleMeta());
 
@@ -201,7 +201,7 @@ class UploadServiceTest {
   @Test
   void givenValidatorFailsForS3Request_whenUploadTrack_thenThrowsBeforeCallingS3() throws Exception {
     var mp3 = new MockMultipartFile("file", "song.mp3", "audio/mpeg", new byte[]{1});
-    var request = new TrackUploadRequestDto(mp3);
+    var request = new TrackUploadRequestDto(mp3, "");
 
     when(metadataService.buildMetadata(any(MetaRequestDto.class))).thenReturn(sampleMeta());
 
@@ -231,7 +231,7 @@ class UploadServiceTest {
   @Test
   void givenValidatorFailsForKafkaRequest_whenUploadTrack_thenThrowsBeforeCallingKafka() throws Exception {
     var mp3 = new MockMultipartFile("file", "song.mp3", "audio/mpeg", new byte[]{1});
-    var request = new TrackUploadRequestDto(mp3);
+    var request = new TrackUploadRequestDto(mp3, "");
 
     when(metadataService.buildMetadata(any(MetaRequestDto.class))).thenReturn(sampleMeta());
 
@@ -267,7 +267,7 @@ class UploadServiceTest {
   @Test
   void givenValidatorFailsForFinalResponse_whenUploadTrack_thenThrowsAfterSideEffects() throws Exception {
     var mp3 = new MockMultipartFile("file", "song.mp3", "audio/mpeg", new byte[]{1});
-    var request = new TrackUploadRequestDto(mp3);
+    var request = new TrackUploadRequestDto(mp3, "");
 
     when(metadataService.buildMetadata(any(MetaRequestDto.class))).thenReturn(sampleMeta());
 

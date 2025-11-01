@@ -33,7 +33,21 @@ public class UploadController {
 
     TrackUploadResponseDto trackUploadResponseDto = null;
     try {
-      trackUploadResponseDto = uploadService.uploadTrack(new TrackUploadRequestDto(file));
+      trackUploadResponseDto = uploadService.uploadTrack(new TrackUploadRequestDto(file,""));
+    } catch (UploadServiceException e) {
+      log.error(e.getMessage());
+    }
+    return ResponseEntity.ok().body(trackUploadResponseDto);
+  }
+
+  @PostMapping("/upload_with_key")
+  @Operation(summary = "Upload a mp3 file to Object Store Bucket")
+  public ResponseEntity<TrackUploadResponseDto> upload_with_key(@RequestParam MultipartFile file,
+                                                                @RequestParam String key) {
+
+    TrackUploadResponseDto trackUploadResponseDto = null;
+    try {
+      trackUploadResponseDto = uploadService.uploadTrack(new TrackUploadRequestDto(file, key));
     } catch (UploadServiceException e) {
       log.error(e.getMessage());
     }
