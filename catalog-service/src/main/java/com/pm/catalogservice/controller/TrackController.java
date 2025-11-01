@@ -6,6 +6,7 @@ import com.pm.catalogservice.dto.response.TrackResponseDto;
 import com.pm.catalogservice.service.KafkaService;
 import com.pm.catalogservice.service.TrackService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +59,7 @@ public class TrackController {
   }
 
   @GetMapping("/internal")
+  @PermitAll
   public ResponseEntity<TrackIdsResponseDto> getAllTracksIds() {
     return ResponseEntity.ok().body(new TrackIdsResponseDto(trackService.getTracksIds()));
   }

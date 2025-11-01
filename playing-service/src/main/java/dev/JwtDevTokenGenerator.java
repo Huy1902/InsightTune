@@ -19,7 +19,7 @@ public class JwtDevTokenGenerator {
     Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
     String jwt = Jwts.builder()
-            .setSubject("bob@example.com")
+            .setSubject("huy@example.com")
             .claim("authorities", List.of("ROLE_USER"))
             .setIssuedAt(new Date())
             .setExpiration(Date.from(Instant.now().plusSeconds(60 * 60 * 24 * 30)))

@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @FeignClient(name="catalog-service", url="localhost:4000")
 public interface CatalogServiceClient {
-  @GetMapping("/catalog/internal")
+  @GetMapping("/tracks/internal")
   TrackIdsResponseDto getTrackIds();
 }
