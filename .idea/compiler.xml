@@ -39,7 +39,6 @@
       <module name="demo" target="21" />
       <module name="gateway-api" target="21" />
       <module name="proto-apis" target="21" />
-      <module name="rec-service" target="21" />
       <module name="SpoTube" target="1.5" />
     </bytecodeTargetLevel>
   </component>

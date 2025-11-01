@@ -1,4 +1,3 @@
--- enable UUIDs
 DROP TABLE artists CASCADE ;
 DROP TABLE albums CASCADE ;
 DROP TABLE tracks CASCADE ;
