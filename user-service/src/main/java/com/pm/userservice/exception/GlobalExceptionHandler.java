@@ -34,8 +34,7 @@ public class GlobalExceptionHandler {
         String enumKey = ex.getFieldError().getDefaultMessage();
 
 
-        ErrorCode errorCode = ErrorCode.INVALID_KEY;
-        errorCode = ErrorCode.valueOf(enumKey);
+        ErrorCode errorCode = ErrorCode.valueOf(enumKey);
 
         response.setCode(errorCode.getCode());
         response.setMessage(errorCode.getMessage());

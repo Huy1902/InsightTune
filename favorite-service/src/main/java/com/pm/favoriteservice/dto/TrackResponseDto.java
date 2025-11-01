@@ -1,6 +1,7 @@
 package com.pm.favoriteservice.dto;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
 import java.util.UUID;
@@ -10,12 +11,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @Setter
 @Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class TrackResponseDto {
-    private UUID id;
-    private String title;
-    private Set<String> artists;
-    private UUID albumId;
-    private String storageKey;
-    private int durationMs;
-    private String coverImageKey;
+    UUID id;
+    String title;
+    Set<String> artists;
+    UUID albumId;
+    String storageKey;
+    int durationMs;
+    String coverImageKey;
 }
