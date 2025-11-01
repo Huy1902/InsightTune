@@ -26,13 +26,6 @@ public class FavoriteController {
         this.favoriteService = favoriteService;
     }
 
-    /**
-     * API thêm bài hát vào danh sách yêu thích.
-     *
-     * @param authentication thông tin người dùng hiện tại
-     * @param createFavoriteRequestDto thông tin bài hát cần thêm
-     * @return FavoriteResponseDto thông tin bài hát đã thêm
-     */
     @PostMapping("/add")
     @Operation(summary = "Add favorite song", description = "need token")
     public ResponseEntity<FavoriteResponseDto> addFavorite(Authentication authentication
@@ -42,12 +35,6 @@ public class FavoriteController {
         return ResponseEntity.ok().body(favoriteService.addFavorite(email, createFavoriteRequestDto));
     }
 
-    /**
-     * API lấy danh sách bài hát yêu thích của người dùng.
-     *
-     * @param authentication thông tin người dùng hiện tại
-     * @return danh sách TrackResponseDto của các bài hát yêu thích
-     */
     @GetMapping
     @Operation(summary = "Get all favorite songs", description = "need token")
     public ResponseEntity<List<TrackResponseDto>> getFavorites(Authentication authentication) {
@@ -58,13 +45,6 @@ public class FavoriteController {
         return ResponseEntity.ok().body(favoriteService.getFavoriteTracks(ids));
     }
 
-    /**
-     * API xóa bài hát khỏi danh sách yêu thích.
-     *
-     * @param authentication thông tin người dùng hiện tại
-     * @param deleteFavoriteRequestDto thông tin bài hát cần xóa
-     * @return thông báo xóa thành công
-     */
     @PostMapping("/delete")
     @Operation(summary = "Delete favorite song", description = "need token")
     public ResponseEntity<String> deleteFavorite(Authentication authentication
@@ -74,13 +54,6 @@ public class FavoriteController {
         return ResponseEntity.ok().body("Successfully deleted favorite");
     }
 
-    /**
-     * API kiểm tra bài hát có trong danh sách yêu thích hay không.
-     *
-     * @param authentication thông tin người dùng hiện tại
-     * @param id ID của bài hát cần kiểm tra
-     * @return true nếu bài hát có trong danh sách yêu thích, false nếu không
-     */
     @GetMapping("/check/{id}")
     @Operation(summary = "Check favorite song in db", description = "need token, songId")
     public ResponseEntity<Boolean> checkFavorite(Authentication authentication, @PathVariable UUID id) {

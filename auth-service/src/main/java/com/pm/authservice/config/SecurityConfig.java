@@ -27,9 +27,7 @@ public class SecurityConfig {
     private final CustomAuthEntryPoint customAuthEntryPoint;
 
 
-    private final String[] PUBLIC_POST_ENDPOINTS = {"/auth/login", "/auth/register", "/auth/forgot_password"};
-    private final String[] PUBLIC_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/user/forgotPassword",
-            "/h2-console/**", "/user/updateRole", "/api/auth/google", "/user/forgot"};
+    private final String[] PUBLIC_ENDPOINTS = {"/auth/login", "/auth/register", "/auth/forgot_password"};
 
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
@@ -44,8 +42,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // tạm thời tắt CSRF cho API
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/user/forgotPassword",
+                                "/h2-console/**", "/user/updateRole", "/api/auth/google", "/user/forgot").permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                         // các endpoint khác cần login
                 )

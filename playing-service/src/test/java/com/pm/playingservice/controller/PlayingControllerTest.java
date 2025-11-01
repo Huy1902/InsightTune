@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pm.playingservice.dto.*;
 import com.pm.playingservice.exception.GlobalExceptionHandler;
 import com.pm.playingservice.service.AwsUrlService;
-import com.pm.playingservice.service.KafkaService;
 import com.pm.playingservice.service.UserStateService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -49,19 +48,14 @@ class PlayingControllerTest {
   @org.springframework.test.context.bean.override.mockito.MockitoBean
   UserStateService userStateService;
 
-  @org.springframework.test.context.bean.override.mockito.MockitoBean
-  KafkaService kafkaService;
-
   @Test
   void givenValidRequest_whenPlay_thenReturnsSignedUrls() throws Exception {
     var req = new PlayRequestDto("tracks/123.mp3", "covers/123.jpg");
-    Authentication auth = mock(Authentication.class);
 
     when(awsUrlService.getUrl("tracks/123.mp3")).thenReturn("https://cf/track123?sig=abc");
     when(awsUrlService.getUrl("covers/123.jpg")).thenReturn("https://cf/img123?sig=xyz");
 
     mockMvc.perform(post("/play")
-                    .principal(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(req)))
             .andExpect(status().isOk())
@@ -78,12 +72,9 @@ class PlayingControllerTest {
   @Test
   void givenEmptyCoverImageKeyRequest_whenPlay_thenReturnsBlankImageUrl() throws Exception {
     var req = new PlayRequestDto("tracks/123.mp3", "         ");
-    Authentication auth = mock(Authentication.class);
-
     when(awsUrlService.getUrl("tracks/123.mp3")).thenReturn("https://cf/track123?sig=abc");
 
     mockMvc.perform(post("/play")
-            .principal(auth)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(req)))
             .andExpect(status().isOk())

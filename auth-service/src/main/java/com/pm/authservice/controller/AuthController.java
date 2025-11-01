@@ -115,12 +115,6 @@ public class AuthController {
                 .build();
     }
 
-    /**
-     * API gửi OTP đến email người dùng khi quên mật khẩu.
-     *
-     * @param email địa chỉ email của người dùng
-     * @return ApiResponse thông báo OTP đã được gửi
-     */
     @PostMapping("/forgot_password")
     @Operation(summary = "Forgot password", description = "API for to get otp in email")
     public ApiResponse<String> sendOTP(@RequestParam String email) {

@@ -84,13 +84,6 @@ spring:
                       filters:
                         - StripPrefix=0
 
-                    - id: auth-service-google
-                      uri: lb://auth-service
-                      predicates:
-                        - Path=/api/auth/**
-                      filters:
-                        - StripPrefix=0
-
                     - id: history-service
                       uri: lb://history-service
                       predicates:
@@ -101,7 +94,7 @@ spring:
                     - id: favorite-service
                       uri: lb://favorite-service
                       predicates:
-                        - Path=/favorites/**
+                        - Path=/favorite/**
                       filters:
                         - StripPrefix=0
 

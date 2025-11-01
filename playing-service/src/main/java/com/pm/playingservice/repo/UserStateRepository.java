@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface UserStateRepository extends JpaRepository<UserState, UUID> {
   Optional<UserState> findByEmail(String email);
+
+
 }
