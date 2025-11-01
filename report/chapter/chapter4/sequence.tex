@@ -1,0 +1,81 @@
+\setcounter{section}{1}
+\section{Biểu đồ tuần tự}
+
+\subsection{Chatbot}
+\label{sec:sequence_chatbot}
+Supervisor trực tiếp nhận câu hỏi từ chatbot system, phân tích (áp dụng
+Chain of Thinking). Khi nhận được câu hỏi, hệ thống gửi cho Supervisor, 
+Supervisor sẽ quyết định đây có yêu cầu query database
+hay không. Nếu có, định tuyến tới Querier, ngược lại tới Researcher (search agent).
+
+Querier làm các bước sau:
+\begin{itemize}
+    \item Sinh câu lệnh SQL, yêu cầu Verifier xác nhận (1)
+    \item Nếu không có lỗi, gửi câu lệnh SQL tới database, nếu có lỗi
+    lặp lại từ (1) (2)
+    \item Nhận kết quả từ database (3)
+    \item Yêu cầu Evaluator đánh giá kết quả (4)
+    \item Nhận kết quả đánh giá từ Evaluator, đạt gửi tới Supervisor,
+    nếu không lặp lại từ bước (1) (5)
+\end{itemize}
+
+Researcher làm các bước sau:
+\begin{itemize}
+    \item Nhận câu hỏi từ Supervisor (1)
+    \item Gọi Tavily để tìm kiếm thông tin (2)
+    \item Nhận kết quả từ Tavily (3)
+    \item Reformat và gửi trả lại cho Supervisor (4)
+\end{itemize}
+Sau đó, Supervisor sẽ tổng hợp kết quả,
+đưa ra câu trả lời cho người dùng. 
+Hình trang tiếp theo mô tả quá trình này.
+\newpage
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/chatbot.png}
+  \caption{Biểu đồ tuần tự cho chatbot}
+\end{figure}
+\subsection{Chỉnh sửa giao dịch}
+\begin{itemize}
+	\item User điền thông tin giao dịch cần chỉnh sửa.
+	\item Giao diện người dùng (UI) đóng gói dữ liệu thành DTO (Data Transfer Object) và gửi đến Controller.
+	\item TransactionController nhận DTO và thực hiện validate.
+	\item Nếu DTO hợp lệ, controller gọi service để cập nhật.
+	\item TransactionService nhận yêu cầu và validate Entity.
+	\item Nếu Entity hợp lệ, UI hiển thị thông báo thành công. Nếu Entity không hợp lệ, UI hiển thị thông báo lỗi.
+\end{itemize}
+\newpage
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{figures/edit-transac-sq.png}
+	\caption{Biểu đồ tuần tự cho chức năng chỉnh sửa giao dịch}
+\end{figure}
+
+\subsection{Xem báo cáo chi tiêu}
+\begin{itemize}
+	\item Người dùng yêu cầu báo cáo.
+	\item Chọn thời gian (vd: tháng 7/2023).
+	\item Hệ thống truy vấn database để lấy tất cả giao dịch trong khoảng thời gian người dùng chọn.
+	\item Nếu không có giao dịch nào → Trả về biểu đồ trống
+	\item Nếu có giao dịch → Tiếp tục xử lý.
+	\item Phân tích dữ liệu: Gộp các giao dịch cùng loại, Tính tổng tiền cho từng danh mục -> Xây dựng biểu đồ thống kê.
+\end{itemize}
+\newpage
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{figures/view-report-sq.png}
+	\caption{Biểu đồ tuần tự cho chức năng xem báo cáo chi tiêu}
+	\end{figure}
+
+\subsection{Thêm giao dịch mới}
+\begin{itemize}
+	\item Người dùng thêm giao dịch: nhấn nút ``Thêm giao dịch'' trên web, Điền thông tin (số tiền, danh mục, ghi chú...).
+	\item Hệ thống xử lý: Kiểm tra dữ liệu, nếu dữ liệu hợp lệ lưu vào database.
+	\item Hệ thống hiển thị kết quả.
+\end{itemize}
+\newpage
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{figures/add-transac-sq.png}
+	\caption{Biểu đồ tuần tự cho chức năng thêm giao dịch mới}
+\end{figure}
