@@ -17,4 +17,6 @@ public class RecTrackRequestDto {
   private List<String> userHistory;
   @JsonProperty("k")
   private int k;
+  @JsonProperty("candidate_ids")
+  private List<String> candidateIds;
 }

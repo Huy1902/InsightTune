@@ -1,6 +1,7 @@
 package com.pm.catalogservice.service;
 
 
+import com.pm.catalogservice.dto.response.TrackIdsResponseDto;
 import com.pm.catalogservice.dto.response.TrackResponseDto;
 import com.pm.catalogservice.mapper.TrackMapper;
 import com.pm.catalogservice.model.Artist;
@@ -20,6 +21,13 @@ import java.util.stream.Stream;
 public class TrackService {
   private final TrackRepository trackRepository;
   private final ArtistRepository artistRepository;
+
+  public List<String> getTracksIds() {
+    List<Track> tracks = trackRepository.findAll();
+    return tracks.stream()
+            .map(Track::getCoverImageKey)
+            .map(TrackMapper::extractIdFromStorageKey).toList();
+  }
 
   public List<TrackResponseDto> getTracks() {
     List<Track> tracks = trackRepository.findAll();

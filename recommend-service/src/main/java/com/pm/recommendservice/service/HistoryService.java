@@ -13,8 +13,8 @@ import java.util.Objects;
 public class HistoryService {
   private final HistoryServiceClient historyServiceClient;
 
-  public List<String> getHistoryTrackKey() {
-    return extractTrackIds(historyServiceClient.getHistory());
+  public List<String> getHistoryTrackKey(String email) {
+    return extractTrackIds(historyServiceClient.getHistory(email));
   }
 
   /** Extract IDs from a list of DTOs returned by your Feign client */

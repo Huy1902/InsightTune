@@ -1,6 +1,7 @@
 package com.pm.catalogservice.controller;
 
 import com.pm.catalogservice.dto.request.SearchSongRequestDto;
+import com.pm.catalogservice.dto.response.TrackIdsResponseDto;
 import com.pm.catalogservice.dto.response.TrackResponseDto;
 import com.pm.catalogservice.service.KafkaService;
 import com.pm.catalogservice.service.TrackService;
@@ -54,5 +55,10 @@ public class TrackController {
   @PostMapping("/by-ids")
   public ResponseEntity<List<TrackResponseDto>> getAllTracksById(@RequestBody Set<UUID> ids) {
       return ResponseEntity.ok().body(trackService.getAllTrackByIds(ids));
+  }
+
+  @GetMapping("/internal")
+  public ResponseEntity<TrackIdsResponseDto> getAllTracksIds() {
+    return ResponseEntity.ok().body(new TrackIdsResponseDto(trackService.getTracksIds()));
   }
 }

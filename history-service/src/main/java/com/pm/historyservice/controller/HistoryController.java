@@ -6,6 +6,7 @@ import com.pm.historyservice.models.History;
 import com.pm.historyservice.models.SearchHistory;
 import com.pm.historyservice.service.HistoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +48,12 @@ public class HistoryController {
     public ResponseEntity<List<SearchHistory>> findAllSearch(Authentication authentication) {
         return ResponseEntity.ok()
                 .body(historyService.findAllSearchByEmail(authentication.getName()));
+    }
+
+    @GetMapping("/internal")
+    @PermitAll
+    public ResponseEntity<List<History>> searchByEmail(@RequestParam String email) {
+      return ResponseEntity.ok()
+              .body(historyService.findAllByEmail(email));
     }
 }
