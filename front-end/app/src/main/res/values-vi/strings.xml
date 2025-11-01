@@ -23,8 +23,8 @@
     <string name="recently_played">Mới nghe gần đây</string>
     <string name="editor_picks">Gợi ý của chúng tôi</string>
     <string name="profile">Thông tin cá nhân</string>
-    <string name="phone">Số điện thoại: %1$s</string>
-    <string name="address">Địa chỉ: %1$s</string>
+    <string name="phone">"Số điện thoại: "</string>
+    <string name="address">"Địa chỉ: "</string>
     <string name="role">Vai trò: %1$s</string>
     <string name="edit_profile">Chỉnh sửa thông tin</string>
     <string name="change_password">Đổi mật khẩu</string>
@@ -78,5 +78,7 @@
     <string name="register_failed">Tạo tài khoản thất bại.</string>
     <string name="favorite_songs">Mục yêu thích</string>
     <string name="no_favorite_songs">Bạn chưa có bài hát nào ở mục yêu thích.</string>
+    <string name="do_not_use_old_password">Không được dùng mật khẩu cũ.</string>
+    <string name="wrong_password">Sai mật khẩu hiện tại.</string>
 
 </resources>

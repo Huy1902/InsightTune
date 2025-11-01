@@ -10,4 +10,7 @@ interface TrackRepository {
     suspend fun searchTracks(keyword: String): List<GetTracksResponse>
 
     suspend fun nextTracks(currentTrackId: String): List<NextTracksResponse>
+
+    suspend fun getTrackById(trackId: String): GetTracksResponse
+
 }

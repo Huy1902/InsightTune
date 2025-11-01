@@ -22,8 +22,8 @@
     <string name="recently_played">Recently played</string>
     <string name="editor_picks">Editor\'s picks</string>
     <string name="profile">Profile</string>
-    <string name="phone">Phone: %1$s</string>
-    <string name="address">Address: %1$s</string>
+    <string name="phone">"Phone: "</string>
+    <string name="address">"Address: "</string>
     <string name="role">Role: %1$s</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="change_password">Change password</string>
@@ -77,5 +77,7 @@
     <string name="register_failed">Registration failed.</string>
     <string name="favorite_songs">Your favorite songs</string>
     <string name="no_favorite_songs">You have no favorite songs yet.</string>
+    <string name="do_not_use_old_password">Do not use old password.</string>
+    <string name="wrong_password">Wrong current password.</string>
 
 </resources>

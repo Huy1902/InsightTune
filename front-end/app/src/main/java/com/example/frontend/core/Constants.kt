@@ -11,4 +11,5 @@ object Constants {
     const val HISTORY_SERVICE_BASE_URL = "http://10.0.2.2:4003/"
     const val FAVORITE_SERVICE_BASE_URL = "http://10.0.2.2:4004/"
 
+    const val CHATBOT_URL = "http://10.0.2.2:2005/"
 }

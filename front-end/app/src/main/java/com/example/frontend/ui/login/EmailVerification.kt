@@ -145,13 +145,15 @@ fun OtpScreenContent(
         Button(
             onClick = onVerifyClick,
             enabled = !isLoading && otpValue.joinToString("").length == 6,
+            modifier = Modifier
+                .height(56.dp),
         ) {
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
             } else {
                 Text(
                     stringResource(R.string.verify),
-                    style = AppTheme.typography.titleMedium,
+                    style = AppTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -160,7 +162,7 @@ fun OtpScreenContent(
             Text(
                 text = it,
                 color = MaterialTheme.colorScheme.error,
-                style = AppTheme.typography.labelSmall,
+                style = AppTheme.typography.labelLarge,
                 modifier = Modifier.padding(top = AppTheme.spacing().S)
             )
         }

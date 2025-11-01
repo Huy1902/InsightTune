@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.data.models.song.NextTracksResponse
 import com.example.frontend.domain.repositories.TrackRepository
-import kotlin.reflect.typeOf
 
 class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {
 
@@ -55,5 +54,16 @@ class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {
             emptyList()
         }
         Log.d(TAG, "End of nextTracks()")
+    }
+
+    override suspend fun getTrackById(trackId: String): GetTracksResponse {
+        return try {
+            val response = trackApi.getTracksById(listOf(trackId))
+            Log.d(TAG, "API response: $response")
+            return response.firstOrNull() ?: GetTracksResponse("", "", emptyList(), "", "", 0L, "")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error when calling API: ${e.message}", e)
+            GetTracksResponse("", "", emptyList(), "", "", 0L, "")
+        }
     }
 }

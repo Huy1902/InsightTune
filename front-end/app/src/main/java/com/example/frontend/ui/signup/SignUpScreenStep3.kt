@@ -160,7 +160,9 @@ fun SignUpStep3Content(
             enabled = uiState !is Resource.Loading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary
-            )
+            ),
+            modifier = Modifier
+                .height(56.dp)
         ) {
             if (uiState is Resource.Loading) {
                 CircularProgressIndicator(
@@ -173,7 +175,7 @@ fun SignUpStep3Content(
                     stringResource(R.string.register_confirmation),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = AppTheme.typography.titleMedium
+                    style = AppTheme.typography.titleLarge
                 )
             }
         }
@@ -182,7 +184,7 @@ fun SignUpStep3Content(
             Spacer(modifier = Modifier.height(AppTheme.spacing().M))
             Text(
                 text = "Email already exists.",
-                style = AppTheme.typography.labelSmall,
+                style = AppTheme.typography.labelLarge,
                 color = AppTheme.color().Error
             )
         }

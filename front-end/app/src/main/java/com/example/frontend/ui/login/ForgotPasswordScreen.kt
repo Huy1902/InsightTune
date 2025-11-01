@@ -117,15 +117,21 @@ fun ForgetPasswordScreenContent(
             modifier = Modifier.fillMaxWidth(),
             placeholderText = "Email"
         )
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.size(30.dp))
         Button(
             onClick = onSendClick,
             enabled = !isLoading,
+            modifier = Modifier
+                .height(56.dp)
         ) {
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
             } else {
-                Text(stringResource(R.string.send_otp))
+                Text(
+                    stringResource(R.string.send_otp),
+                    style = AppTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

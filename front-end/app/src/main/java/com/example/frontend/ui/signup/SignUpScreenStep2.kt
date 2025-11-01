@@ -168,11 +168,13 @@ fun SignUpStep2Content(
         Button(
             onClick = onNextClick,
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            modifier = Modifier
+                .height(56.dp)
         ) {
             Text(
                 stringResource(R.string.next),
                 fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.titleMedium,
+                style = AppTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimary,
             )
         }
@@ -182,7 +184,7 @@ fun SignUpStep2Content(
             Text(
                 it,
                 fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.labelSmall,
+                style = AppTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.error,
             )
         }
