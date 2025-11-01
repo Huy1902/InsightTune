@@ -1,0 +1,168 @@
+\section{Các ca sử dụng}
+
+
+\subsection{Sửa giao dịch}
+\begin{longtable}{|p{4.5cm}|p{10cm}|}
+	\hline
+	\textbf{Mã Use case} & 5 \\
+	\hline
+	\textbf{Tên Use case} & Sửa giao dịch \\
+	\hline
+	\textbf{Tác nhân} & Người dùng \\
+	\hline
+	\textbf{Mô tả} & Người dùng sửa thông tin của một giao dịch đã thêm trước đó \\
+	\hline
+	\textbf{Sự kiện kích hoạt} & Bấm nút "Edit transaction" bên cạnh một giao dịch trong phần Transaction History \\
+	\hline
+	\textbf{Pre-condition} & Người dùng đã đăng nhập \\
+	\hline
+	\textbf{Pre-condition} & Người dùng đã đăng nhập \\
+	\hline
+	\textbf{Basic flow} &
+	\begin{tabular}{|p{1cm}|p{7.5cm}|}
+		\hline
+		\textbf{STT} & \textbf{Sự kiện} \\
+		\hline
+		1 & Người dùng chọn một giao dịch cần sửa \\
+		\hline
+		2 & Hệ thống hiển thị thông tin giao dịch \\
+		\hline
+		3 & Người dùng chỉnh sửa thông tin giao dịch và xác nhận\\
+		\hline
+		4 & Hệ thống cập nhật giao dịch và lưu vào CSDL \\
+		\hline
+	\end{tabular}
+	\\
+	\hline
+	\textbf{Alternate flow:} Người dùng nhập thông tin lỗi &
+	\begin{tabular}{|p{1cm}|p{7.5cm}|}
+		\hline
+		\textbf{STT} & \textbf{Sự kiện} \\
+		\hline
+		4b & Hệ thống yêu cầu nhập lại thông tin\\
+		\hline
+	\end{tabular}
+	\\
+	\hline
+	\caption{Use Case: Sửa giao dịch} \label{tab:usecase-suagiaodich} \\
+\end{longtable}
+
+
+
+\subsection{Sửa danh mục}
+\begin{longtable}{|p{4.5cm}|p{10cm}|}
+	\hline
+	\textbf{Mã Use case} & 9 \\
+	\hline
+	\textbf{Tên Use case} & Sửa danh mục\\
+	\hline
+	\textbf{Tác nhân} & Người dùng \\
+	\hline
+	\textbf{Mô tả} & Người dùng sửa một danh mục đã tạo\\
+	\hline
+	\textbf{Điều kiện kích hoạt} & Bấm icon sửa bên cạnh một danh mục trong phần "All category"\\
+	\hline
+	\textbf{Pre-condition} &  Người dùng đã đăng nhập\\
+	\hline
+	\textbf{Post-condition} &  Không\\
+	\hline
+	\textbf{Basic flow} &
+	\begin{tabular}{|p{1cm}|p{7.5cm}|}
+		\hline
+		\textbf{STT} & \textbf{Sự kiện} \\
+		\hline
+		1 & Người dùng chọn danh mục cần sửa \\
+		\hline
+		2 & Hệ thống hiển thị thông tin danh mục\\
+		\hline
+		3 & Người dùng chỉnh sửa thông tin danh mục và xác nhận\\
+		\hline
+		4 & Hệ thống cập nhật danh mục và lưu vào CSDL \\
+		\hline
+	\end{tabular}
+	\\
+	\hline
+	\textbf{Alternate flow:} Người dùng nhập thông tin lỗi &
+	\begin{tabular}{|p{1cm}|p{7.5cm}|}
+		\hline
+		\textbf{STT} & \textbf{Sự kiện} \\
+		\hline
+		4b & Hệ thống yêu cầu nhập lại thông tin\\
+		\hline
+	\end{tabular}
+	\\
+	\hline
+	\caption{Use Case: Sửa danh mục} \label{tab:usecase-xoaloaigiaodich} \\
+\end{longtable}
+
+\subsection{Báo cáo chi tiêu}
+\begin{longtable}{|p{4.5cm}|p{10cm}|}
+	\hline
+	\textbf{Mã Use case} & 10 \\
+	\hline
+	\textbf{Tên Use case} & Báo cáo chi tiêu\\
+	\hline
+	\textbf{Tác nhân} & Người dùng \\
+	\hline
+	\textbf{Mô tả} & Báo cáo thu chi của người dùng trong một khoảng thời gian \\
+	\hline
+	\textbf{Điều kiện kích hoạt} & Bấm nút "Statistics" \\
+	\hline
+	\textbf{Pre-condition} & Người dùng đã đăng nhập\\
+	\hline
+	\textbf{Post-condition} & Người dùng nhận được báo cáo\\
+	\hline
+	\textbf{Basic flow} &
+	\begin{tabular}{|p{1cm}|p{7.5cm}|}
+		\hline
+		\textbf{STT} & \textbf{Sự kiện} \\
+		\hline
+		1 & Người dùng vào phần "Statistics" \\
+		\hline
+		2 & Người dùng chọn khoảng thời gian muốn thống kê \\
+		\hline
+		3 & Hệ thống truy vấn và hiển thị biểu đồ giá trị thu chi theo danh mục\\
+		\hline
+	\end{tabular}
+	\\
+	\hline
+	\caption{Use Case: Báo cáo chi tiêu} \label{tab:usecase-baocaochitieu} \\
+\end{longtable}
+
+\subsection{Trò chuyện với chatbot}
+\begin{longtable}{|p{4.5cm}|p{10cm}|}
+	\hline
+	\textbf{Mã Use case} & 11 \\
+	\hline
+	\textbf{Tên Use case} & Trò chuyện với chatbot \\
+	\hline
+	\textbf{Tác nhân} & Người dùng, Chatbot \\
+	\hline
+	\textbf{Mô tả} & Người dùng giao tiếp với chatbot để được hỗ trợ truy vấn, xem báo cáo, nhận cảnh báo, hoặc được tư vấn chi tiêu \\
+	\hline
+	\textbf{Điều kiện kích hoạt} & Gửi message trong phần trò chuyện với chatbot \\
+	\hline
+	\textbf{Pre-condition} & Người dùng đã đăng nhập \\
+	\hline
+	\textbf{Post-condition} & Người dùng nhận được câu trả lời từ chatbot \\
+	\hline
+	\textbf{Basic flow} &
+	\begin{tabular}{|p{1cm}|p{7.5cm}|}
+		\hline
+		\textbf{STT} & \textbf{Sự kiện} \\
+		\hline
+		1 & Người dùng truy cập vào trang chat\\
+		\hline
+		2 & Người dùng nhập tin nhắn và gửi\\
+		\hline
+		4 & Chatbot phân tích và xử lý yêu cầu \\
+		\hline
+		5 & Hệ thống hiển thị phản hồi của chatbot\\
+		\hline
+	\end{tabular}
+	\\
+	\hline
+	\caption{Use Case: Trò chuyện với chatbot} \label{tab:usecase-chatbot} \\
+\end{longtable}
+
+
