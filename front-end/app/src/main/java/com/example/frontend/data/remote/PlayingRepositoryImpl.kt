@@ -1,9 +1,9 @@
 package com.example.frontend.data.remote
 
 import android.util.Log
-import com.example.frontend.data.models.song.ImageResponse
-import com.example.frontend.data.models.song.PlayingRequest
-import com.example.frontend.data.models.song.PlayingResponse
+import com.example.frontend.data.models.favorites.ImageResponse
+import com.example.frontend.data.models.playingsong.PlayingRequest
+import com.example.frontend.data.models.playingsong.PlayingResponse
 import com.example.frontend.domain.repositories.PlayingRepository
 
 class PlayingRepositoryImpl(

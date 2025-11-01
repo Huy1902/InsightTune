@@ -57,6 +57,7 @@ fun ChatBotScreen(viewModel: ChatbotViewModel) {
                     .fillMaxSize()
                     .padding(padding)
                     .background(MaterialTheme.colorScheme.background)
+                    .imePadding()
             ) {
                 LazyColumn(
                     state= listState,

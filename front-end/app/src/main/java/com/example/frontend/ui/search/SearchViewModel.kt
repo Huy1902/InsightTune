@@ -3,8 +3,8 @@ package com.example.frontend.ui.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frontend.core.AppPreferences
-import com.example.frontend.data.models.song.GetTracksResponse
-import com.example.frontend.data.models.song.SearchHistoryResponse
+import com.example.frontend.data.models.home.GetTracksResponse
+import com.example.frontend.data.models.search.SearchHistoryResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.domain.repositories.HistoryRepository

@@ -1,7 +1,7 @@
 package com.example.frontend.data.remote
 
-import com.example.frontend.data.models.Chatbot.ChatbotRequest
-import com.example.frontend.data.models.Chatbot.ChatbotResponse
+import com.example.frontend.data.models.chatbot.ChatbotRequest
+import com.example.frontend.data.models.chatbot.ChatbotResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 

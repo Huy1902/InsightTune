@@ -2,7 +2,7 @@ package com.example.frontend.core
 
 import android.util.Base64
 import android.util.Log
-import com.example.frontend.data.models.user.RefreshRequest
+import com.example.frontend.data.models.login.RefreshRequest
 import com.example.frontend.data.remote.AuthApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

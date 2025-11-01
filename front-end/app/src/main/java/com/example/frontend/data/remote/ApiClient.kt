@@ -3,7 +3,7 @@ package com.example.frontend.data.remote
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.core.AuthInterceptor
 import com.example.frontend.core.Constants
-import com.example.frontend.data.models.user.GoogleResponseResult
+import com.example.frontend.data.register.GoogleResponseResult
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

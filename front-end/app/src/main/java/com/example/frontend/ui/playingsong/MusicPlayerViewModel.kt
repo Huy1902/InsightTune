@@ -13,9 +13,8 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.example.frontend.data.models.song.NextTracksResponse
+import com.example.frontend.data.models.playingsong.NextTracksResponse
 import com.example.frontend.data.remote.ApiClient
-import com.example.frontend.data.remote.HistoryRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.domain.repositories.FavoriteRepository
 import com.example.frontend.domain.repositories.HistoryRepository

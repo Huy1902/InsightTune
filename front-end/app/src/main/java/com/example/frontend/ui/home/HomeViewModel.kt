@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frontend.core.AppPreferences
-import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.home.GetTracksResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.HistoryRepositoryImpl
 import com.example.frontend.data.remote.PlayingRepositoryImpl

@@ -54,7 +54,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.example.frontend.R
-import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.home.GetTracksResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.domain.repositories.TrackRepository

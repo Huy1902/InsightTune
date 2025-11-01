@@ -1,4 +1,4 @@
-package com.example.frontend.data.models.song
+package com.example.frontend.data.models.playingsong
 
 data class NextTracksResponse (
     val id: String,

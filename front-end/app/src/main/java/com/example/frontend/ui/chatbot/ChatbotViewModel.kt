@@ -2,7 +2,7 @@ package com.example.frontend.ui.chatbot
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.frontend.data.models.Chatbot.ChatbotRequest
+import com.example.frontend.data.models.chatbot.ChatbotRequest
 import com.example.frontend.data.remote.ChatbotApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

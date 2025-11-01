@@ -1,8 +1,8 @@
 package com.example.frontend.data.remote
 
-import com.example.frontend.data.models.song.ImageResponse
-import com.example.frontend.data.models.song.PlayingRequest
-import com.example.frontend.data.models.song.PlayingResponse
+import com.example.frontend.data.models.favorites.ImageResponse
+import com.example.frontend.data.models.playingsong.PlayingRequest
+import com.example.frontend.data.models.playingsong.PlayingResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

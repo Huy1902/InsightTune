@@ -3,7 +3,6 @@ package com.example.frontend.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.frontend.data.models.song.PlayingResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.domain.repositories.PlayingRepository

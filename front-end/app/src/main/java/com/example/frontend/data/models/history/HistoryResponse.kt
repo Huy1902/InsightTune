@@ -1,4 +1,4 @@
-package com.example.frontend.data.models.song
+package com.example.frontend.data.models.history
 
 import java.util.Date
 

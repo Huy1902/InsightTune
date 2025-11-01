@@ -1,8 +1,8 @@
 package com.example.frontend.data.remote
 
-import com.example.frontend.data.models.song.HistoryRequest
-import com.example.frontend.data.models.song.HistoryResponse
-import com.example.frontend.data.models.song.SearchHistoryResponse
+import com.example.frontend.data.models.history.HistoryRequest
+import com.example.frontend.data.models.history.HistoryResponse
+import com.example.frontend.data.models.search.SearchHistoryResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
