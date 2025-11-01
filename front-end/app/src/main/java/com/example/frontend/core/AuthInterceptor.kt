@@ -24,7 +24,7 @@ class AuthInterceptor(
             Log.d("AUTH_DEBUG", "Current token exists: ${!currentToken.isNullOrBlank()}")
             val tokenToUse = if (currentToken != null && isTokenAboutToExpire(currentToken)) {
                 Log.d("AUTH", "⏳ Token is about to expire. Proactively refreshing...")
-                performRefresh(currentToken) ?: currentToken // Nếu refresh thất bại, thử dùng lại token cũ
+                performRefresh(currentToken) ?: currentToken
             } else {
                 currentToken
             }
@@ -63,7 +63,7 @@ class AuthInterceptor(
                 "Bearer $expiredToken",
                 RefreshRequest(refreshToken)
             ).execute()
-            Log.d("AUTH_REFRESH", "Refresh API response code: ${responseSync.code()}") // <-- Log mã phản hồi
+            Log.d("AUTH_REFRESH", "Refresh API response code: ${responseSync.code()}")
             if (responseSync.isSuccessful) {
                 val body = responseSync.body()
                 if (body != null) {
@@ -79,7 +79,7 @@ class AuthInterceptor(
                     null
                 }
             } else {
-                Log.e("AUTH_REFRESH", "Refresh failed with error body: ${responseSync.errorBody()?.string()}") // <-- Log lỗi
+                Log.e("AUTH_REFRESH", "Refresh failed with error body: ${responseSync.errorBody()?.string()}")
                 Log.e("AUTH", "❌ Refresh HTTP fail: ${responseSync.code()} ${responseSync.message()}")
                 if (responseSync.code() == 401) {
                     SessionManager.sendLogout()

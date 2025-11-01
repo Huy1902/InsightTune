@@ -26,9 +26,6 @@ class PlayingViewModel (
             _playing.value = playingRepo.getUrlTrack(urlKey, urlImage)
             Log.d("PLAYING", "Loaded playing: ${playing.value?.trackUrl}")
         }
-
-
-
     }
 
 }

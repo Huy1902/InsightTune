@@ -21,10 +21,17 @@ import androidx.media3.ui.PlayerNotificationManager
 import com.example.frontend.R
 import androidx.media3.common.C
 import androidx.media3.common.Player
+import com.example.frontend.data.remote.ApiClient
+import com.example.frontend.data.remote.PlayingRepositoryImpl
+import com.example.frontend.domain.repositories.PlayingRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @UnstableApi
 class MusicService : MediaSessionService() {
 
+    private val playingRepo: PlayingRepository = PlayingRepositoryImpl(ApiClient.playingApi)
     private var player: ExoPlayer? = null
     private var mediaSession: MediaSession? = null
     private var playerNotificationManager: PlayerNotificationManager? = null
@@ -35,20 +42,26 @@ class MusicService : MediaSessionService() {
 
         if (playerInstance == null) {
             playerInstance = ExoPlayer.Builder(this)
+                .setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(C.USAGE_MEDIA)
+                        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                        .build(),
+                    /* handleAudioFocus= */ true
+                )
+                .setHandleAudioBecomingNoisy(true)
                 .build()
-                .apply {
-                    setAudioAttributes(
-                        AudioAttributes.Builder()
-                            .setUsage(C.USAGE_MEDIA)
-                            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-                            .build(),
-                        true
-                    )
-                    setHandleAudioBecomingNoisy(true)
-                }
         }
 
         player = playerInstance
+
+        player?.addListener(object : Player.Listener {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                if (!isPlaying) {
+                    persistPlaybackState()
+                }
+            }
+        })
 
         mediaSession = MediaSession.Builder(this, player!!)
             .setId("SpotubeSession")
@@ -86,39 +99,32 @@ class MusicService : MediaSessionService() {
         val songUrl = intent?.getStringExtra("song_url")
         val songTitle = intent?.getStringExtra("song_title") ?: "Unknown"
         val songArtist = intent?.getStringExtra("song_artist") ?: "Unknown"
+        val trackId = intent?.getStringExtra("track_id")
 
         if (!songUrl.isNullOrEmpty()) {
-            val current = player?.currentMediaItem
+            val metadata = MediaMetadata.Builder()
+                .setTitle(songTitle)
+                .setArtist(songArtist)
+                .build()
 
-            if (current == null || current.mediaId != songUrl) {
-                val metadata = MediaMetadata.Builder()
-                    .setTitle(songTitle)
-                    .setArtist(songArtist)
-                    .build()
+            val mediaItem = MediaItem.Builder()
+                .setUri(songUrl)
+                .setMediaId(trackId?:"")
+                .setMediaMetadata(metadata)
+                .build()
 
-                val mediaItem = MediaItem.Builder()
-                    .setUri(songUrl)
-                    .setMediaId(songUrl)
-                    .setMediaMetadata(metadata)
-                    .build()
-
-                player?.setMediaItem(mediaItem)
-                player?.prepare()
-                player?.playWhenReady = true
-            } else {
-                if (player?.isPlaying == false) {
-                    player?.play()
-                }
-            }
+            player?.setMediaItem(mediaItem)
+            player?.prepare()
+            player?.playWhenReady = true
         }
 
         return START_NOT_STICKY
     }
 
     private fun buildNotification(): Notification {
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Đang phát nhạc")
-            .setContentText("Ứng dụng SpoTube")
+        return NotificationCompat.Builder(this,     CHANNEL_ID)
+            .setContentTitle("On playing")
+            .setContentText("SpoTube")
             .setSmallIcon(android.R.drawable.ic_media_play)
             .setOngoing(true)
             .build()
@@ -139,6 +145,7 @@ class MusicService : MediaSessionService() {
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = mediaSession
 
     override fun onDestroy() {
+        persistPlaybackState()
         playerNotificationManager?.setPlayer(null)
         mediaSession?.release()
         player?.release()
@@ -180,8 +187,24 @@ class MusicService : MediaSessionService() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
+        persistPlaybackState()
         player?.stop()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+    }
+
+    private fun persistPlaybackState() {
+        val currentMediaItem = player?.currentMediaItem ?: return
+        val trackId = currentMediaItem.mediaId
+        val position = player?.currentPosition ?: 0L
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                playingRepo.updateUserState(trackId, position.toInt())
+                android.util.Log.d("MusicService", "Saved playback state: $trackId at $position ms")
+            } catch (e: Exception) {
+                android.util.Log.e("MusicService", "Failed to save playback state: ${e.message}")
+            }
+        }
     }
 }

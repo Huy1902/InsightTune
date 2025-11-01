@@ -53,6 +53,8 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
     private var originalFavoriteTracks: List<NextTracksResponse> = emptyList()
     private var title: String = ""
     private var artist: String = ""
+    private var trackId: String = ""
+    private var position: Int = 0
     private val tracksRepo : TrackRepository = TrackRepositoryImpl(ApiClient.trackApi)
 
     private var _playerState = MutableStateFlow(PlayerState())
@@ -139,10 +141,11 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
 
     init {
         viewModelScope.launch {
-            // nextTracks.addAll(trackList) // Xóa dòng này
             setupMediaController()
-            // if (currentTrack != null) loadPlaying(currentTrack) // Xóa dòng này
+            delay(500)
+            restoreLastPlayback()
             startProgressUpdater()
+
             FavoriteEventBus.favoriteChanged.collect { changedTrackId ->
                 if (changedTrackId == getCurrentTrack()?.id) {
                     checkIfFavorite(changedTrackId)
@@ -150,6 +153,7 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
             }
         }
     }
+
 
 
     @OptIn(UnstableApi::class)
@@ -160,6 +164,8 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
             putExtra("song_url", songUrl)
             putExtra("song_title", title)
             putExtra("song_artist", artist)
+            putExtra("track_id", trackId)
+            putExtra("resume_position", position)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
@@ -235,6 +241,7 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
                 currentSongUrl = response.trackUrl
                 title = track.title
                 artist = track.artists.joinToString(", ")
+                trackId = track.id
                 Log.d("MusicDebug", "Track URL: ${response.trackUrl}")
                 _playerState.value = _playerState.value.copy(
                     mediaMetadata = MediaMetadata.Builder()
@@ -391,4 +398,66 @@ class MusicPlayerViewModel @OptIn(androidx.media3.common.util.UnstableApi::class
         Log.d("MusicPlayerVM", "Repeat One mode: ${_isRepeatOne.value}")
     }
 
+    fun updateUserState() {
+        viewModelScope.launch {
+            val current = getCurrentTrack() ?: return@launch
+            playingRepo.updateUserState(current.id, _playerState.value.currentPosition.toInt())
+        }
+    }
+
+    fun restoreLastPlayback() {
+        viewModelScope.launch {
+            try {
+                val state = playingRepo.getUserState()
+                val trackId = state.trackId
+                val position = state.positionMs.toLong()
+
+                if (trackId.isNotEmpty()) {
+                    Log.d("MusicPlayerVM", "Restoring trackId=$trackId at $position ms")
+                    val track = tracksRepo.getTrackById(trackId)
+                    if (track != null) {
+                        val resumedTrack = NextTracksResponse(
+                            id = track.id,
+                            title = track.title,
+                            artists = track.artists ?: listOf("Unknown artist"),
+                            albumId = track.albumId,
+                            storageKey = track.storageKey,
+                            durationMs = track.durationMs,
+                            coverImageKey = track.coverImageKey ?: ""
+                        )
+
+                        nextTracks.clear()
+                        nextTracks.add(resumedTrack)
+                        currentIndexSong = 0
+
+                        loadPlaying(resumedTrack)
+
+                        var waited = 0
+                        while ((controller?.playbackState ?: Player.STATE_IDLE) != Player.STATE_READY && waited < 10) {
+                            delay(300)
+                            waited++
+                        }
+
+                        controller?.seekTo(position)
+                        controller?.pause()
+                        Log.d("MusicPlayerVM", "Restored to $position ms (paused)")
+
+                        if (canFetchNextTracks) {
+                            try {
+                                val nextList = tracksRepo.nextTracks(currentTrackId = resumedTrack.id)
+                                if (nextList.isNotEmpty()) {
+                                    nextTracks.addAll(nextList)
+                                    Log.d("MusicPlayerVM", "Fetched ${nextList.size} next tracks after restore")
+                                }
+                            } catch (e: Exception) {
+                                Log.e("MusicPlayerVM", "Failed to fetch next tracks: ${e.message}")
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("MusicPlayerVM", "Failed to restore playback: ${e.message}")
+            }
+        }
+    }
 }

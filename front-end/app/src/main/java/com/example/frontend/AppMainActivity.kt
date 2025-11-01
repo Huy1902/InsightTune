@@ -27,8 +27,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.NavHostController
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.core.LocaleContextWrapper
+import com.example.frontend.core.TokenRefreshWorker
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.ui.AppNavHost
 import com.example.frontend.ui.NavRoutes
@@ -38,6 +42,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -56,7 +61,15 @@ class AppMainActivity : ComponentActivity() {
 
         prefs = AppPreferences(this)
         ApiClient.init(prefs)
+        val workRequest = PeriodicWorkRequestBuilder<TokenRefreshWorker>(
+            13, TimeUnit.MINUTES
+        ).build()
 
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "TokenRefreshWork",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
         enableEdgeToEdge()
 
         setContent {
