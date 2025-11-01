@@ -97,10 +97,6 @@ public class UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND)));
     }
 
-    public void deleteByEmail(String email) {
-        userRepository.deleteByEmail(email);
-    }
-
     /**
      * Thay đổi avatar của user.
      *
