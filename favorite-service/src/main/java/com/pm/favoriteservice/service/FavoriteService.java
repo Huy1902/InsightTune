@@ -28,15 +28,13 @@ public class FavoriteService {
     private final FavoriteMapper favoriteMapper;
     private final RestTemplate restTemplate;
 
-    public FavoriteService(FavoriteRepository favoriteRepository,
-                           FavoriteMapper favoriteMapper, RestTemplate restTemplate) {
+    public FavoriteService(FavoriteRepository favoriteRepository, FavoriteMapper favoriteMapper, RestTemplate restTemplate) {
         this.favoriteRepository = favoriteRepository;
         this.favoriteMapper = favoriteMapper;
         this.restTemplate = restTemplate;
     }
 
-    public FavoriteResponseDto addFavorite(String email,
-                                           CreateFavoriteRequestDto createFavoriteRequestDto) {
+    public FavoriteResponseDto addFavorite(String email, CreateFavoriteRequestDto createFavoriteRequestDto) {
         Favorite favorite = Favorite.builder()
                 .email(email)
                 .songId(createFavoriteRequestDto.getSongId())

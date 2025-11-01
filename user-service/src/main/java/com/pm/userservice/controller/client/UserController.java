@@ -83,6 +83,17 @@ public class UserController {
     }
 
     /**
+     * Xóa user dựa trên token.
+     *
+     * @param principal principal chứa email từ token
+     */
+    @DeleteMapping
+    @Operation(summary = "Delete user by token")
+    public void deleteUser(Principal principal) {
+        userService.deleteByEmail(principal.getName());
+    }
+
+    /**
      * Thay đổi avatar của user.
      *
      * @param principal principal chứa email từ token

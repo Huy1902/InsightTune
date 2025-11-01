@@ -19,22 +19,20 @@ import javax.crypto.spec.SecretKeySpec;
 public class SecurityConfig {
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
-
-    private final String[] PUBLIC_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**",
-            "/swagger-ui.html", "/users/create", "/h2-console/**"};
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**"
+                                , "/swagger-ui.html", "/users/create").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()// cho phép public
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
                                 .frameOptions(frame -> frame.disable())
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2
+                );
+        http.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.decoder(jwtDecoder())
                 ));
 

@@ -72,12 +72,6 @@ public class UserController {
                 .build();
     }
 
-    /**
-     * API đổi mật khẩu khi người dùng quên mật khẩu.
-     *
-     * @param forgotPasswordRequest thông tin email, OTP và mật khẩu mới, confirmNewPassword
-     * @return ApiResponse xác nhận đổi mật khẩu thành công
-     */
     @PatchMapping("/forgotPassword")
     @Operation(summary = "Change User password", description = "Not need accessToken")
     public ApiResponse<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
