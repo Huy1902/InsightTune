@@ -12,4 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class TrackUploadRequestDto {
   @NotNull
   private MultipartFile file;
+
+  private String key;
 }

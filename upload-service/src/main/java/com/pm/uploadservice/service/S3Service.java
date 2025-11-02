@@ -21,16 +21,16 @@ import java.io.IOException;
 import java.util.Set;
 
 /**
- * Service class that handles uploading and downloading files (tracks and cover images)
- * to and from an Amazon S3 bucket.
+ * Lớp dịch vụ xử lý việc tải lên và tải xuống file (bài hát và ảnh bìa)
+ * từ/đến một bucket Amazon S3.
  *
- * <p>Tracks are stored under the <code>tracks/</code> prefix with an <code>.mp3</code> extension,
- * and cover images (if provided) are stored under the <code>covers/</code> prefix with a
- * <code>.jpeg</code> extension.</p>
+ * <p>Các bài hát được lưu dưới tiền tố <code>tracks/</code> với phần mở rộng <code>.mp3</code>,
+ * và ảnh bìa (nếu có) được lưu dưới tiền tố <code>covers/</code> với phần mở rộng
+ * <code>.jpeg</code>.</p>
  *
- * <p>Configuration:</p>
+ * <p>Cấu hình:</p>
  * <ul>
- *   <li><b>aws.bucket.name</b> – the target S3 bucket name (injected from application properties)</li>
+ *   <li><b>aws.bucket.name</b> – tên bucket S3 đích (được inject từ application properties)</li>
  * </ul>
  *
  * @author Huy1902
@@ -47,15 +47,15 @@ public class S3Service {
   private String bucketName;
 
   /**
-   * Uploads a track (and optional cover image) to S3.
+   * Tải lên một bài hát (và ảnh bìa tùy chọn) lên S3.
    *
-   * <p>The track is stored under the <code>tracks/</code> prefix with an <code>.mp3</code> extension.
-   * If a cover image is provided, it is stored under the <code>covers/</code> prefix with a
-   * <code>.jpeg</code> extension.</p>
+   * <p>Bài hát được lưu dưới tiền tố <code>tracks/</code> với phần mở rộng <code>.mp3</code>.
+   * Nếu cung cấp ảnh bìa, ảnh sẽ được lưu dưới tiền tố <code>covers/</code> với phần mở rộng
+   * <code>.jpeg</code>.</p>
    *
-   * @param s3UploadRequestDto the upload request containing the track file, cover image (optional),
-   *                           and unique key used for naming.
-   * @return a {@link S3UploadResponseDto} containing the storage keys and metadata.
+   * @param s3UploadRequestDto đối tượng yêu cầu upload chứa file bài hát, ảnh bìa (tùy chọn),
+   *                           và key duy nhất dùng để đặt tên.
+   * @return một {@link S3UploadResponseDto} chứa key lưu trữ và metadata.
    */
   public S3UploadResponseDto uploadTrack(S3UploadRequestDto s3UploadRequestDto) {
     String keyTrack = "tracks/" + s3UploadRequestDto.getKey() + ".mp3";
@@ -102,13 +102,13 @@ public class S3Service {
   }
 
   /**
-   * Downloads a track from S3.
+   * Tải xuống một bài hát từ S3.
    *
-   * <p>The method looks under the <code>tracks/</code> prefix and retrieves the file
-   * as a byte array.</p>
+   * <p>Phương thức tìm dưới tiền tố <code>tracks/</code> và lấy file
+   * dưới dạng mảng byte.</p>
    *
-   * @param key the key (without prefix or extension) identifying the track in S3.
-   * @return the file contents as a byte array.
+   * @param key key (không bao gồm tiền tố hoặc phần mở rộng) xác định bài hát trong S3.
+   * @return nội dung file dưới dạng mảng byte.
    */
   public byte[] downloadFile(String key) {
     ResponseBytes<GetObjectResponse> objectAsBytes =

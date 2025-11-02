@@ -1,13 +1,13 @@
 package com.pm.catalogservice.controller;
 
-import com.pm.catalogservice.dto.request.NextSongRequestDto;
 import com.pm.catalogservice.dto.request.SearchSongRequestDto;
+import com.pm.catalogservice.dto.response.TrackIdsResponseDto;
 import com.pm.catalogservice.dto.response.TrackResponseDto;
 import com.pm.catalogservice.service.KafkaService;
 import com.pm.catalogservice.service.TrackService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,15 +46,21 @@ public class TrackController {
     return ResponseEntity.ok().body(tracks);
   }
 
-  @GetMapping("/next")
-  @Operation(summary = "Get 5 next songs", description = "This current playing track's information in request")
-  public ResponseEntity<List<TrackResponseDto>> getNextSong(@RequestBody NextSongRequestDto nextSongRequestDto) {
-    List<TrackResponseDto> tracks = trackService.getNextSong(nextSongRequestDto);
+  @GetMapping("/next/{currentTrackId}")
+  @Operation(summary = "Get 5 next songs", description = "This current playing track's id in path")
+  public ResponseEntity<List<TrackResponseDto>> getNextSong(@PathVariable UUID currentTrackId) {
+    List<TrackResponseDto> tracks = trackService.getNextSong(currentTrackId);
     return ResponseEntity.ok().body(tracks);
   }
 
   @PostMapping("/by-ids")
   public ResponseEntity<List<TrackResponseDto>> getAllTracksById(@RequestBody Set<UUID> ids) {
       return ResponseEntity.ok().body(trackService.getAllTrackByIds(ids));
+  }
+
+  @GetMapping("/internal")
+  @PermitAll
+  public ResponseEntity<TrackIdsResponseDto> getAllTracksIds() {
+    return ResponseEntity.ok().body(new TrackIdsResponseDto(trackService.getTracksIds()));
   }
 }
