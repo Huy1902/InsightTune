@@ -1,7 +1,7 @@
 import logging
-import os  # THAY ĐỔI: Import os để dùng biến môi trường
+import json
 from typing import Annotated
-
+import re
 from langchain_google_genai import ChatGoogleGenerativeAI
 from typing_extensions import TypedDict
 
@@ -10,12 +10,10 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.memory import InMemorySaver
 
-# Giả sử các file tool của bạn đã được sửa như hướng dẫn trước
 from Duckduckgo_tool import Duckduckgo_tool
 from Scrape_Website import scrape_website
 
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, BaseMessage
-# THAY ĐỔI: Import thêm ChatPromptTemplate và MessagesPlaceholder
+from langchain_core.messages import AIMessage, HumanMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 logging.basicConfig(
@@ -28,14 +26,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# --- THAY ĐỔI 1: Sử dụng biến môi trường cho API Key ---
-# Hãy tạo file .env hoặc set biến môi trường hệ thống
-# Ví dụ: GOOGLE_API_KEY="YOUR_API_KEY_HERE"
-# from dotenv import load_dotenv
-# load_dotenv()
-# Huy_api_key = os.getenv("GOOGLE_API_KEY")
-
-# Tạm thời vẫn dùng key trực tiếp để bạn test, nhưng nên thay đổi
 Huy_api_key = "AIzaSyCe1rN61sbsF2WVXDe3w_PSi-j_DwkbDr4"
 if not Huy_api_key:
     raise ValueError("Vui lòng cung cấp Google API Key!")
@@ -45,10 +35,16 @@ class State(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
 
 
-# --- THAY ĐỔI 2: Tạo Prompt Template với System Message cố định ---
 system_prompt = """
-Bạn là một trợ lý âm nhạc hữu ích, có khả năng tìm thông tin về bài hát.
-Khi người dùng hỏi về bài hát (tên bài, lời bài hát, hoặc tác giả sáng tác):
+Bạn là một trợ lý âm nhạc hữu ích, có khả năng tìm thông tin về bài hát và phát nhạc.
+
+Nếu người dùng muốn nghe hoặc mở một bài hát, hãy trả về cho output cuối cùng là:
+{{"type": "playMusic", "song_name": "<tên bài hát>"}}
+
+Nếu người dùng chỉ hỏi thông tin (vd: tác giả, lời bài hát, ý nghĩa), thì output cuối cùng trả về:
+{{"type": "reply", "reply": "<nội dung trả lời>"}}
+
+Khi người dùng hỏi về bài hát (tên bài, lời bài hát, tác giả sáng tác hoặc bất cứ thứ gì liên quan đến âm nhạc):
 
 1.  Sử dụng Duckduckgo_tool để tìm kiếm thông tin trên internet.
     - Nếu là bài hát tiếng Việt, ưu tiên các trang: loibaihat365.com, nhaccuatui.com, hopamchuan.com.
@@ -70,25 +66,19 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-# --- Thiết lập LLM và Tools ---
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7, google_api_key=Huy_api_key)
 
 search_tool = Duckduckgo_tool()
 tools = [search_tool, scrape_website]
 llm_with_tools = llm.bind_tools(tools)
 
-# --- THAY ĐỔI 3: Kết hợp Prompt và LLM thành một chuỗi (chain) ---
 chain = prompt | llm_with_tools
 
 
-# --- THAY ĐỔI 4: Đơn giản hóa node chatbot ---
 def chatbot(state: State):
     try:
-        # Lấy toàn bộ messages từ state (bao gồm cả lịch sử)
         messages = state["messages"]
 
-        # Gọi chuỗi đã có sẵn system prompt
-        # LangGraph sẽ tự động đưa `messages` vào `MessagesPlaceholder`
         response = chain.invoke({"messages": messages})
 
         logger.info(f"LLM response: {response.content}")
@@ -102,7 +92,6 @@ def chatbot(state: State):
         return {"messages": [AIMessage(content="Đã xảy ra lỗi trong quá trình xử lý.")]}
 
 
-# --- Xây dựng Graph (Không thay đổi) ---
 graph_builder = StateGraph(State)
 graph_builder.add_node("chatbot", chatbot)
 tool_node = ToolNode(tools=tools)
@@ -120,42 +109,50 @@ memory = InMemorySaver()
 graph = graph_builder.compile(checkpointer=memory)
 
 
-# --- Hàm get_response (Không thay đổi nhiều, nhưng logic giờ đã đúng) ---
 def get_response(user_input: str, thread_id: str = "default") -> str:
     logger.info(f"New user input for thread '{thread_id}': {user_input}")
     config = {"configurable": {"thread_id": thread_id}}
 
     try:
-        final_content = ""
-
-        # Input cho graph chỉ cần là HumanMessage
         input_messages = [HumanMessage(content=user_input)]
 
+        last_state = None
         for state_update in graph.stream(
                 {"messages": input_messages},
                 config=config,
                 stream_mode="values"
         ):
-            # Lấy message cuối cùng từ state được cập nhật
-            last_message = state_update["messages"][-1]
+            last_state = state_update
 
-            if isinstance(last_message, AIMessage) and last_message.content:
-                content = last_message.content
+        if not last_state:
+            return "Không nhận được phản hồi từ mô hình."
 
-                # Gemini trả về content là một list chứa các 'part' (dictionary)
-                if isinstance(content, list):
-                    # Lấy text từ part đầu tiên nếu nó tồn tại
-                    if content and isinstance(content[0], dict) and 'text' in content[0]:
-                        final_content = content[0]['text'].strip()
-                # Đề phòng trường hợp content là một string đơn giản
-                elif isinstance(content, str):
-                    final_content = content.strip()
+        last_message = last_state["messages"][-1]
+        final_content = last_message.content
+        # Nếu content là list (ví dụ Gemini trả [{'type': 'text', 'text': '...'}])
+        if isinstance(final_content, list):
+            text_parts = []
+            for part in final_content:
+                if isinstance(part, dict) and "text" in part:
+                    text_parts.append(part["text"])
+            final_content = " ".join(text_parts).strip()
 
-        return final_content
+        cleaned = re.sub(r"```(?:json)?|```", "", str(final_content)).strip()
+
+        try:
+            parsed = json.loads(cleaned)
+            # Nếu model trả đúng định dạng JSON, dùng luôn
+            return parsed
+        except json.JSONDecodeError:
+            logger.warning(f"Không parse được JSON: {cleaned}")
+            return {"type": "reply", "reply": cleaned}
+
+
     except Exception as e:
-        logger.exception(f"\nError while streaming graph: {e}")
-        return "Đã có lỗi xảy ra khi tạo phản hồi."
 
+        logger.exception(f"\nError while streaming graph: {e}")
+
+        return {"type": "error", "reply": "Đã có lỗi xảy ra khi tạo phản hồi."}
 
 if __name__ == "__main__":
     thread_id = "user_session_main"

@@ -179,9 +179,12 @@ fun HomeScreen(
             }
             composable(BottomNavItem.ChatBot.route) {
                 val chatbotApi = ApiClient.chatbotApi
-                val chatbotViewModelFactory = ChatbotViewModelFactory(chatbotApi)
+                val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
+                val chatbotViewModelFactory = ChatbotViewModelFactory(chatbotApi, trackRepository)
                 val vm: ChatbotViewModel = viewModel(factory = chatbotViewModelFactory)
-                ChatBotScreen(vm)
+                ChatBotScreen(vm,
+                    musicPlayerViewModel = playerViewModel,
+                    appNavController)
             }
             composable(
                 BottomNavItem.Track.route,

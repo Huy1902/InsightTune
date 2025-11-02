@@ -3316,3 +3316,508 @@ Please retry in 10.452687312s. [violations {
 2025-10-27 09:58:33,195 | INFO     | LLM response: 
 2025-10-27 09:58:33,195 | INFO     | Tool calls detected: [{'name': 'scrape_website', 'args': {'url': 'https://loibaihat.biz/lyric/rf0b0/chacaidoseve/'}, 'id': 'cc8bc82d-5b26-41b1-9509-1455a5772cfe', 'type': 'tool_call'}]
 2025-10-27 09:58:38,862 | INFO     | LLM response: [{'type': 'text', 'text': 'Đây là lời bài hát "Chắc ai đó sẽ về" của Sơn Tùng M-TP:\n\nAnh tìm nỗi nhớ, anh tìm quá khứ\nNhớ lắm kí ức anh và em\nTrả lại anh yêu thương ấy, xin người hãy về nơi đây\nBàn tay yếu ớt cố níu em ở lại.\n\nNhững giọt nước mắt lăn dài trên mi\nCứ thế anh biết phải làm sao\nTình yêu trong em đã mất, phai dần đi theo gió bay\nCòn lại chi nơi đây cô đơn riêng anh.\n\nEm đi xa quá, em đi xa anh quá\nCó biết không nơi đây anh vẫn đứng đợi một giấc mơ\nAnh chờ đợi một cơn mưa, sẽ xoá sạch giọt nước mắt\nNgồi trong đêm bơ vơ anh thấy đau em có biết không?\n\nEm ơi anh nhớ, em ơi anh rất nhớ\nTừng câu nói ánh mắt của em giờ này ở nơi đâu\nChắc ai đó sẽ sớm quay lại thôi\nChắc ai đó sẽ sớm quay về thôi\nCầm bông hoa trên tay nước mắt rơi\nAnh nhớ em! (ố ô ồ ô ồ)\n\nNhững giọt nước mắt lăn dài trên mi\nCứ thế anh biết phải làm sao\nTình yêu trong em đã mất, phai dần đi theo gió bay\nCòn lại chi nơi đây cô đơn riêng anh.\n\n[ĐK2:]\nEm đi xa quá, em đi xa anh quá\nCó biết không nơi đây anh vẫn đứng đợi một giấc mơ\nAnh chờ đợi một cơn mưa, sẽ xoá sạch giọt nước mắt\nNgồi trong đêm bơ vơ anh thấy đau em có biết không?\n\nEm ơi anh nhớ, em ơi anh rất nhớ\nTừng câu nói ánh mắt của em giờ này ở nơi đâu\nChắc ai đó sẽ sớm quay lại thôi\nChắc ai đó sẽ sớm quay về thôi\nCầm bông hoa trên tay nước mắt rơi\nAnh nhớ em! (ê ề ê ê ề ế ê ề ê ơ ờ zê....)\n\nAnh sẽ mãi nhớ thật nhiều những thứ thuộc về em\nTrong tim này vẫn mãi yêu người, riêng em! (ồ ô ố)\nEm đi xa quá, em đi xa anh quá\nCó biết không nơi đây anh vẫn đứng đợi một giấc mơ\nAnh chờ đợi một cơn mưa, sẽ xoá sạch giọt nước mắt\nNgồi trong đêm bơ vơ anh thấy đau em có biết không?\n\nEm ơi anh nhớ, em ơi anh rất nhớ\nTừng câu nói ánh mắt của em giờ này ở nơi đâu\nChắc ai đó sẽ sớm quay lại thôi\nChắc ai đó sẽ sớm quay về thôi\nCầm bông hoa trên tay nước mắt rơi\nAnh nhớ em!', 'extras': {'signature': 'CpcCAdHtim87ARsPVHxj2AuffVMPtuX5yPNR3mojAjXfCG/1YXmr5RqBkGdxOUBCyxsep2UoK0UVp8r2n5b+PQ9NSpJ1zQ0JtaLl84D6vDsvSSj9dWT60GplEH1JswRXpbv7z83KSQtiVBitmShrWrh85d2mjGeIcuiIngQb7hEQA3soWEdsSZWjazhnpB5U3UmK6TGcO4JJshOn0uf98//r6KjgXXTmmgk/k1KLSwvOiOCIXfj2mdJf6uhI1YW3RtCjmJPZuujn7K1xtJWcFr6RWK9uCS40aHrbuLIFh9sV+dUi7bSXH6QlNrv/yA9RWJ47ad1kvvYq27hWS1h/pdLTLV3u4lPSzY9eYgSFvSaZSMAo3gbFUeON'}}]
+2025-11-01 21:22:31,090 | INFO     | New user input for thread 'python-thread-456': Bài hát lâu không cười do ai sáng tác
+2025-11-01 21:22:31,110 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:22:31,128 | ERROR    | 
+Error while streaming graph: tuple indices must be integers or slices, not str
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 129, in get_response
+    last_message = graph.get_state(config)["messages"][-1]
+                   ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+TypeError: tuple indices must be integers or slices, not str
+2025-11-01 21:22:40,303 | INFO     | New user input for thread 'python-thread-456': Bài hát lâu không cười do ai sáng tác
+2025-11-01 21:22:40,307 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:22:40,314 | ERROR    | 
+Error while streaming graph: tuple indices must be integers or slices, not str
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 129, in get_response
+    last_message = graph.get_state(config)["messages"][-1]
+                   ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+TypeError: tuple indices must be integers or slices, not str
+2025-11-01 21:23:33,437 | INFO     | New user input for thread 'python-thread-456': Bài hát lâu không cười do ai sáng tác
+2025-11-01 21:23:33,439 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:23:33,445 | ERROR    | 
+Error while streaming graph: tuple indices must be integers or slices, not str
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 129, in get_response
+    last_message = graph.get_state(config)["messages"][-1]
+                   ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+TypeError: tuple indices must be integers or slices, not str
+2025-11-01 21:23:38,291 | INFO     | New user input for thread 'python-thread-456': Bài hát lâu không cười do ai sáng tác
+2025-11-01 21:23:38,296 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:23:38,299 | ERROR    | 
+Error while streaming graph: tuple indices must be integers or slices, not str
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 129, in get_response
+    last_message = graph.get_state(config)["messages"][-1]
+                   ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+TypeError: tuple indices must be integers or slices, not str
+2025-11-01 21:28:38,876 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:28:38,881 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:28:38,888 | ERROR    | 
+Error while streaming graph: tuple indices must be integers or slices, not str
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 129, in get_response
+    last_message = graph.get_state(config)["messages"][-1]
+                   ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+TypeError: tuple indices must be integers or slices, not str
+2025-11-01 21:28:42,230 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:28:42,233 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:28:42,236 | ERROR    | 
+Error while streaming graph: tuple indices must be integers or slices, not str
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 129, in get_response
+    last_message = graph.get_state(config)["messages"][-1]
+                   ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+TypeError: tuple indices must be integers or slices, not str
+2025-11-01 21:28:43,171 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:28:43,174 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:28:43,177 | ERROR    | 
+Error while streaming graph: tuple indices must be integers or slices, not str
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 129, in get_response
+    last_message = graph.get_state(config)["messages"][-1]
+                   ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+TypeError: tuple indices must be integers or slices, not str
+2025-11-01 21:38:15,416 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:38:15,423 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:38:30,804 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:38:30,810 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:41:53,782 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:41:53,789 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:41:55,020 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:41:55,026 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:43:58,593 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:43:58,597 | ERROR    | Error in chatbot node: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+Traceback (most recent call last):
+  File "D:\Chatbot\AgentsBasic.py", line 82, in chatbot
+    response = chain.invoke({"messages": messages})
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 3091, in invoke
+    input_ = context.run(step.invoke, input_, config, **kwargs)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 209, in invoke
+    return self._call_with_config(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        self._format_prompt_with_error_handling,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        serialized=self._serialized,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 2021, in _call_with_config
+    context.run(
+    ~~~~~~~~~~~^
+        call_func_with_variable_args,  # type: ignore[arg-type]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ),
+    ^
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 428, in call_func_with_variable_args
+    return func(input, **kwargs)  # type: ignore[call-arg]
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 182, in _format_prompt_with_error_handling
+    inner_input_ = self._validate_input(inner_input)
+  File "D:\Chatbot\.venv\Lib\site-packages\langchain_core\prompts\base.py", line 176, in _validate_input
+    raise KeyError(
+        create_message(message=msg, error_code=ErrorCode.INVALID_PROMPT_INPUT)
+    )
+KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expected: [\'"type"\', \'messages\'] Received: [\'messages\']\nNote: if you intended {"type"} to be part of the string and not a variable, please escape it with double curly braces like: \'{{"type"}}\'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT '
+2025-11-01 21:43:58,603 | ERROR    | Error in chatbot node: Đã xảy ra lỗi trong quá trình xử lý.
+2025-11-01 21:45:46,714 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:45:48,036 | INFO     | LLM response: Hello! Tôi có thể giúp gì cho bạn hôm nay?
+2025-11-01 21:45:48,040 | ERROR    | Error in chatbot node: Hello! Tôi có thể giúp gì cho bạn hôm nay?
+2025-11-01 21:49:58,711 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:49:59,888 | INFO     | LLM response: [{'type': 'text', 'text': 'Chào bạn! Tôi có thể giúp gì cho bạn hôm nay?', 'extras': {'signature': 'CpoBAdHtim9mrk81/B909flfmgkaPYY97X3i/TSstEe4c+DiKBCbN31fwlouYy0jLTizYVNI/+Ma4L1Hn3WK23g1/dJ64+Brkgx1gs5mzGkzkFOtXDTt3N8WYkVV/ijGieGe+RS24VZmQO+87NJ40c4Ssi4SbU5qC+8yPfCiOO8S2O3iAwuME831F+2JQRy5f3pBx7puJzJ2pZjI3g=='}}]
+2025-11-01 21:49:59,890 | WARNING  | Không parse được JSON: [{'type': 'text', 'text': 'Chào bạn! Tôi có thể giúp gì cho bạn hôm nay?', 'extras': {'signature': 'CpoBAdHtim9mrk81/B909flfmgkaPYY97X3i/TSstEe4c+DiKBCbN31fwlouYy0jLTizYVNI/+Ma4L1Hn3WK23g1/dJ64+Brkgx1gs5mzGkzkFOtXDTt3N8WYkVV/ijGieGe+RS24VZmQO+87NJ40c4Ssi4SbU5qC+8yPfCiOO8S2O3iAwuME831F+2JQRy5f3pBx7puJzJ2pZjI3g=='}}]
+2025-11-01 21:51:44,403 | INFO     | New user input for thread 'python': Hello
+2025-11-01 21:51:45,554 | INFO     | LLM response: [{'type': 'text', 'text': 'Hello! Tôi có thể giúp gì cho bạn hôm nay?', 'extras': {'signature': 'CpgBAdHtim8jFjn7zKyKVIgTcfPHJLcOXVZUClZkcNHUEkzTGUCVMIE2BqF5HpWIoapMgzv5e/WZmAdFQFCMiz/FBn7OhmnpFVdkYF4HJ/8XbCVBLsbs51XDJVOmvqSaVezGmPhMSTjmoXYY6PKuKwrEcdNd/X1kLQ+OJ5CpLimZDR9SAWax2RCQcvYMGcmNdDRvwKSLMoPc25M='}}]
+2025-11-01 21:51:45,585 | WARNING  | Không parse được JSON: Hello! Tôi có thể giúp gì cho bạn hôm nay?
+2025-11-01 21:51:58,209 | INFO     | New user input for thread 'python': TÔi muốn nghe bài nào đấy buồn buồn 
+2025-11-01 21:51:59,606 | INFO     | LLM response: [{'type': 'text', 'text': '{"type": "playMusic", "song_name": "Anh Sai Rồi"}', 'extras': {'signature': 'CssCAdHtim/A2gVT6tw3+ap6pvVWUn0BHrzuwFI1ZC0K557Ix+uNN+y1wi8SrXOYzIuKI1aLWQpVM/3CJPwFHyrN3ochmhNK7qFrikGm37Usi+T/iuvkb4bFHMpqLumB1C5voSUj6ax1agfkusdfz8kPdyZKn7PhsPwRQpe2fz45TvgwWibmsd8E4Hy2o9fyptfrkMUyfqwZvSrV/YlKTGwaA64VQqK269LV8Rz1+n0v9034EzZvVSjN25DjG+ce4l6jiGVUH4NVDUIC+8l7wvnvUhnfdfzEf+RsM9RTeL6fCrW2HgKzIBtSkMc4VXMxjdNIb5WpmaqUtepJdMnBDPvwq5hKv3RPob4aKXjm8AeRXpT4zDv7KiCgFB1LpXth4RkugHFFXxv6YWi1H+y7dSZPE8XACJNP2/NopGMGC1uolC7HJxHj0eXuZZrIIw=='}}]
+2025-11-01 21:52:15,368 | INFO     | New user input for thread 'python': Tôi tên là Hậu 
+2025-11-01 21:52:16,559 | INFO     | LLM response: Rất vui được gặp bạn, Hậu! Tôi có thể giúp gì cho bạn hôm nay?
+2025-11-01 21:52:16,561 | WARNING  | Không parse được JSON: Rất vui được gặp bạn, Hậu! Tôi có thể giúp gì cho bạn hôm nay?
+2025-11-01 21:52:26,817 | INFO     | New user input for thread 'python': TÔi tên là gì 
+2025-11-01 21:52:28,030 | INFO     | LLM response: [{'type': 'text', 'text': 'Bạn tên là Hậu.', 'extras': {'signature': 'CrIBAdHtim8fdI1JKY8mZXdAsv+mPDGpcOxyYucf1tQDiV0YvxBS6X53eBR+m2xU/SGo6PLQYEX6vkT82v4tlTAnyTDrL+3UHEbIgTAb2/x/kNFi8X3t3rHmu/5mLYxO2T6MFH1PWJ5icEPNtO33IHEv6XchlsAfko9ZA9K+TZ4lvTShgIEbpmzWCWk4jbRUjcLU2wSE6swkzCK56+vvUEwRs4Mk6IdRATQToCr7FrTqrmaFSA=='}}]
+2025-11-01 21:52:28,033 | WARNING  | Không parse được JSON: Bạn tên là Hậu.
+2025-11-01 21:52:50,657 | INFO     | New user input for thread 'python': Tôi muốn phát bài Anh sai rồi cơ 
+2025-11-01 21:52:51,754 | INFO     | LLM response: {"type": "playMusic", "song_name": "Anh Sai Rồi"}
+2025-11-01 21:53:01,630 | INFO     | New user input for thread 'python': Tôi muốn phát bài Lâu không cười 
+2025-11-01 21:53:02,605 | INFO     | LLM response: {"type": "playMusic", "song_name": "Lâu Không Cười"}
+2025-11-01 22:21:35,409 | INFO     | New user input for thread 'python': Tôi muốn phát bài Lâu không cười 
+2025-11-01 22:21:37,503 | INFO     | LLM response: [{'type': 'text', 'text': '{"type": "playMusic", "song_name": "Lâu không cười"}', 'extras': {'signature': 'CoICAdHtim9RPGpg73tUW5HgURndG4YZhHAZ84QR4TrHaL+xB6NFR+Tmb+1/04Ci0DUlRr7Ffx4Tx+CinNWHTEeRAev27C+Z65TFK3QXaXsUDOFQlDK5SsvcyjotNrvuOsvI6NjCdh/B/uEJG9Bx8g2qG0HsKIAI6vw283sFaZWzE4QhslPrqNruVcW8JX2vDyGQBf10X64lw9gMOzhcY76hY9S9mctBLolavimiIXgkXIiLKu/sstIISZBCYxzv5kPM1i7y1uraoFUdomJb1B6vr/gJuQQPtYQP1IhoaQq+4lQzBBvMyQEbzSl6yD88/1sXSBPklekQpi/+ez6CTUdrfnEk'}}]
