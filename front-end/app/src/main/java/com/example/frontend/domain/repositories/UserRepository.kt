@@ -2,18 +2,13 @@ package com.example.frontend.domain.repositories
 
 import android.content.Context
 import android.net.Uri
-import com.example.frontend.data.models.user.AuthResponseDto
+import com.example.frontend.data.register.AuthResponseDto
 import com.example.frontend.data.models.user.ChangeAvatarResponse
-import com.example.frontend.data.models.user.ChangePasswordRequest
 import com.example.frontend.data.models.user.ChangePasswordResponse
-import com.example.frontend.data.models.user.ForgotPasswordResponse
-import com.example.frontend.data.models.user.LogoutResponseDto
-import com.example.frontend.data.models.user.RefreshResponseDto
-import com.example.frontend.data.models.user.RegisterResponseDto
-import com.example.frontend.data.models.user.UserDto
+import com.example.frontend.data.register.ForgotPasswordResponse
+import com.example.frontend.data.register.LogoutResponseDto
+import com.example.frontend.data.register.RegisterResponseDto
 import com.example.frontend.data.models.user.UserResult
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 
 interface UserRepository {
     suspend fun login(email: String, password: String): AuthResponseDto

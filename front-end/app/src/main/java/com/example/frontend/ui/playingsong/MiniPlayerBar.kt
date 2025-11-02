@@ -77,7 +77,6 @@ fun MiniPlayerBar(
                 )
             }
 
-
             IconButton(
                 onClick = { viewModel.playPreviousTrack() },
                 modifier = Modifier.size(36.dp)

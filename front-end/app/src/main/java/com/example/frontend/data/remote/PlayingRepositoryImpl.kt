@@ -1,9 +1,10 @@
 package com.example.frontend.data.remote
 
 import android.util.Log
-import com.example.frontend.data.models.song.ImageResponse
-import com.example.frontend.data.models.song.PlayingRequest
-import com.example.frontend.data.models.song.PlayingResponse
+import com.example.frontend.data.models.favorites.ImageResponse
+import com.example.frontend.data.models.playingsong.PlayingRequest
+import com.example.frontend.data.models.playingsong.PlayingResponse
+import com.example.frontend.data.models.playingsong.UserState
 import com.example.frontend.domain.repositories.PlayingRepository
 
 class PlayingRepositoryImpl(
@@ -39,5 +40,31 @@ class PlayingRepositoryImpl(
             val body = response.body() ?: throw Exception("Empty response")
         }
         return response.body() ?: throw Exception("Empty response")
+    }
+
+    override suspend fun updateUserState(trackId: String, positionMs: Int): UserState {
+        val request = UserState(trackId, positionMs)
+        android.util.Log.d("PLAYING_STATE", "Request body: ${request.toString()}")
+        val response = playingApi.updateUserState(request)
+        if (response.isSuccessful) {
+            val body = response.body() ?: throw Exception("Empty response")
+            Log.d("PLAYING_STATE", "Updated user state: $body")
+            return body
+        } else {
+            Log.e("PLAYING_STATE", "HTTP state Error: ${response.code()}")
+            throw Exception("HTTP state Error: ${response.code()}")
+        }
+    }
+
+    override suspend fun getUserState(): UserState {
+        val response = playingApi.getUserState()
+        if (response.isSuccessful) {
+            val body = response.body() ?: throw Exception("Empty response")
+            Log.d("PLAYING_STATE", "Got user state: $body")
+            return body
+        } else {
+            Log.e("PLAYING_STATE", "HTTP Error: ${response.code()}")
+            throw Exception("HTTP Error: ${response.code()}")
+        }
     }
 }

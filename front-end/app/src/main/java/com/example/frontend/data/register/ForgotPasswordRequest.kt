@@ -1,4 +1,4 @@
-package com.example.frontend.data.models.user
+package com.example.frontend.data.register
 
 data class ForgotPasswordRequest (
     val otp: String,

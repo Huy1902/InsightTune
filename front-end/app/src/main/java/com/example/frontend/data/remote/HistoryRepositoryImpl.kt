@@ -2,9 +2,9 @@ package com.example.frontend.data.remote
 
 import android.util.Log
 import com.example.frontend.core.AppPreferences
-import com.example.frontend.data.models.song.HistoryRequest
-import com.example.frontend.data.models.song.HistoryResponse
-import com.example.frontend.data.models.song.SearchHistoryResponse
+import com.example.frontend.data.models.history.HistoryRequest
+import com.example.frontend.data.models.history.HistoryResponse
+import com.example.frontend.data.models.search.SearchHistoryResponse
 import com.example.frontend.domain.repositories.HistoryRepository
 import java.util.Date
 import kotlin.collections.emptyList

@@ -1,8 +1,8 @@
 package com.example.frontend.data.remote
 
 import android.util.Log
-import com.example.frontend.data.models.song.GetTracksResponse
-import com.example.frontend.data.models.song.NextTracksResponse
+import com.example.frontend.data.models.home.GetTracksResponse
+import com.example.frontend.data.models.playingsong.NextTracksResponse
 import com.example.frontend.domain.repositories.TrackRepository
 
 class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {

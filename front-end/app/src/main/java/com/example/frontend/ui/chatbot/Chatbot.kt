@@ -25,16 +25,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.frontend.R
+import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import com.example.frontend.ui.theme.AppTheme
 
 @Composable
-fun ChatBotScreen(viewModel: ChatbotViewModel) {
+fun ChatBotScreen(
+    viewModel: ChatbotViewModel,
+    musicPlayerViewModel: MusicPlayerViewModel,
+    navController: NavController
+) {
+
+    val trackToPlay by viewModel.trackToPlay.collectAsState()
 
     var textInput by remember {mutableStateOf("")}
 
@@ -46,6 +55,17 @@ fun ChatBotScreen(viewModel: ChatbotViewModel) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
         }
+        trackToPlay?.let {
+            track ->
+            musicPlayerViewModel.playSong(
+                track.id,
+                track.storageKey,
+                track.title,
+                track.artists.toString(),
+                track.coverImageKey.toString()
+                )
+        }
+        viewModel.onTrackPlayed()
     }
 
     Scaffold(
@@ -56,6 +76,7 @@ fun ChatBotScreen(viewModel: ChatbotViewModel) {
                     .fillMaxSize()
                     .padding(padding)
                     .background(MaterialTheme.colorScheme.background)
+                    .imePadding()
             ) {
                 LazyColumn(
                     state= listState,
@@ -72,7 +93,7 @@ fun ChatBotScreen(viewModel: ChatbotViewModel) {
 
                     if (isBotTyping) {
                         item {
-                            MessageBubble(text = "Bot đang soạn tin...", isFromUser = false)
+                            MessageBubble(text = stringResource(R.string.bot_thinking), isFromUser = false)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }

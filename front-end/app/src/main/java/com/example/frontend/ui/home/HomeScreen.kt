@@ -2,9 +2,6 @@ package com.example.frontend.ui.home
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,14 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
@@ -31,23 +25,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
@@ -58,15 +46,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.frontend.R
 import com.example.frontend.core.AppPreferences
-import com.example.frontend.data.models.song.GetTracksResponse
-import com.example.frontend.data.models.song.NextTracksResponse
+import com.example.frontend.data.models.home.GetTracksResponse
+import com.example.frontend.data.models.playingsong.NextTracksResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.FavoriteRepositoryImpl
 import com.example.frontend.data.remote.HistoryRepositoryImpl
 import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.data.remote.TrackRepositoryImpl
 import com.example.frontend.ui.AppGraph
-import com.example.frontend.ui.NavRoutes
 import com.example.frontend.ui.chatbot.ChatBotScreen
 import com.example.frontend.ui.chatbot.ChatbotViewModel
 import com.example.frontend.ui.chatbot.ChatbotViewModelFactory
@@ -85,9 +72,6 @@ import com.example.frontend.ui.search.SearchViewModel
 import com.example.frontend.ui.search.SearchViewModelFactory
 import com.example.frontend.ui.theme.AppTheme
 import com.example.frontend.ui.theme.ThemeSetting
-import java.net.URLDecoder
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 
 @Composable
@@ -183,9 +167,12 @@ fun HomeScreen(
             }
             composable(BottomNavItem.ChatBot.route) {
                 val chatbotApi = ApiClient.chatbotApi
-                val chatbotViewModelFactory = ChatbotViewModelFactory(chatbotApi)
+                val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
+                val chatbotViewModelFactory = ChatbotViewModelFactory(chatbotApi, trackRepository)
                 val vm: ChatbotViewModel = viewModel(factory = chatbotViewModelFactory)
-                ChatBotScreen(vm)
+                ChatBotScreen(vm,
+                    musicPlayerViewModel = playerViewModel,
+                    appNavController)
             }
             composable(
                 BottomNavItem.Track.route,
@@ -335,7 +322,7 @@ fun HomeScreenContent(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = "User Profile",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(80.dp) // Lưu ý: Icon 80dp trong button 60dp sẽ bị cắt
+                    modifier = Modifier.size(80.dp)
                 )
             }
         }
@@ -350,6 +337,39 @@ fun HomeScreenContent(
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else {
+            Text(
+                stringResource(R.string.recently_played),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.Bold,
+                style = AppTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            )
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                itemsIndexed(uiTracks) { index, trackUiModel ->
+                    val track = trackUiModel.trackInfo
+                    val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+                    SongCard(
+                        songName = track.title,
+                        artistName = artistString,
+                        coverImageUrl = trackUiModel.coverImageUrl,
+                        onClick = {
+                            playerViewModel.playSong(
+                                newTrackId = track.id,
+                                newUrlKey = track.storageKey,
+                                newTitle = track.title,
+                                newArtist = artistString,
+                                newImageKey = track.coverImageKey ?: "no_image"
+                            )
+                            bottomNavController.navigate("track_player_screen")
+                        }
+                    )
+                }
+            }
             if (history.isNotEmpty()) {
                 Text(
                     stringResource(R.string.recently_played),

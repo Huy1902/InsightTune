@@ -3,6 +3,7 @@ package com.example.frontend.ui.profile
 import android.content.ContentValues
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -44,6 +45,8 @@ fun ChangeProfileDialog(
     var phone by remember { mutableStateOf(uiState.phone) }
     var address by remember { mutableStateOf(uiState.address) }
     var role by remember { mutableStateOf(uiState.role) }
+
+    val context = LocalContext.current
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -115,12 +118,11 @@ fun ChangeProfileDialog(
             TextButton(onClick = {
                 onConfirm(firstName, lastName, phone, address, role)
                 if (uiState.error != null) {
+                    Toast.makeText(context, context.getString(R.string.update_profile_successfully), Toast.LENGTH_SHORT).show()
                     onDismiss()
                 }
             }) {
-                Text(
-                    stringResource(R.string.save),
-                )
+                Text(stringResource(R.string.save))
             }
         },
         dismissButton = {

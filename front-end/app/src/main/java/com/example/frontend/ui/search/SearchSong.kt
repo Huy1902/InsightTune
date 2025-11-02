@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.frontend.R
-import com.example.frontend.data.models.song.GetTracksResponse
-import com.example.frontend.data.models.song.SearchHistoryResponse
+import com.example.frontend.data.models.home.GetTracksResponse
+import com.example.frontend.data.models.search.SearchHistoryResponse
 import com.example.frontend.ui.home.HorizontalSongCard
 import com.example.frontend.ui.home.SongCard
 import com.example.frontend.ui.home.SongCardLayout

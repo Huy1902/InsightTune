@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.core.Resource
-import com.example.frontend.data.models.user.AuthResponseDto
-import com.example.frontend.data.models.user.RegisterResponseDto
+import com.example.frontend.data.register.AuthResponseDto
+import com.example.frontend.data.register.RegisterResponseDto
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.UserRepositoryImpl
 import com.example.frontend.domain.usecases.LoginUser

@@ -2,7 +2,7 @@ package com.example.frontend.ui.favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.home.GetTracksResponse
 import com.example.frontend.domain.repositories.FavoriteRepository
 import com.example.frontend.domain.repositories.PlayingRepository
 import com.example.frontend.domain.repositories.TrackRepository

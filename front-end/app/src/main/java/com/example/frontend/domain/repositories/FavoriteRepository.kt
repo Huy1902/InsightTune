@@ -1,7 +1,7 @@
 package com.example.frontend.domain.repositories
 
-import com.example.frontend.data.models.song.FavoriteResponse
-import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.favorites.FavoriteResponse
+import com.example.frontend.data.models.home.GetTracksResponse
 
 interface FavoriteRepository {
     suspend fun addFavorite(songId: String): FavoriteResponse

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
@@ -114,6 +115,10 @@ fun ProfileScreen(
             vm.updateAvatar(cameraUri!!, context)
         }
     }
+
+//    LaunchedEffect(uiState.error == null) {
+//        Toast.makeText(context, context.getString(R.string.update_profile_successfully), Toast.LENGTH_SHORT).show()
+//    }
 
     ProfileScreenContent(
         uiState = uiState,
@@ -294,14 +299,14 @@ fun ProfileScreenContent(
                 )
                 Spacer(Modifier.height(AppTheme.spacing().S))
             }
-            if (uiState.error != null) {
-                Text(
-                    text = uiState.error,
-                    color = MaterialTheme.colorScheme.error,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(bottom = AppTheme.spacing().S)
-                )
-            }
+//            if (uiState.error != null) {
+//                Text(
+//                    text = uiState.error,
+//                    color = MaterialTheme.colorScheme.error,
+//                    fontSize = 12.sp,
+//                    modifier = Modifier.padding(bottom = AppTheme.spacing().S)
+//                )
+//            }
             Button(
                 onClick = onLogoutClick,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),

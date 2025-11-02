@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.frontend.data.models.song.PlayingResponse
+import com.example.frontend.data.models.playingsong.PlayingResponse
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.PlayingRepositoryImpl
 import com.example.frontend.domain.repositories.PlayingRepository
@@ -26,9 +26,6 @@ class PlayingViewModel (
             _playing.value = playingRepo.getUrlTrack(urlKey, urlImage)
             Log.d("PLAYING", "Loaded playing: ${playing.value?.trackUrl}")
         }
-
-
-
     }
 
 }

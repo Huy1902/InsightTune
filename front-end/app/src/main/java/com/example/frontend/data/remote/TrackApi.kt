@@ -1,8 +1,7 @@
 package com.example.frontend.data.remote
 
-import com.example.frontend.data.models.song.GetTracksResponse
-import com.example.frontend.data.models.song.NextTracksResponse
-import okhttp3.Response
+import com.example.frontend.data.models.home.GetTracksResponse
+import com.example.frontend.data.models.playingsong.NextTracksResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

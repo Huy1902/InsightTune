@@ -1,8 +1,8 @@
 package com.example.frontend.data.remote
 
 import com.example.frontend.core.AppPreferences
-import com.example.frontend.data.models.Chatbot.ChatbotRequest
-import com.example.frontend.data.models.Chatbot.ChatbotResponse
+import com.example.frontend.data.models.chatbot.ChatbotRequest
+import com.example.frontend.data.models.chatbot.ChatbotResponse
 import com.example.frontend.domain.repositories.ChatbotRepository
 
 class ChatbotRepositoryImpl (

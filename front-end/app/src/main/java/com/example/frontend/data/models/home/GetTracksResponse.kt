@@ -1,4 +1,4 @@
-package com.example.frontend.data.models.song
+package com.example.frontend.data.models.home
 
 data class GetTracksResponse (
     val id: String,

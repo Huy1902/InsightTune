@@ -1,8 +1,8 @@
 package com.example.frontend.data.remote
 
-import com.example.frontend.data.models.song.FavoriteRequest
-import com.example.frontend.data.models.song.FavoriteResponse
-import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.favorites.FavoriteRequest
+import com.example.frontend.data.models.favorites.FavoriteResponse
+import com.example.frontend.data.models.home.GetTracksResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body

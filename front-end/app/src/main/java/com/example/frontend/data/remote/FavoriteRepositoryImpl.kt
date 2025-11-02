@@ -1,9 +1,9 @@
 package com.example.frontend.data.remote
 
 import android.util.Log
-import com.example.frontend.data.models.song.FavoriteRequest
-import com.example.frontend.data.models.song.FavoriteResponse
-import com.example.frontend.data.models.song.GetTracksResponse
+import com.example.frontend.data.models.favorites.FavoriteRequest
+import com.example.frontend.data.models.favorites.FavoriteResponse
+import com.example.frontend.data.models.home.GetTracksResponse
 import com.example.frontend.domain.repositories.FavoriteRepository
 
 class FavoriteRepositoryImpl(private val api: FavoriteApi) : FavoriteRepository {
