@@ -1,0 +1,24 @@
+\setcounter{section}{2}
+\section{Cơ sở dữ liệu}
+\label{sec:database}
+Cơ sở dữ liệu gồm 2 phần chính: dữ liệu người dùng và dữ liệu
+cho hệ thống AI. Cơ sở dữ liệu sử dụng PostgreSQL, và được 
+deploy toàn bộ trên Azure.
+\subsection{Cho user}
+Gồm 3 bảng chính: thông tin người dùng, các loại giao dịch và các giao dịch được tạo.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/user_ERD.png}
+  \caption{Sơ đồ ERD cho user}
+\end{figure}
+  
+\subsection{Cho hệ thống AI}
+Gồm 1 bảng lưu trữ lịch sử trò chuyện giữa người dùng và hệ thống AI. Bảng này
+có các metadata như: ID người dùng, thời gian để cho việc filter khi tìm kiếm,
+cùng với câu hỏi của người dùng và kết quả trả lời cho câu hỏi từ hệ thống.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{figures/ai_erd.png}
+  \caption{Sơ đồ ERD cho AI system}
+\end{figure}
+  
