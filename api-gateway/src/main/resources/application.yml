@@ -5,7 +5,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://eureka:8761/eureka
+      defaultZone: http://localhost:8761/eureka/
 spring:
   application:
     name: api-gateway
@@ -105,7 +105,12 @@ spring:
                       filters:
                         - StripPrefix=0
 
-
+                    - id: recommend-service
+                      uri: lb://recommend-service
+                      predicates:
+                        - Path=/recommend
+                      filters:
+                        - StripPrefix=0
 
                     - id: docs-catalog
                       uri: lb://catalog-service

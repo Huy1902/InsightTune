@@ -10,13 +10,12 @@ spring:
       path: /h2-console
       settings:
         web-allow-others: true
-
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
+            client-id: 707539669485-hvb782jf95k54qogpjmcalbjiiec9nrd.apps.googleusercontent.com
             client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: email, profile
         provider:
@@ -29,8 +28,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${EMAIL}
-    password: ${EMAIL_PASSWORD}
+    username: tqdinhtt@gmail.com
+    password: xplg rcic ooaa eatb
     properties:
       mail:
         smtp:
@@ -55,7 +54,7 @@ server:
   port: 8080 # port riêng cho auth-service
 
 jwt:
-  signerKey : ${SIGNER_KEY}
+  signerKey : Q+W+8at86K9vMPRa3ZZEHWOL6wiQzDmNS0X9Wu8omL2h5qgfIIb0oEchMm+v49MP
 
 user-service:
   create-path: http://user-service/users/create

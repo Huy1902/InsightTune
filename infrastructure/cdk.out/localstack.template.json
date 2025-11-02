@@ -1,0 +1,499 @@
+{
+ "Resources": {
+  "SpoTubeVPCED7DBAAA": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "SpoTubeVPC"
+     }
+    ]
+   }
+  },
+  "SpoTubeVPCPublicSubnet1Subnet5EE28A79": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.0.0/18",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "SpoTubeVPCED7DBAAA"
+    }
+   }
+  },
+  "SpoTubeVPCPublicSubnet1RouteTable024EC8F8": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "SpoTubeVPCED7DBAAA"
+    }
+   }
+  },
+  "SpoTubeVPCPublicSubnet1RouteTableAssociationDED118AB": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "SpoTubeVPCPublicSubnet1RouteTable024EC8F8"
+    },
+    "SubnetId": {
+     "Ref": "SpoTubeVPCPublicSubnet1Subnet5EE28A79"
+    }
+   }
+  },
+  "SpoTubeVPCPublicSubnet1DefaultRoute46F494A8": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "SpoTubeVPCIGW4425213E"
+    },
+    "RouteTableId": {
+     "Ref": "SpoTubeVPCPublicSubnet1RouteTable024EC8F8"
+    }
+   },
+   "DependsOn": [
+    "SpoTubeVPCVPCGWD9DD75C4"
+   ]
+  },
+  "SpoTubeVPCPublicSubnet1EIPDF38B558": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PublicSubnet1"
+     }
+    ]
+   }
+  },
+  "SpoTubeVPCPublicSubnet1NATGatewayC78A9862": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "SpoTubeVPCPublicSubnet1EIPDF38B558",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "SpoTubeVPCPublicSubnet1Subnet5EE28A79"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PublicSubnet1"
+     }
+    ]
+   },
+   "DependsOn": [
+    "SpoTubeVPCPublicSubnet1DefaultRoute46F494A8",
+    "SpoTubeVPCPublicSubnet1RouteTableAssociationDED118AB"
+   ]
+  },
+  "SpoTubeVPCPublicSubnet2Subnet5DB9A171": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.64.0/18",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PublicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "SpoTubeVPCED7DBAAA"
+    }
+   }
+  },
+  "SpoTubeVPCPublicSubnet2RouteTableB1B5B325": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PublicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "SpoTubeVPCED7DBAAA"
+    }
+   }
+  },
+  "SpoTubeVPCPublicSubnet2RouteTableAssociation1F29A606": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "SpoTubeVPCPublicSubnet2RouteTableB1B5B325"
+    },
+    "SubnetId": {
+     "Ref": "SpoTubeVPCPublicSubnet2Subnet5DB9A171"
+    }
+   }
+  },
+  "SpoTubeVPCPublicSubnet2DefaultRouteCDA83180": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "SpoTubeVPCIGW4425213E"
+    },
+    "RouteTableId": {
+     "Ref": "SpoTubeVPCPublicSubnet2RouteTableB1B5B325"
+    }
+   },
+   "DependsOn": [
+    "SpoTubeVPCVPCGWD9DD75C4"
+   ]
+  },
+  "SpoTubeVPCPublicSubnet2EIPB49080E0": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PublicSubnet2"
+     }
+    ]
+   }
+  },
+  "SpoTubeVPCPublicSubnet2NATGateway50313DA4": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "SpoTubeVPCPublicSubnet2EIPB49080E0",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "SpoTubeVPCPublicSubnet2Subnet5DB9A171"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PublicSubnet2"
+     }
+    ]
+   },
+   "DependsOn": [
+    "SpoTubeVPCPublicSubnet2DefaultRouteCDA83180",
+    "SpoTubeVPCPublicSubnet2RouteTableAssociation1F29A606"
+   ]
+  },
+  "SpoTubeVPCPrivateSubnet1Subnet44580B19": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.128.0/18",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PrivateSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "SpoTubeVPCED7DBAAA"
+    }
+   }
+  },
+  "SpoTubeVPCPrivateSubnet1RouteTableE3429285": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PrivateSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "SpoTubeVPCED7DBAAA"
+    }
+   }
+  },
+  "SpoTubeVPCPrivateSubnet1RouteTableAssociation79EC27B2": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "SpoTubeVPCPrivateSubnet1RouteTableE3429285"
+    },
+    "SubnetId": {
+     "Ref": "SpoTubeVPCPrivateSubnet1Subnet44580B19"
+    }
+   }
+  },
+  "SpoTubeVPCPrivateSubnet1DefaultRouteD93BBA3D": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "SpoTubeVPCPublicSubnet1NATGatewayC78A9862"
+    },
+    "RouteTableId": {
+     "Ref": "SpoTubeVPCPrivateSubnet1RouteTableE3429285"
+    }
+   }
+  },
+  "SpoTubeVPCPrivateSubnet2SubnetAB7B9BA9": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.192.0/18",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PrivateSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "SpoTubeVPCED7DBAAA"
+    }
+   }
+  },
+  "SpoTubeVPCPrivateSubnet2RouteTable923DD509": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/SpoTubeVPC/PrivateSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "SpoTubeVPCED7DBAAA"
+    }
+   }
+  },
+  "SpoTubeVPCPrivateSubnet2RouteTableAssociation7E0A2C7E": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "SpoTubeVPCPrivateSubnet2RouteTable923DD509"
+    },
+    "SubnetId": {
+     "Ref": "SpoTubeVPCPrivateSubnet2SubnetAB7B9BA9"
+    }
+   }
+  },
+  "SpoTubeVPCPrivateSubnet2DefaultRoute716B1CDE": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "SpoTubeVPCPublicSubnet2NATGateway50313DA4"
+    },
+    "RouteTableId": {
+     "Ref": "SpoTubeVPCPrivateSubnet2RouteTable923DD509"
+    }
+   }
+  },
+  "SpoTubeVPCIGW4425213E": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "SpoTubeVPC"
+     }
+    ]
+   }
+  },
+  "SpoTubeVPCVPCGWD9DD75C4": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "SpoTubeVPCIGW4425213E"
+    },
+    "VpcId": {
+     "Ref": "SpoTubeVPCED7DBAAA"
+    }
+   }
+  },
+  "catalogServiceDbSubnetGroup8E7F2140": {
+   "Type": "AWS::RDS::DBSubnetGroup",
+   "Properties": {
+    "DBSubnetGroupDescription": "Subnet group for catalogServiceDb database",
+    "SubnetIds": [
+     {
+      "Ref": "SpoTubeVPCPrivateSubnet1Subnet44580B19"
+     },
+     {
+      "Ref": "SpoTubeVPCPrivateSubnet2SubnetAB7B9BA9"
+     }
+    ]
+   }
+  },
+  "catalogServiceDbSecurityGroup8153B263": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Security group for catalogServiceDb database",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "SpoTubeVPCED7DBAAA"
+    }
+   }
+  },
+  "localstackcatalogServiceDbSecret45ACE7A23fdaad7efa858a3daf9490cf0a702aeb": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Generated by the CDK for stack: ",
+       {
+        "Ref": "AWS::StackName"
+       }
+      ]
+     ]
+    },
+    "GenerateSecretString": {
+     "ExcludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
+     "GenerateStringKey": "password",
+     "PasswordLength": 30,
+     "SecretStringTemplate": "{\"username\":\"admin\"}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "catalogServiceDbSecretAttachment4556FE29": {
+   "Type": "AWS::SecretsManager::SecretTargetAttachment",
+   "Properties": {
+    "SecretId": {
+     "Ref": "localstackcatalogServiceDbSecret45ACE7A23fdaad7efa858a3daf9490cf0a702aeb"
+    },
+    "TargetId": {
+     "Ref": "catalogServiceDb4D81CF32"
+    },
+    "TargetType": "AWS::RDS::DBInstance"
+   }
+  },
+  "catalogServiceDb4D81CF32": {
+   "Type": "AWS::RDS::DBInstance",
+   "Properties": {
+    "AllocatedStorage": "20",
+    "CopyTagsToSnapshot": true,
+    "DBInstanceClass": "db.t2.micro",
+    "DBName": "catalog-service-db",
+    "DBSubnetGroupName": {
+     "Ref": "catalogServiceDbSubnetGroup8E7F2140"
+    },
+    "Engine": "postgres",
+    "EngineVersion": "17.2",
+    "MasterUserPassword": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "localstackcatalogServiceDbSecret45ACE7A23fdaad7efa858a3daf9490cf0a702aeb"
+       },
+       ":SecretString:password::}}"
+      ]
+     ]
+    },
+    "MasterUsername": "admin",
+    "StorageType": "gp2",
+    "VPCSecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "catalogServiceDbSecurityGroup8153B263",
+       "GroupId"
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  }
+ }
+}

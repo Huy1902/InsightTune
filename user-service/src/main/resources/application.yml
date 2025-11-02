@@ -41,4 +41,4 @@ avatar:
 cloudinary:
   cloud_name: "dazbecyqb"
   api_key: "383163451866538"
-  api_secret: ${API_SECRET}
+  api_secret: oqNdUOXQntjrznbK2X7SUYIZxZw

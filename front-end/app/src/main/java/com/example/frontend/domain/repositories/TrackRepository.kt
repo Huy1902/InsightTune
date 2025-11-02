@@ -11,4 +11,6 @@ interface TrackRepository {
 
     suspend fun getTrackById(trackId: String): GetTracksResponse
 
+    suspend fun getRecommendTracks(): List<GetTracksResponse>
+
 }

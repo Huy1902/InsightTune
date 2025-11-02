@@ -1,0 +1,193 @@
+{
+  "version": "39.0.0",
+  "artifacts": {
+    "localstack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "localstack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}"
+      },
+      "metadata": {
+        "/localstack/SpoTubeVPC/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCED7DBAAA"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet1Subnet5EE28A79"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet1RouteTable024EC8F8"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet1RouteTableAssociationDED118AB"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet1DefaultRoute46F494A8"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet1/EIP": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet1EIPDF38B558"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet1/NATGateway": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet1NATGatewayC78A9862"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet2Subnet5DB9A171"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet2RouteTableB1B5B325"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet2RouteTableAssociation1F29A606"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet2DefaultRouteCDA83180"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet2/EIP": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet2EIPB49080E0"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PublicSubnet2/NATGateway": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPublicSubnet2NATGateway50313DA4"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PrivateSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPrivateSubnet1Subnet44580B19"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PrivateSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPrivateSubnet1RouteTableE3429285"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PrivateSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPrivateSubnet1RouteTableAssociation79EC27B2"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PrivateSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPrivateSubnet1DefaultRouteD93BBA3D"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PrivateSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPrivateSubnet2SubnetAB7B9BA9"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PrivateSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPrivateSubnet2RouteTable923DD509"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PrivateSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPrivateSubnet2RouteTableAssociation7E0A2C7E"
+          }
+        ],
+        "/localstack/SpoTubeVPC/PrivateSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCPrivateSubnet2DefaultRoute716B1CDE"
+          }
+        ],
+        "/localstack/SpoTubeVPC/IGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCIGW4425213E"
+          }
+        ],
+        "/localstack/SpoTubeVPC/VPCGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SpoTubeVPCVPCGWD9DD75C4"
+          }
+        ],
+        "/localstack/catalogServiceDb/SubnetGroup/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "catalogServiceDbSubnetGroup8E7F2140"
+          }
+        ],
+        "/localstack/catalogServiceDb/SecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "catalogServiceDbSecurityGroup8153B263"
+          }
+        ],
+        "/localstack/catalogServiceDb/Secret/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "localstackcatalogServiceDbSecret45ACE7A23fdaad7efa858a3daf9490cf0a702aeb"
+          }
+        ],
+        "/localstack/catalogServiceDb/Secret/Attachment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "catalogServiceDbSecretAttachment4556FE29"
+          }
+        ],
+        "/localstack/catalogServiceDb/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "catalogServiceDb4D81CF32"
+          }
+        ]
+      },
+      "displayName": "localstack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

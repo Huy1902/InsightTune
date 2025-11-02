@@ -36,6 +36,10 @@ class HomeViewModel(context: Context) : ViewModel() {
     private val _tracks = MutableStateFlow<List<GetTracksResponse>>(emptyList())
 
     private val _uiTracks = MutableStateFlow<List<TrackUiModel>>(emptyList())
+
+    private val _recommendTracks = MutableStateFlow<List<TrackUiModel>>(emptyList())
+
+    val uiRecommendTracks = _recommendTracks.asStateFlow()
     val uiTracks = _uiTracks.asStateFlow()
     val tracks = _tracks.asStateFlow()
 
@@ -63,6 +67,30 @@ class HomeViewModel(context: Context) : ViewModel() {
                 }.awaitAll()
 
                 _uiTracks.value = tracksWithUrls
+            } catch (e: Exception) {
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun loadRecommendTracks(limit: Int = 5) {
+        if (_recommendTracks.value.isNotEmpty()) {
+            return
+        }
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val initialTracks = repo.getRecommendTracks().shuffled().take(limit)
+
+                val tracksWithUrls = initialTracks.map { track ->
+                    async {
+                        val response = playingRepo.getUrlTrack(track.storageKey, track.coverImageKey)
+                        TrackUiModel(trackInfo = track, coverImageUrl = response.coverImageUrl)
+                    }
+                }.awaitAll()
+
+                _recommendTracks.value = tracksWithUrls
             } catch (e: Exception) {
             } finally {
                 _isLoading.value = false

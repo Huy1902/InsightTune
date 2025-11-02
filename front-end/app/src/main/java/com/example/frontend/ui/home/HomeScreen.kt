@@ -172,11 +172,9 @@ fun HomeScreen(
                 val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
                 val chatbotViewModelFactory = ChatbotViewModelFactory(chatbotApi, trackRepository)
                 val vm: ChatbotViewModel = viewModel(factory = chatbotViewModelFactory)
-                ChatBotScreen(
-                    vm,
+                ChatBotScreen(vm,
                     musicPlayerViewModel = playerViewModel,
-                    appNavController
-                )
+                    appNavController)
             }
             composable(
                 BottomNavItem.Track.route,
@@ -282,7 +280,7 @@ fun HomeScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        //horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start
     ) {
 
         Row(
@@ -331,147 +329,131 @@ fun HomeScreenContent(
             }
         }
         Spacer(modifier = Modifier.size(10.dp))
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            if (isLoading) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(400.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+
+
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            }
+        } else {
+            Text(
+                stringResource(R.string.recently_played),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.Bold,
+                style = AppTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            )
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                itemsIndexed(uiTracks) { index, trackUiModel ->
+                    val track = trackUiModel.trackInfo
+                    val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+                    SongCard(
+                        songName = track.title,
+                        artistName = artistString,
+                        coverImageUrl = trackUiModel.coverImageUrl,
+                        onClick = {
+                            playerViewModel.playSong(
+                                newTrackId = track.id,
+                                newUrlKey = track.storageKey,
+                                newTitle = track.title,
+                                newArtist = artistString,
+                                newImageKey = track.coverImageKey ?: "no_image"
+                            )
+                            bottomNavController.navigate("track_player_screen")
+                        }
+                    )
+                }
+            }
+            if (history.isNotEmpty()) {
+                Text(
+                    stringResource(R.string.recently_played),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold,
+                    style = AppTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                )
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    itemsIndexed(history) { index, trackUiModel ->
+                        val track = trackUiModel.trackInfo
+                        val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+                        Log.d(
+                            "HistoryDebug",
+                            "title=${track.title}, artist=$artistString, image=${trackUiModel.coverImageUrl}"
+                        )
+                        SongCard(
+                            songName = track.title,
+                            artistName = artistString,
+                            coverImageUrl = trackUiModel.coverImageUrl,
+                            onClick = {
+                                playerViewModel.playSong(
+                                    newTrackId = track.id,
+                                    newUrlKey = track.storageKey,
+                                    newTitle = track.title,
+                                    newArtist = artistString,
+                                    newImageKey = track.coverImageKey ?: "no_image"
+                                )
+                                bottomNavController.navigate("track_player_screen")
+                            }
+                        )
                     }
+                }
+            }
+            Text(
+                stringResource(R.string.editor_picks),
+                style = AppTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            )
+
+            if (isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // CircularProgressIndicator(color = AppTheme.color().Primary)
                 }
             } else {
-                item {
-                    Text(
-                        stringResource(R.string.recently_played),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold,
-                        style = AppTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                    )
-                    LazyRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        itemsIndexed(uiTracks) { index, trackUiModel ->
-                            val track = trackUiModel.trackInfo
-                            val artistString = track.artists?.joinToString(", ") ?: "Unknown"
-                            SongCard(
-                                songName = track.title,
-                                artistName = artistString,
-                                coverImageUrl = trackUiModel.coverImageUrl,
-                                onClick = {
-                                    playerViewModel.playSong(
-                                        newTrackId = track.id,
-                                        newUrlKey = track.storageKey,
-                                        newTitle = track.title,
-                                        newArtist = artistString,
-                                        newImageKey = track.coverImageKey ?: "no_image"
-                                    )
-                                    bottomNavController.navigate("track_player_screen")
-                                }
-                            )
-                        }
-                    }
-                }
-                item {
-                    if (history.isNotEmpty()) {
-                        Text(
-                            stringResource(R.string.recently_played),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontWeight = FontWeight.Bold,
-                            style = AppTheme.typography.bodyLarge,
-                            modifier = Modifier
-                                .padding(start = 16.dp)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .padding(8.dp)
+                ) {
+                    items(uiTracks) { trackUiModel ->
+                        val track = trackUiModel.trackInfo
+                        val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+
+                        SongCard(
+                            songName = track.title,
+                            artistName = artistString,
+                            coverImageUrl = trackUiModel.coverImageUrl,
+                            onClick = {
+                                playerViewModel.playSong(
+                                    newTrackId = track.id,
+                                    newUrlKey = track.storageKey,
+                                    newTitle = track.title,
+                                    newArtist = artistString,
+                                    newImageKey = track.coverImageKey ?: "no_image"
+                                )
+                                bottomNavController.navigate("track_player_screen")
+                            }
                         )
-                        LazyRow(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                        ) {
-                            itemsIndexed(history) { index, trackUiModel ->
-                                val track = trackUiModel.trackInfo
-                                val artistString = track.artists?.joinToString(", ") ?: "Unknown"
-                                Log.d(
-                                    "HistoryDebug",
-                                    "title=${track.title}, artist=$artistString, image=${trackUiModel.coverImageUrl}"
-                                )
-                                SongCard(
-                                    songName = track.title,
-                                    artistName = artistString,
-                                    coverImageUrl = trackUiModel.coverImageUrl,
-                                    onClick = {
-                                        playerViewModel.playSong(
-                                            newTrackId = track.id,
-                                            newUrlKey = track.storageKey,
-                                            newTitle = track.title,
-                                            newArtist = artistString,
-                                            newImageKey = track.coverImageKey ?: "no_image"
-                                        )
-                                        bottomNavController.navigate("track_player_screen")
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-                item {
-                    Text(
-                        stringResource(R.string.editor_picks),
-                        style = AppTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                    )
-
-                    if (isLoading) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            // CircularProgressIndicator(color = AppTheme.color().Primary)
-                        }
-                    } else {
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier
-                                .heightIn(max = 800.dp)
-                                .padding(8.dp)
-                        ) {
-                            items(uiTracks) { trackUiModel ->
-                                val track = trackUiModel.trackInfo
-                                val artistString = track.artists?.joinToString(", ") ?: "Unknown"
-
-                                SongCard(
-                                    songName = track.title,
-                                    artistName = artistString,
-                                    coverImageUrl = trackUiModel.coverImageUrl,
-                                    onClick = {
-                                        playerViewModel.playSong(
-                                            newTrackId = track.id,
-                                            newUrlKey = track.storageKey,
-                                            newTitle = track.title,
-                                            newArtist = artistString,
-                                            newImageKey = track.coverImageKey ?: "no_image"
-                                        )
-                                        bottomNavController.navigate("track_player_screen")
-                                    }
-                                )
-                            }
-                        }
                     }
                 }
             }
