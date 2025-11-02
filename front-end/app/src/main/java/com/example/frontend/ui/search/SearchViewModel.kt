@@ -75,7 +75,7 @@ class SearchViewModel(
         _searchQuery.value = newQuery
     }
 
-    private fun searchTracks(keyword: String) {
+    public fun searchTracks(keyword: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {

@@ -31,11 +31,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.frontend.R
+import com.example.frontend.ui.playingsong.MusicPlayerViewModel
 import com.example.frontend.ui.theme.AppTheme
 
 @Composable
-fun ChatBotScreen(viewModel: ChatbotViewModel) {
+fun ChatBotScreen(
+    viewModel: ChatbotViewModel,
+    musicPlayerViewModel: MusicPlayerViewModel,
+    navController: NavController
+) {
+
+    val trackToPlay by viewModel.trackToPlay.collectAsState()
 
     var textInput by remember {mutableStateOf("")}
 
@@ -47,6 +55,17 @@ fun ChatBotScreen(viewModel: ChatbotViewModel) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
         }
+        trackToPlay?.let {
+            track ->
+            musicPlayerViewModel.playSong(
+                track.id,
+                track.storageKey,
+                track.title,
+                track.artists.toString(),
+                track.coverImageKey.toString()
+                )
+        }
+        viewModel.onTrackPlayed()
     }
 
     Scaffold(
