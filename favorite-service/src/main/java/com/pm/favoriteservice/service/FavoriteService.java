@@ -35,6 +35,13 @@ public class FavoriteService {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * Thêm bài hát yêu thích cho người dùng.
+     *
+     * @param email email của người dùng
+     * @param createFavoriteRequestDto thông tin bài hát cần thêm
+     * @return FavoriteResponseDto chứa thông tin bài hát đã thêm
+     */
     public FavoriteResponseDto addFavorite(String email,
                                            CreateFavoriteRequestDto createFavoriteRequestDto) {
         Favorite favorite = Favorite.builder()

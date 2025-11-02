@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/play")
 public class PlayingController {
   private final AwsUrlService awsUrlService;
   private final UserStateService userStateService;
@@ -30,7 +31,7 @@ public class PlayingController {
    * @return link nhạc và ảnh bìa
    * @throws Exception nếu xảy ra lỗi khi lấy URL
    */
-  @PostMapping("/play")
+  @PostMapping
   @Operation(summary = "Receive a play request then send back a play response contain a mp3 link and image link")
   public ResponseEntity<PlayResponseDto> play(@RequestBody @Valid PlayRequestDto req,
                                               Authentication auth) throws Exception {
