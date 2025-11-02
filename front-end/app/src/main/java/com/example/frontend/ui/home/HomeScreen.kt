@@ -322,7 +322,7 @@ fun HomeScreenContent(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = "User Profile",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(80.dp) // Lưu ý: Icon 80dp trong button 60dp sẽ bị cắt
+                    modifier = Modifier.size(80.dp)
                 )
             }
         }
@@ -337,6 +337,39 @@ fun HomeScreenContent(
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else {
+            Text(
+                stringResource(R.string.recently_played),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.Bold,
+                style = AppTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            )
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                itemsIndexed(uiTracks) { index, trackUiModel ->
+                    val track = trackUiModel.trackInfo
+                    val artistString = track.artists?.joinToString(", ") ?: "Unknown"
+                    SongCard(
+                        songName = track.title,
+                        artistName = artistString,
+                        coverImageUrl = trackUiModel.coverImageUrl,
+                        onClick = {
+                            playerViewModel.playSong(
+                                newTrackId = track.id,
+                                newUrlKey = track.storageKey,
+                                newTitle = track.title,
+                                newArtist = artistString,
+                                newImageKey = track.coverImageKey ?: "no_image"
+                            )
+                            bottomNavController.navigate("track_player_screen")
+                        }
+                    )
+                }
+            }
             if (history.isNotEmpty()) {
                 Text(
                     stringResource(R.string.recently_played),

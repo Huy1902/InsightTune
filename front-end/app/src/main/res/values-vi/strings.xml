@@ -84,5 +84,6 @@
     <string name="message">Tin nhắn...</string>
     <string name="chat_bot_hello">Xin chào! Tôi có thể giúp gì cho bạn?</string>
     <string name="update_profile_successfully">Cập nhật thông tin thành công!</string>
+    <string name="made_for_you">Dành cho bạn</string>
 
 </resources>

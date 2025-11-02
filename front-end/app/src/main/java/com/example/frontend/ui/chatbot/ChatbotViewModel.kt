@@ -3,6 +3,7 @@ package com.example.frontend.ui.chatbot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frontend.data.models.chatbot.ChatbotRequest
+import com.example.frontend.data.models.home.GetTracksResponse
 import com.example.frontend.data.remote.ChatbotApi
 import com.example.frontend.domain.repositories.TrackRepository
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
