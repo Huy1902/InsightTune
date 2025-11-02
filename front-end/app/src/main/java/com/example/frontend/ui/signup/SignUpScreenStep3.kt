@@ -183,7 +183,7 @@ fun SignUpStep3Content(
         if (uiState is Resource.Error) {
             Spacer(modifier = Modifier.height(AppTheme.spacing().M))
             Text(
-                text = "Email already exists.",
+                text = "An error occurred: ${uiState.message}",
                 style = AppTheme.typography.labelLarge,
                 color = AppTheme.color().Error
             )
