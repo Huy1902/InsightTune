@@ -20,6 +20,7 @@ import java.lang.reflect.Type
 import java.time.Instant
 import java.time.ZoneId
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object ApiClient {
 
@@ -30,6 +31,9 @@ object ApiClient {
         }
         OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(prefs) { refreshAuthApi }) // Sửa ở đây
+            .connectTimeout(100, TimeUnit.SECONDS)
+            .readTimeout(100, TimeUnit.SECONDS)
+            .writeTimeout(100, TimeUnit.SECONDS)
             .addInterceptor(logging)
             .build()
     }
