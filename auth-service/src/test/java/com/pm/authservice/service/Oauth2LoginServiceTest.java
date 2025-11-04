@@ -111,4 +111,192 @@ class Oauth2LoginServiceTest {
         AppException exception = assertThrows(AppException.class, () -> spyService.loginGoogle(request));
         assertEquals(ErrorCode.IDTOKEN_NULL, exception.getError());
     }
+
+    @Test
+    void loginGoogle_tokenNull_shouldThrowAppException() throws Exception {
+        Oauth2LoginRequest request = new Oauth2LoginRequest();
+        request.setIdToken("fake-token");
+
+        Oauth2LoginService spyService = spy(oauth2LoginService);
+        doReturn(null).when(spyService).verifyGoogleIdToken("fake-token");
+
+        AppException ex = assertThrows(AppException.class,
+                () -> spyService.loginGoogle(request));
+        assertEquals(ErrorCode.IDTOKEN_NULL, ex.getError());
+    }
+
+    // ===== 2️⃣ User chưa tồn tại =====
+    @Test
+    void loginGoogle_validToken_userNotExists_shouldCreateUserAndAuthenticate() throws Exception {
+        Oauth2LoginRequest request = new Oauth2LoginRequest();
+        request.setIdToken("valid-token");
+
+        // Mock token và payload
+        GoogleIdToken.Payload payload = mock(GoogleIdToken.Payload.class);
+        when(payload.getEmail()).thenReturn("test@example.com");
+        when(payload.get("name")).thenReturn("John Doe");
+        when(payload.get("picture")).thenReturn("avatar.png");
+
+        GoogleIdToken token = mock(GoogleIdToken.class);
+        when(token.getPayload()).thenReturn(payload);
+
+        Oauth2LoginService spyService = spy(oauth2LoginService);
+        doReturn(token).when(spyService).verifyGoogleIdToken("valid-token");
+
+        when(authService.existsByEmail("test@example.com")).thenReturn(false);
+
+        UserProfileResponse profile = UserProfileResponse.builder()
+                .id(1L)
+                .email("test@example.com")
+                .firstName("John")
+                .lastName("Doe")
+                .role("USER")
+                .build();
+        when(authService.createUser(any())).thenReturn(profile);
+
+        AuthenticationResponse authResp = AuthenticationResponse.builder()
+                .token("access-token")
+                .refreshToken("refresh-token")
+                .authenticated(true)
+                .build();
+        when(authService.authenticate(any())).thenReturn(authResp);
+
+        AuthenticationResponse result = spyService.loginGoogle(request);
+
+        assertTrue(result.isAuthenticated());
+        assertEquals("access-token", result.getToken());
+        assertEquals("refresh-token", result.getRefreshToken());
+
+        verify(authService).createUser(any());
+        verify(authService).authenticate(any());
+    }
+
+    // ===== 3️⃣ User đã tồn tại =====
+    @Test
+    void loginGoogle_validToken_userExists_shouldAuthenticateOnly() throws Exception {
+        Oauth2LoginRequest request = new Oauth2LoginRequest();
+        request.setIdToken("valid-token");
+
+        GoogleIdToken.Payload payload = mock(GoogleIdToken.Payload.class);
+        when(payload.getEmail()).thenReturn("test@example.com");
+        when(payload.get("name")).thenReturn("John Doe");
+        when(payload.get("picture")).thenReturn("avatar.png");
+
+        GoogleIdToken token = mock(GoogleIdToken.class);
+        when(token.getPayload()).thenReturn(payload);
+
+        Oauth2LoginService spyService = spy(oauth2LoginService);
+        doReturn(token).when(spyService).verifyGoogleIdToken("valid-token");
+
+        when(authService.existsByEmail("test@example.com")).thenReturn(true);
+
+        AuthenticationResponse authResp = AuthenticationResponse.builder()
+                .token("access-token")
+                .refreshToken("refresh-token")
+                .authenticated(true)
+                .build();
+        when(authService.authenticate(any())).thenReturn(authResp);
+
+        AuthenticationResponse result = spyService.loginGoogle(request);
+
+        assertTrue(result.isAuthenticated());
+        assertEquals("access-token", result.getToken());
+        assertEquals("refresh-token", result.getRefreshToken());
+
+        verify(authService, never()).createUser(any());
+        verify(authService).authenticate(any());
+    }
+
+    // ===== 4️⃣ createUser ném AppException =====
+    @Test
+    void loginGoogle_createUserFails_shouldThrowAppException() throws Exception {
+        Oauth2LoginRequest request = new Oauth2LoginRequest();
+        request.setIdToken("valid-token");
+
+        GoogleIdToken.Payload payload = mock(GoogleIdToken.Payload.class);
+        when(payload.getEmail()).thenReturn("test@example.com");
+        when(payload.get("name")).thenReturn("John Doe");
+
+        GoogleIdToken token = mock(GoogleIdToken.class);
+        when(token.getPayload()).thenReturn(payload);
+
+        Oauth2LoginService spyService = spy(oauth2LoginService);
+        doReturn(token).when(spyService).verifyGoogleIdToken("valid-token");
+
+        when(authService.existsByEmail("test@example.com")).thenReturn(false);
+
+        when(authService.createUser(any()))
+                .thenThrow(new AppException(ErrorCode.EMAIL_ALREADY_EXISTS));
+
+        AppException ex = assertThrows(AppException.class,
+                () -> spyService.loginGoogle(request));
+        assertEquals(ErrorCode.EMAIL_ALREADY_EXISTS, ex.getError());
+    }
+
+    // ===== 5️⃣ authenticate ném AppException =====
+    @Test
+    void loginGoogle_authenticateFails_shouldThrowAppException() throws Exception {
+        Oauth2LoginRequest request = new Oauth2LoginRequest();
+        request.setIdToken("valid-token");
+
+        GoogleIdToken.Payload payload = mock(GoogleIdToken.Payload.class);
+        when(payload.getEmail()).thenReturn("test@example.com");
+        when(payload.get("name")).thenReturn("John Doe");
+
+        GoogleIdToken token = mock(GoogleIdToken.class);
+        when(token.getPayload()).thenReturn(payload);
+
+        Oauth2LoginService spyService = spy(oauth2LoginService);
+        doReturn(token).when(spyService).verifyGoogleIdToken("valid-token");
+
+        when(authService.existsByEmail("test@example.com")).thenReturn(true);
+
+        when(authService.authenticate(any()))
+                .thenThrow(new AppException(ErrorCode.PASSWORD_NOT_TRUE));
+
+        AppException ex = assertThrows(AppException.class,
+                () -> spyService.loginGoogle(request));
+        assertEquals(ErrorCode.PASSWORD_NOT_TRUE, ex.getError());
+    }
+
+    // ===== 6️⃣ Name null → fallback firstName/lastName =====
+    @Test
+    void loginGoogle_nameNull_shouldUseDefaultNames() throws Exception {
+        Oauth2LoginRequest request = new Oauth2LoginRequest();
+        request.setIdToken("valid-token");
+
+        GoogleIdToken.Payload payload = mock(GoogleIdToken.Payload.class);
+        when(payload.getEmail()).thenReturn("test@example.com");
+        when(payload.get("name")).thenReturn(null);
+        when(payload.get("picture")).thenReturn("avatar.png");
+
+        GoogleIdToken token = mock(GoogleIdToken.class);
+        when(token.getPayload()).thenReturn(payload);
+
+        Oauth2LoginService spyService = spy(oauth2LoginService);
+        doReturn(token).when(spyService).verifyGoogleIdToken("valid-token");
+
+        when(authService.existsByEmail("test@example.com")).thenReturn(false);
+
+        UserProfileResponse profile = UserProfileResponse.builder()
+                .id(1L)
+                .email("test@example.com")
+                .firstName("Google")
+                .lastName("User")
+                .role("USER")
+                .build();
+        when(authService.createUser(any())).thenReturn(profile);
+
+        AuthenticationResponse authResp = AuthenticationResponse.builder()
+                .token("access-token")
+                .refreshToken("refresh-token")
+                .authenticated(true)
+                .build();
+        when(authService.authenticate(any())).thenReturn(authResp);
+
+        AuthenticationResponse result = spyService.loginGoogle(request);
+
+        assertEquals("Google", profile.getFirstName());
+        assertEquals("User", profile.getLastName());
+    }
 }

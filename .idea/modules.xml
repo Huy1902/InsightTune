@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/catalog-service/catalog-service.iml" filepath="$PROJECT_DIR$/catalog-service/catalog-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/history-service/history-service.iml" filepath="$PROJECT_DIR$/history-service/history-service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/playing-service/playing-service.iml" filepath="$PROJECT_DIR$/playing-service/playing-service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/upload-service/upload-service.iml" filepath="$PROJECT_DIR$/upload-service/upload-service.iml" />
     </modules>
   </component>
 </project>
