@@ -10,7 +10,6 @@
         <module name="eureka-service" />
         <module name="recommend-service" />
         <module name="infrastructure" />
-        <module name="catalog-service" />
         <module name="api-gateway" />
         <module name="history-service" />
         <module name="upload-service" />
@@ -34,6 +33,16 @@
         </processorPath>
         <module name="auth-service" />
         <module name="user-service" />
+      </profile>
+      <profile name="Annotation profile for spotube (parent)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="catalog-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
