@@ -79,7 +79,16 @@ public class LocalStack extends Stack {
                     "recommend-service",
                     List.of(4008),
                     null, null);
-
+    FargateService authService =
+            createFargateService("AuthService",
+                    "auth-service",
+                    List.of(4006),
+                    null, null);
+    FargateService userService =
+            createFargateService("UserService",
+                    "user-service",
+                    List.of(4005),
+                    null, null);
     catalogService.getNode().addDependency(catalogDbHealthCheck);
     catalogService.getNode().addDependency(eurekaService);
     catalogService.getNode().addDependency(catalogServiceDb);
