@@ -9,14 +9,12 @@ import com.example.frontend.domain.repositories.TrackRepository
 import com.example.frontend.ui.home.PlayingViewModel
 
 class ChatbotViewModelFactory (
-    val application: Application,
     val chatbotApi: ChatbotApi,
     val trackRepository: TrackRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>) : T {
         if (modelClass.isAssignableFrom(ChatbotViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return ChatbotViewModel(
-                application,
                 chatbotApi,
                 trackRepository
             ) as T

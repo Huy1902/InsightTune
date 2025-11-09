@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -116,7 +117,9 @@ fun SignUpStep1Content(
             AppTextField(
                 value = email,
                 onValueChange = onEmailChange,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("email_field"),
                 placeholderText = ""
             )
 
@@ -137,7 +140,8 @@ fun SignUpStep1Content(
             onClick = onNextClick,
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier
-                .height(56.dp),
+                .height(56.dp)
+                .testTag("next_button_step1"),
             enabled = !isLoading,
         ) {
             if (isLoading) {

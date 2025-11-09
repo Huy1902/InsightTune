@@ -8,10 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frontend.data.models.chatbot.ChatbotRequest
 import com.example.frontend.data.models.home.GetTracksResponse
+import com.example.frontend.data.models.chatbot.ChatbotVoiceResponse
 import com.example.frontend.R
-import com.example.frontend.data.models.Chatbot.ChatbotRequest
-import com.example.frontend.data.models.Chatbot.ChatbotResponse
-import com.example.frontend.data.models.song.GetTracksResponse
 import com.example.frontend.data.remote.ChatbotApi
 import com.example.frontend.domain.repositories.TrackRepository
 import com.example.frontend.ui.playingsong.MusicPlayerViewModel
@@ -23,15 +21,12 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
 class ChatbotViewModel(
-    application: Application,
     val chatbotApi: ChatbotApi,
     val trackRepository: TrackRepository,
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
     val messages: StateFlow<List<Message>> = _messages
@@ -79,55 +74,55 @@ class ChatbotViewModel(
         }
     }
 
-//    private fun stopRecordingAndSend() {
-//        try {
-//            recorder?.apply {
-//                stop()
-//                release()
-//            }
-//            recorder = null
-//            isRecording = false
-//            Log.d("Chatbot", "Dừng ghi âm")
-//            outputFile?.let {
-//                file ->
-//                viewModelScope.launch(Dispatchers.IO) {
-//                    sendVoiceToServer(file)
-//                }
-//            }
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
-//    }
-private fun stopRecordingAndSend() {
-    // Tạm thời bỏ qua việc dừng ghi âm thật
-    // recorder?.apply { ... }
-    isRecording = false
-    Log.d("Chatbot_Test", "Bỏ qua ghi âm, bắt đầu gửi file mẫu.")
-
-    // Bắt đầu logic gửi file mẫu từ resource
-    viewModelScope.launch(Dispatchers.IO) {
+    private fun stopRecordingAndSend() {
         try {
-            val context = getApplication<Application>().applicationContext
-            val inputStream = context.resources.openRawResource(R.raw.tungla) // Lưu ý: không có đuôi file ở đây
-
-            val tempFile = File.createTempFile("test_audio", ".m4a", context.cacheDir)
-
-            inputStream.use { input ->
-                tempFile.outputStream().use { output ->
-                    input.copyTo(output)
+            recorder?.apply {
+                stop()
+                release()
+            }
+            recorder = null
+            isRecording = false
+            Log.d("Chatbot", "Dừng ghi âm")
+            outputFile?.let {
+                file ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    sendVoiceToServer(file)
                 }
             }
-
-            Log.d("Chatbot_Test", "Đã tạo file tạm từ resource: ${tempFile.absolutePath}")
-
-            // 4. GỌI HÀM GỐC với file tạm vừa tạo. Bây giờ nó sẽ hoạt động!
-            sendVoiceToServer(tempFile)
-
         } catch (e: Exception) {
-            Log.e("Chatbot_Test", "Lỗi khi xử lý và gửi file mẫu", e)
+            e.printStackTrace()
         }
     }
-}
+//private fun stopRecordingAndSend() {
+//    // Tạm thời bỏ qua việc dừng ghi âm thật
+//    // recorder?.apply { ... }
+//    isRecording = false
+//    Log.d("Chatbot_Test", "Bỏ qua ghi âm, bắt đầu gửi file mẫu.")
+//
+//    // Bắt đầu logic gửi file mẫu từ resource
+//    viewModelScope.launch(Dispatchers.IO) {
+//        try {
+//            val context = getApplication<Application>().applicationContext
+//            val inputStream = context.resources.openRawResource(R.raw.tungla) // Lưu ý: không có đuôi file ở đây
+//
+//            val tempFile = File.createTempFile("test_audio", ".m4a", context.cacheDir)
+//
+//            inputStream.use { input ->
+//                tempFile.outputStream().use { output ->
+//                    input.copyTo(output)
+//                }
+//            }
+//
+//            Log.d("Chatbot_Test", "Đã tạo file tạm từ resource: ${tempFile.absolutePath}")
+//
+//            // 4. GỌI HÀM GỐC với file tạm vừa tạo. Bây giờ nó sẽ hoạt động!
+//            sendVoiceToServer(tempFile)
+//
+//        } catch (e: Exception) {
+//            Log.e("Chatbot_Test", "Lỗi khi xử lý và gửi file mẫu", e)
+//        }
+//    }
+//}
 
     private suspend fun sendVoiceToServer(audioFile: File) {
         try {

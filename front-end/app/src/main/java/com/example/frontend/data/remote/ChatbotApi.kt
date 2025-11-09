@@ -1,11 +1,10 @@
 package com.example.frontend.data.remote
 
-import com.example.frontend.data.models.Chatbot.ChatbotRequest
-import com.example.frontend.data.models.Chatbot.ChatbotResponse
-import com.example.frontend.data.models.Chatbot.ChatbotVoiceResponse
-import okhttp3.MultipartBody
 import com.example.frontend.data.models.chatbot.ChatbotRequest
 import com.example.frontend.data.models.chatbot.ChatbotResponse
+import com.example.frontend.data.models.chatbot.ChatbotVoiceResponse
+import okhttp3.MultipartBody
+
 import retrofit2.http.Body
 import retrofit2.http.Multipart
 import retrofit2.http.POST

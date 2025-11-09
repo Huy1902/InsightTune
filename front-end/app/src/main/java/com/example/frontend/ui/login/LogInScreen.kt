@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -144,6 +145,8 @@ fun LogInScreenContent(
             Text(
                 stringResource(R.string.forgot_password),
                 color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .testTag("forgot_password_button")
             )
         }
 
@@ -157,6 +160,7 @@ fun LogInScreenContent(
             ),
             modifier = Modifier
                 .height(56.dp)
+                .testTag("login_button")
         ) {
             if (uiState is Resource.Loading) {
                 CircularProgressIndicator(
@@ -182,7 +186,9 @@ fun LogInScreenContent(
                 text = stringResource(R.string.log_in_error),
                 style = AppTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
-                color = AppTheme.color().Error
+                color = AppTheme.color().Error,
+                modifier = Modifier
+                    .testTag("login_error_text")
             )
         }
     }
