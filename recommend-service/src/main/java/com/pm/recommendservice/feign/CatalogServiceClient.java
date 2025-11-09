@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name="CATALOG-SERVICE")
+@FeignClient(name="CATALOG-SERVICE", url="http://catalog-service.spotube.local:4000")
 public interface CatalogServiceClient {
   @GetMapping("/tracks/internal")
   TrackIdsResponseDto getTrackIds();

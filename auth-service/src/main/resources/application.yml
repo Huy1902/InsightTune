@@ -16,7 +16,7 @@ spring:
         registration:
           google:
             client-id: 707539669485-hvb782jf95k54qogpjmcalbjiiec9nrd.apps.googleusercontent.com
-            client-secret: ${GOOGLE_CLIENT_SECRET}
+#            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: email, profile
         provider:
           google:
@@ -51,7 +51,7 @@ spring:
       mode: always
 
 server:
-  port: 8080 # port riêng cho auth-service
+  port: 4006
 
 jwt:
   signerKey : Q+W+8at86K9vMPRa3ZZEHWOL6wiQzDmNS0X9Wu8omL2h5qgfIIb0oEchMm+v49MP

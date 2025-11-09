@@ -6,7 +6,7 @@
     <groupId>com.pm</groupId>
     <version>0.0.1-SNAPSHOT</version>
     <artifactId>infrastructure</artifactId>
-
+    <name>infrastructure</name>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>

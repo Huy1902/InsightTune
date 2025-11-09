@@ -67,4 +67,8 @@ public class HistoryService {
     List<SearchHistory> list = searchedHistoryRepository.findAllByEmail(email);
     Collections.reverse(list);
     return list;  }
+
+  public List<History> findRecentlyHistory(String email) {
+    return historyRepository.findTop5ByEmailOrderByPlayedAtDesc(email);
+  }
 }

@@ -19,6 +19,7 @@
         <module>api-gateway</module>
         <module>history-service</module>
         <module>recommend-service</module>
+        <module>infrastructure</module>
     </modules>
 
     <properties>

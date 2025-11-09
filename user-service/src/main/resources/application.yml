@@ -21,7 +21,7 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
 
 server:
-  port: 8081   # port riêng cho auth-service
+  port: 4005
 
 springdoc:
   api-docs:

@@ -14,7 +14,7 @@ class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {
     override suspend fun getTracks(): List<GetTracksResponse> {
         return try {
             Log.d(TAG, "Call API getTracks()...")
-            val response = trackApi.getTracks()
+            val response = trackApi.getRecommendTracks()
             Log.d(TAG, "API response: ${response.size} songs")
 
             if (response.isNotEmpty()) {
