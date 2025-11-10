@@ -23,21 +23,21 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Dịch vụ trích xuất metadata từ các file MP3 sử dụng thư viện {@code mp3agic}.
+ * Service for extracting metadata from MP3 files using the {@code mp3agic} library.
  *
- * <p>Dịch vụ này hỗ trợ:</p>
+ * <p>This service supports:</p>
  * <ul>
- *   <li>Đọc thẻ ID3v2 (title, album, danh sách nghệ sĩ)</li>
- *   <li>Lấy thời lượng bài hát tính theo mili giây</li>
- *   <li>Phân tích và chuẩn hóa ảnh bìa nhúng (chỉ JPEG/PNG)</li>
- *   <li>Dự phòng nếu thẻ thiếu (ví dụ: sử dụng tên file làm tiêu đề)</li>
+ *   <li>Reading ID3v2 tags (title, album, list of artists)</li>
+ *   <li>Obtaining song duration in milliseconds</li>
+ *   <li>Analyzing and validating embedded cover images (JPEG/PNG only)</li>
+ *   <li>Fallback when tags are missing (e.g., use file name as title)</li>
  * </ul>
  *
- * <p>Các file tạm thời sẽ được tạo để phân tích và tự động xóa sau đó.</p>
+ * <p>Temporary files are created for analysis and automatically deleted afterward.</p>
  *
- * <p>Cách sử dụng: được gọi từ controller khi người dùng tải lên một file MP3,
- * trả về một đối tượng {@link MetaResponseDto} có cấu trúc, có thể lưu vào cơ sở dữ liệu
- * hoặc chuyển cho các dịch vụ khác.</p>
+ * <p>Usage: called from a controller when a user uploads an MP3 file,
+ * returning a {@link MetaResponseDto} object that can be stored in the database
+ * or passed to other services.</p>
  *
  * @author Huy1902
  */
@@ -49,20 +49,20 @@ public class MetadataService {
   private final Validator validator;
 
   /**
-   * Xây dựng metadata có cấu trúc từ một file MP3 được tải lên.
+   * Builds structured metadata from an uploaded MP3 file.
    *
-   * <p>Phương thức sẽ:</p>
+   * <p>The method will:</p>
    * <ol>
-   *   <li>Lưu file tạm thời lên đĩa (yêu cầu bởi {@code mp3agic}).</li>
-   *   <li>Đọc thẻ ID3v2 nếu có (title, album, nghệ sĩ, ảnh bìa).</li>
-   *   <li>Dự phòng dùng tên file làm title nếu thiếu.</li>
-   *   <li>Chuẩn hóa / kiểm tra loại MIME của ảnh (chỉ JPEG/PNG).</li>
-   *   <li>Trả về metadata dưới dạng {@link MetaResponseDto}.</li>
+   *   <li>Save the file temporarily on disk (required by {@code mp3agic}).</li>
+   *   <li>Read the ID3v2 tag if present (title, album, artists, cover image).</li>
+   *   <li>Fallback to using the file name as title if missing.</li>
+   *   <li>Normalize/check image MIME type (JPEG/PNG only).</li>
+   *   <li>Return metadata as a {@link MetaResponseDto} object.</li>
    * </ol>
    *
-   * @param metaRequestDto đối tượng request chứa {@link MultipartFile}.
-   * @return đối tượng response DTO chứa metadata đã phân tích (title, album, nghệ sĩ, thời lượng, ảnh bìa).
-   * @throws MetaExtractException nếu có lỗi trong quá trình trích xuất.
+   * @param metaRequestDto request object containing a {@link MultipartFile}.
+   * @return response DTO containing analyzed metadata (title, album, artists, duration, cover image).
+   * @throws MetaExtractException if any error occurs during extraction.
    */
   public MetaResponseDto buildMetadata(MetaRequestDto metaRequestDto)
           throws MetaExtractException {
@@ -144,19 +144,18 @@ public class MetadataService {
     }
   }
 
-
   /**
-   * Chuyển các chuỗi rỗng hoặc chỉ chứa khoảng trắng thành {@code null}.
+   * Converts empty strings or strings containing only whitespace to {@code null}.
    */
   private static String blankToNull(String s) {
     return StringUtils.hasText(s) ? s : null;
   }
 
   /**
-   * Lấy tên file cơ bản từ đường dẫn (loại bỏ thư mục và phần mở rộng).
+   * Returns the base name of a file from a path (removes directories and extension).
    *
-   * @param filename tên file hoặc đường dẫn gốc.
-   * @return tên file cơ bản, hoặc "unknown" nếu đầu vào rỗng.
+   * @param filename the original file name or path
+   * @return the base file name, or "unknown" if input is empty.
    */
   private static String baseName(String filename) {
     if (!StringUtils.hasText(filename)) return "unknown";
@@ -167,12 +166,12 @@ public class MetadataService {
   }
 
   /**
-   * Tách chuỗi nghệ sĩ thô thành danh sách các nghệ sĩ riêng lẻ.
+   * Splits a raw artist string into a list of individual artist names.
    *
-   * <p>Xử lý các dấu phân cách phổ biến: dấu phẩy, "&amp;", "feat.", "ft.", "x".</p>
+   * <p>Handles common delimiters: comma, "&", "feat.", "ft.", "x".</p>
    *
-   * @param artistRaw chuỗi nghệ sĩ thô (ví dụ: "Artist feat. Guest").
-   * @return danh sách tên nghệ sĩ đã xử lý, không bao giờ trả về {@code null}.
+   * @param artistRaw raw artist string (e.g., "Artist feat. Guest")
+   * @return list of processed artist names, never {@code null}.
    */
   private static List<String> splitArtists(String artistRaw) {
     if (!StringUtils.hasText(artistRaw)) return List.of();
@@ -197,10 +196,10 @@ public class MetadataService {
 
 
   /**
-   * Chuẩn hóa các biến thể MIME phổ biến (ví dụ: {@code image/jpg → image/jpeg}).
+   * Normalizes common MIME variants (e.g., {@code image/jpg → image/jpeg}).
    *
-   * @param mime chuỗi MIME thô.
-   * @return chuỗi MIME đã chuẩn hóa, hoặc {@code null} nếu đầu vào null.
+   * @param mime raw MIME string
+   * @return normalized MIME string, or {@code null} if input is null
    */
   private static String sanitizeMime(String mime) {
     if (mime == null) return null;
@@ -212,9 +211,9 @@ public class MetadataService {
   }
 
   /**
-   * Kiểm tra loại ảnh có được hỗ trợ (JPEG hoặc PNG).
+   * Validates that the image type is supported (JPEG or PNG).
    *
-   * @param mime loại MIME cần kiểm tra.
+   * @param mime the MIME type to check
    */
   private static void validateImageType(String mime) {
     if (!("image/jpeg".equalsIgnoreCase(mime) || "image/png".equalsIgnoreCase(mime))) {

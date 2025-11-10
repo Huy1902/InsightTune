@@ -12,29 +12,29 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
- * Xử lý các trường hợp người dùng chưa xác thực (unauthenticated) khi truy cập API bảo vệ.
+ * Handles cases where a user is unauthenticated when accessing protected APIs.
  * <p>
- * Khi Spring Security phát hiện request không hợp lệ hoặc không có token,
- * class này sẽ trả về HTTP status 401 Unauthorized kèm theo JSON thông báo lỗi.
+ * When Spring Security detects an invalid request or a missing token,
+ * this class returns HTTP status 401 Unauthorized along with a JSON error message.
  * </p>
  */
 @Component
 public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
 
     /**
-     * Gọi khi authentication thất bại.
+     * Called when authentication fails.
      *
-     * @param request       request HTTP
-     * @param response      response HTTP
-     * @param authException ngoại lệ xác thực
-     * @throws IOException      nếu ghi JSON vào response lỗi
-     * @throws ServletException nếu có lỗi Servlet
+     * @param request       the HTTP request
+     * @param response      the HTTP response
+     * @param authException the authentication exception
+     * @throws IOException      if writing JSON to the response fails
+     * @throws ServletException if a Servlet error occurs
      * <p>
-     * Hành vi:
+     * Behavior:
      * <ul>
-     *     <li>Set content type là application/json</li>
-     *     <li>Set HTTP status là 401 Unauthorized</li>
-     *     <li>Trả về body JSON: {"code":401, "message":"Lỗi Token"}</li>
+     *     <li>Set content type to application/json</li>
+     *     <li>Set HTTP status to 401 Unauthorized</li>
+     *     <li>Return JSON body: {"code":401, "message":"Token Error"}</li>
      * </ul>
      * </p>
      */
@@ -48,7 +48,6 @@ public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
                 .message("Lỗi Token")
                 .build();
 
-        // Chuyển ApiResponse thành JSON
         ObjectMapper mapper = new ObjectMapper();
         response.getWriter().write(mapper.writeValueAsString(apiResponse));
     }

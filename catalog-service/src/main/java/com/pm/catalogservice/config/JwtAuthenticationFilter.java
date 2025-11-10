@@ -18,54 +18,46 @@ import java.text.ParseException;
 import java.util.Collections;
 
 /**
- * Lọc JWT cho mỗi request (một lần) trong Spring Security.
+ * JWT filter applied once per request in Spring Security.
  * <p>
- * Class này sẽ kiểm tra header "Authorization" để tìm token theo dạng "Bearer {token}".
- * Nếu token hợp lệ, nó sẽ xác thực người dùng trong SecurityContext, cho phép
- * Spring Security nhận dạng request là authenticated.
+ * This class checks the "Authorization" header for a token in the format "Bearer {token}".
+ * If the token is valid, it authenticates the user in the SecurityContext,
+ * allowing Spring Security to recognize the request as authenticated.
  * </p>
  * <p>
- * Các bước chính:
+ * Main steps:
  * <ul>
- *     <li>Lấy token từ header Authorization</li>
- *     <li>Xác minh token bằng CustomTokenService</li>
- *     <li>Lấy email từ token và tạo UsernamePasswordAuthenticationToken</li>
- *     <li>Đặt authentication vào SecurityContextHolder</li>
+ *     <li>Extract the token from the Authorization header</li>
+ *     <li>Verify the token using CustomTokenService</li>
+ *     <li>Retrieve the email from the token and create a UsernamePasswordAuthenticationToken</li>
+ *     <li>Set the authentication in the SecurityContextHolder</li>
  * </ul>
  * </p>
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    /**
-     * Service để verify token và lấy thông tin từ token.
-     */
-    private final CustomTokenService customTokenService; // service verify token, lấy sub/email
+    private final CustomTokenService customTokenService; // service verify token, get sub/email
 
-    /**
-     * Constructor để inject CustomTokenService.
-     *
-     * @param customTokenService service xử lý JWT
-     */
     public JwtAuthenticationFilter(CustomTokenService customTokenService) {
         this.customTokenService = customTokenService;
 
     }
 
     /**
-     * Lọc request HTTP để xác thực JWT.
+     * Filters HTTP requests to authenticate JWT.
      *
-     * @param request     request HTTP
-     * @param response    response HTTP
-     * @param filterChain chuỗi filter tiếp theo
-     * @throws ServletException nếu có lỗi Servlet
-     * @throws IOException      nếu có lỗi IO
+     * @param request     HTTP request
+     * @param response    HTTP response
+     * @param filterChain the next filter in the chain
+     * @throws ServletException if a Servlet error occurs
+     * @throws IOException      if an IO error occurs
      * <p>
-     * Hành vi:
+     * Behavior:
      * <ul>
-     *     <li>Kiểm tra header "Authorization"</li>
-     *     <li>Nếu token hợp lệ, đặt authentication vào SecurityContextHolder</li>
-     *     <li>Gọi filterChain.doFilter để tiếp tục xử lý request</li>
+     *     <li>Check the "Authorization" header</li>
+     *     <li>If the token is valid, set authentication in SecurityContextHolder</li>
+     *     <li>Call filterChain.doFilter to continue processing the request</li>
      * </ul>
      * </p>
      */
