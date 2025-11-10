@@ -77,7 +77,7 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb-enhanced</artifactId>
-            <version>2.25.17</version> <!-- use latest version -->
+            <version>2.25.17</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
@@ -112,7 +112,6 @@
             <version>5.12.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- Optional but recommended for JUnit 5 + Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -122,7 +121,6 @@
     </dependencies>
     <dependencyManagement>
         <dependencies>
-            <!-- Import Spring Cloud BOM to align eureka & friends -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -135,7 +133,6 @@
 
     <build>
         <extensions>
-            <!-- Ensure OS compatibility for protoc -->
             <extension>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>os-maven-plugin</artifactId>
@@ -162,12 +159,8 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <!-- protobuf -->
                                 <exclude>track/events/**</exclude>
-                                <!-- spring configs -->
                                 <exclude>com/pm/uploadservice/config/**</exclude>
-                                <!-- optional DTOs -->
-                                <!-- <exclude>com/pm/uploadservice/dto/**</exclude> -->
                             </excludes>
                         </configuration>
                     </execution>
