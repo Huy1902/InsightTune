@@ -3821,3 +3821,29 @@ KeyError: 'Input to ChatPromptTemplate is missing variables {\'"type"\'}.  Expec
 2025-11-01 21:53:02,605 | INFO     | LLM response: {"type": "playMusic", "song_name": "Lâu Không Cười"}
 2025-11-01 22:21:35,409 | INFO     | New user input for thread 'python': Tôi muốn phát bài Lâu không cười 
 2025-11-01 22:21:37,503 | INFO     | LLM response: [{'type': 'text', 'text': '{"type": "playMusic", "song_name": "Lâu không cười"}', 'extras': {'signature': 'CoICAdHtim9RPGpg73tUW5HgURndG4YZhHAZ84QR4TrHaL+xB6NFR+Tmb+1/04Ci0DUlRr7Ffx4Tx+CinNWHTEeRAev27C+Z65TFK3QXaXsUDOFQlDK5SsvcyjotNrvuOsvI6NjCdh/B/uEJG9Bx8g2qG0HsKIAI6vw283sFaZWzE4QhslPrqNruVcW8JX2vDyGQBf10X64lw9gMOzhcY76hY9S9mctBLolavimiIXgkXIiLKu/sstIISZBCYxzv5kPM1i7y1uraoFUdomJb1B6vr/gJuQQPtYQP1IhoaQq+4lQzBBvMyQEbzSl6yD88/1sXSBPklekQpi/+ez6CTUdrfnEk'}}]
+2025-11-03 00:29:21,749 | ERROR    | Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+
+2025-11-03 02:54:13,356 | INFO     | HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-tiny/revision/main "HTTP/1.1 200 OK"
+2025-11-03 02:54:13,611 | INFO     | HTTP Request: HEAD https://huggingface.co/Systran/faster-whisper-tiny/resolve/d90ca5fe260221311c53c58e660288d3deb8d356/config.json "HTTP/1.1 307 Temporary Redirect"
+2025-11-03 02:54:13,620 | INFO     | HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/Systran/faster-whisper-tiny/d90ca5fe260221311c53c58e660288d3deb8d356/config.json "HTTP/1.1 200 OK"
+2025-11-03 02:54:13,640 | INFO     | HTTP Request: GET https://huggingface.co/api/resolve-cache/models/Systran/faster-whisper-tiny/d90ca5fe260221311c53c58e660288d3deb8d356/config.json "HTTP/1.1 200 OK"
+2025-11-03 02:54:13,664 | INFO     | HTTP Request: HEAD https://huggingface.co/Systran/faster-whisper-tiny/resolve/d90ca5fe260221311c53c58e660288d3deb8d356/vocabulary.txt "HTTP/1.1 307 Temporary Redirect"
+2025-11-03 02:54:13,673 | INFO     | HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/Systran/faster-whisper-tiny/d90ca5fe260221311c53c58e660288d3deb8d356/vocabulary.txt "HTTP/1.1 200 OK"
+2025-11-03 02:54:13,678 | INFO     | HTTP Request: HEAD https://huggingface.co/Systran/faster-whisper-tiny/resolve/d90ca5fe260221311c53c58e660288d3deb8d356/tokenizer.json "HTTP/1.1 307 Temporary Redirect"
+2025-11-03 02:54:13,678 | INFO     | HTTP Request: HEAD https://huggingface.co/Systran/faster-whisper-tiny/resolve/d90ca5fe260221311c53c58e660288d3deb8d356/model.bin "HTTP/1.1 302 Found"
+2025-11-03 02:54:13,692 | INFO     | HTTP Request: GET https://huggingface.co/api/resolve-cache/models/Systran/faster-whisper-tiny/d90ca5fe260221311c53c58e660288d3deb8d356/vocabulary.txt "HTTP/1.1 200 OK"
+2025-11-03 02:54:13,698 | INFO     | HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/Systran/faster-whisper-tiny/d90ca5fe260221311c53c58e660288d3deb8d356/tokenizer.json "HTTP/1.1 200 OK"
+2025-11-03 02:54:13,716 | INFO     | HTTP Request: GET https://huggingface.co/api/resolve-cache/models/Systran/faster-whisper-tiny/d90ca5fe260221311c53c58e660288d3deb8d356/tokenizer.json "HTTP/1.1 200 OK"
+2025-11-03 02:54:13,939 | INFO     | HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-tiny/xet-read-token/d90ca5fe260221311c53c58e660288d3deb8d356 "HTTP/1.1 200 OK"
+2025-11-03 03:00:50,977 | INFO     | HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-tiny/revision/main "HTTP/1.1 200 OK"
+2025-11-03 03:08:39,558 | INFO     | HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-tiny/revision/main "HTTP/1.1 200 OK"
+2025-11-03 03:15:30,757 | INFO     | HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-tiny/revision/main "HTTP/1.1 200 OK"
+2025-11-03 03:27:22,842 | INFO     | HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-tiny/revision/main "HTTP/1.1 200 OK"
+2025-11-03 03:29:45,104 | INFO     | HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-tiny/revision/main "HTTP/1.1 200 OK"
+2025-11-03 03:30:04,802 | INFO     | Processing audio with duration 00:01.950
+2025-11-03 03:30:05,413 | INFO     | Detected language 'en' with probability 0.24
+2025-11-03 03:35:12,937 | INFO     | HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-tiny/revision/main "HTTP/1.1 200 OK"
+2025-11-03 03:36:33,768 | INFO     | HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-tiny/revision/main "HTTP/1.1 200 OK"

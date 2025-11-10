@@ -9,11 +9,10 @@ duckduckgo-search
 beautifulsoup4
 pydantic
 langchain-ollama
-beautifulsoup4
-requests
 pyparsing
 typing-extensions
-duckduckgo-search
 langchain-core
 python-dotenv
 ddgs
+python-multipart
+faster-whisper
