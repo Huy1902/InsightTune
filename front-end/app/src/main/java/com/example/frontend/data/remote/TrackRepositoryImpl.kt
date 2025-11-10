@@ -14,7 +14,7 @@ class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {
     override suspend fun getTracks(): List<GetTracksResponse> {
         return try {
             Log.d(TAG, "Call API getTracks()...")
-            val response = trackApi.getTracks()
+            val response = trackApi.getRecommendTracks()
             Log.d(TAG, "API response: ${response.size} songs")
 
             if (response.isNotEmpty()) {
@@ -64,6 +64,25 @@ class TrackRepositoryImpl(private val trackApi: TrackApi) : TrackRepository {
         } catch (e: Exception) {
             Log.e(TAG, "Error when calling API: ${e.message}", e)
             GetTracksResponse("", "", emptyList(), "", "", 0L, "")
+        }
+    }
+
+    override suspend fun getRecommendTracks(): List<GetTracksResponse> {
+        return try {
+            Log.d(TAG, "Call API getTracks()...")
+            val response = trackApi.getTracks()
+            Log.d(TAG, "API response: ${response.size} songs")
+
+            if (response.isNotEmpty()) {
+                val first = response.first()
+                Log.d(TAG, "First song: title=${first.title}, cover=${first.coverImageKey}, storageKey=${first.storageKey}}")
+            } else {
+                Log.w(TAG, "Empty response from API")
+            }
+            response
+        } catch (e: Exception) {
+            Log.e(TAG, "Error when calling API: ${e.message}", e)
+            emptyList()
         }
     }
 }

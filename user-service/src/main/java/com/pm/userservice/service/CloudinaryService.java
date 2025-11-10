@@ -11,9 +11,9 @@ import java.util.Map;
 
 
 /**
- * Service xử lý upload file lên Cloudinary.
+ * Service for handling file uploads to Cloudinary.
  * <p>
- * Cung cấp phương thức upload file và trả về URL công khai của file.
+ * Provides methods to upload files and return their public URLs.
  * </p>
  */
 @Service
@@ -25,15 +25,15 @@ public class CloudinaryService {
     }
 
     /**
-     * Upload file lên Cloudinary.
+     * Upload a file to Cloudinary.
      *
-     * @param file file cần upload (MultipartFile)
-     * @return URL công khai (secure URL) của file vừa upload
-     * @throws IOException nếu có lỗi khi đọc file hoặc upload
+     * @param file the file to be uploaded (MultipartFile)
+     * @return the public URL (secure URL) of the uploaded file
+     * @throws IOException if an error occurs while reading the file or uploading
      */
     public String uploadFile(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
                 ObjectUtils.asMap("resource_type", "auto"));
-        return uploadResult.get("secure_url").toString(); // URL công khai của file
+        return uploadResult.get("secure_url").toString(); // public URL
     }
 }

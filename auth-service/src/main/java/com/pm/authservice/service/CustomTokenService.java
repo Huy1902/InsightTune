@@ -26,14 +26,14 @@ import java.util.StringJoiner;
 import java.util.UUID;
 
 /**
- * Service xử lý các nghiệp vụ liên quan đến JWT và refresh token.
+ * Service handling JWT and refresh token operations.
  * <p>
- * Bao gồm các chức năng:
+ * Includes the following functionalities:
  * <ul>
  *     <li>Generate access token</li>
  *     <li>Generate refresh token</li>
- *     <li>Refresh access token từ refresh token</li>
- *     <li>Verify token và lấy email từ token</li>
+ *     <li>Refresh access token using a refresh token</li>
+ *     <li>Verify token and extract email from token</li>
  * </ul>
  * </p>
  */
@@ -56,10 +56,10 @@ public class CustomTokenService {
 
 
     /**
-     * Xây dựng scope cho user dựa trên role.
+     * Build scope for a user based on their role.
      *
-     * @param user user cần tạo scope
-     * @return scope dạng chuỗi, phân tách bởi khoảng trắng
+     * @param user the user for whom to create the scope
+     * @return a space-separated scope string
      */
     private String buildScope(User user) {
         StringJoiner scope = new StringJoiner(" ");
@@ -72,10 +72,10 @@ public class CustomTokenService {
 
 
     /**
-     * Tạo access token cho user.
+     * Generate an access token for a user.
      *
-     * @param user user cần tạo token
-     * @return access token dạng JWT
+     * @param user the user for whom to create the token
+     * @return a JWT access token
      */
     public String generateAccessToken(User user) {
 
@@ -108,10 +108,10 @@ public class CustomTokenService {
     }
 
     /**
-     * Tạo refresh token cho user và lưu vào database.
+     * Generate a refresh token for a user and save it in the database.
      *
-     * @param user user cần tạo refresh token
-     * @return refresh token dạng chuỗi
+     * @param user the user for whom to create the refresh token
+     * @return the refresh token as a string
      */
     public String generateRefreshToken(User user) {
         RefreshToken token = new RefreshToken();
@@ -123,11 +123,11 @@ public class CustomTokenService {
     }
 
     /**
-     * Tạo access token mới từ refresh token.
+     * Generate a new access token from a refresh token.
      *
-     * @param refreshTokenValue refresh token hiện tại
-     * @return AuthenticationResponse chứa access token mới và thông tin user
-     * @throws AppException nếu refresh token không hợp lệ hoặc đã hết hạn
+     * @param refreshTokenValue the current refresh token
+     * @return AuthenticationResponse containing the new access token and user information
+     * @throws AppException if the refresh token is invalid or expired
      */
     @PostAuthorize("returnObject.email == authentication.name")
     public AuthenticationResponse refreshAccessToken(String refreshTokenValue) {
@@ -153,12 +153,12 @@ public class CustomTokenService {
     }
 
     /**
-     * Xác thực token JWT.
+     * Verify a JWT access token.
      *
-     * @param token access token cần verify
-     * @return true nếu token hợp lệ và chưa hết hạn, false nếu không hợp lệ
-     * @throws JOSEException  nếu có lỗi khi verify
-     * @throws ParseException nếu token không hợp lệ
+     * @param token the access token to verify
+     * @return true if the token is valid and not expired, false otherwise
+     * @throws JOSEException  if an error occurs during verification
+     * @throws ParseException if the token is invalid
      */
     public boolean verifyToken(String token) throws JOSEException, ParseException {
 
@@ -174,13 +174,13 @@ public class CustomTokenService {
     }
 
     /**
-     * Lấy email (subject) từ access token JWT.
+     * Retrieve the email (subject) from a JWT access token.
      *
-     * @param token access token hợp lệ
-     * @return email của user
-     * @throws ParseException  nếu token không hợp lệ
-     * @throws JOSEException   nếu token không hợp lệ
-     * @throws RuntimeException nếu token không hợp lệ hoặc đã hết hạn
+     * @param token a valid access token
+     * @return the user's email
+     * @throws ParseException  if the token is invalid
+     * @throws JOSEException   if the token is invalid
+     * @throws RuntimeException if the token is invalid or has expired
      */
     public String getEmailFromToken(String token) throws ParseException, JOSEException {
         if (!verifyToken(token)) {
@@ -189,7 +189,7 @@ public class CustomTokenService {
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 
-        // Lấy claim 'sub' (email)
+        // get claim 'sub' (email)
         return signedJWT.getJWTClaimsSet().getSubject();
     }
 

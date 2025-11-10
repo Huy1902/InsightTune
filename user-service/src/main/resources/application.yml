@@ -21,7 +21,7 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
 
 server:
-  port: 8081   # port riêng cho auth-service
+  port: 4005
 
 springdoc:
   api-docs:
@@ -41,4 +41,4 @@ avatar:
 cloudinary:
   cloud_name: "dazbecyqb"
   api_key: "383163451866538"
-  api_secret: ${API_SECRET}
+  api_secret: oqNdUOXQntjrznbK2X7SUYIZxZw

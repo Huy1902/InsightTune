@@ -45,7 +45,7 @@ public class TrackService {
     }
 
     List<Track> relatedTracks = trackRepository.findByArtistsIn(matchedArtist);
-    // gộp và loại trùng
+    // merge
     return Stream.concat(matchedTracks.stream(), relatedTracks.stream())
             .distinct()
             .map(TrackMapper::toTrackResponseDto)
@@ -77,7 +77,6 @@ public class TrackService {
     if (nextTracks.size() < 5) {
       List<Track> artistTracks = trackRepository.findAllByArtistsOrdered(artists);
 
-      // tìm vị trí bài hiện tại trong danh sách nghệ sĩ
       int currentArtistIndex = IntStream.range(0, artistTracks.size())
               .filter(i -> artistTracks.get(i).getId().equals(currentTrackId))
               .findFirst()

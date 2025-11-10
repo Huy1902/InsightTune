@@ -46,15 +46,15 @@ public class UserService {
     }
 
     /**
-     * Cập nhật thông tin profile user.
+     * Update the user profile.
      * <p>
-     * Endpoint này được bảo vệ bởi PostAuthorize, chỉ cho phép cập nhật user trùng với token.
+     * This endpoint is protected by PostAuthorize, only allowing updates for the user matching the token.
      * </p>
      *
-     * @param email email của user (lấy từ token)
-     * @param request request chứa thông tin cập nhật
-     * @return UserResponse chứa thông tin user sau khi update
-     * @throws JsonProcessingException nếu có lỗi khi parse JSON từ response
+     * @param email   the user's email (retrieved from token)
+     * @param request the request containing updated user information
+     * @return UserResponse containing the updated user information
+     * @throws JsonProcessingException if an error occurs while parsing JSON from the response
      */
     @PostAuthorize("returnObject.email == authentication.name")
     public UserResponse updateUserProfile(String email, UserUpdateRequest request) throws JsonProcessingException {
@@ -79,7 +79,7 @@ public class UserService {
                 String responseBody = ex.getResponseBodyAsString();
                 ObjectMapper mapper = new ObjectMapper();
                 String message = mapper.readTree(responseBody).path("message").asText();
-                throw new RuntimeException(message); // ném message gốc
+                throw new RuntimeException(message);
             }
         }
 
@@ -87,10 +87,10 @@ public class UserService {
     }
 
     /**
-     * Tìm user theo email.
+     * Find a user by email.
      *
-     * @param email email của user
-     * @return UserResponse chứa thông tin user
+     * @param email the user's email
+     * @return UserResponse containing user information
      */
     public UserResponse findByEmail(String email) {
         return userMapper.UserToUserResponse(userRepository.findByEmail(email)
@@ -98,11 +98,11 @@ public class UserService {
     }
 
     /**
-     * Thay đổi avatar của user.
+     * Change the user's avatar.
      *
-     * @param email email của user
-     * @param avatar file ảnh upload
-     * @return URL công khai của avatar mới
+     * @param email  the user's email
+     * @param avatar the uploaded avatar file
+     * @return the public URL of the new avatar
      */
     public String changeAvatar(String email, MultipartFile avatar) {
         try {

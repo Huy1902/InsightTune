@@ -10,7 +10,6 @@ import com.pm.authservice.models.Role;
 import com.pm.authservice.repository.OneTimePasswordRepository;
 import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.repository.UserRepository;
-import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,13 +32,13 @@ public class UserService {
     }
 
     /**
-     * Cập nhật role của user theo email.
+     * Update the role of a user by email.
      * <p>
-     * Không cho phép chuyển role về "USER".
+     * Changing the role to "USER" is not allowed.
      * </p>
      *
-     * @param updateRoleRequest chứa email và role mới
-     * @throws AppException nếu role không tồn tại hoặc không thể thay đổi
+     * @param updateRoleRequest contains email and new role
+     * @throws AppException if the role does not exist or cannot be changed
      */
     public void updateRole(UpdateRoleRequest updateRoleRequest) {
         String email = updateRoleRequest.getEmail();
@@ -56,14 +55,14 @@ public class UserService {
     }
 
     /**
-     * Thay đổi mật khẩu user.
+     * Change a user's password.
      * <p>
-     * Xác thực mật khẩu cũ trước khi thay đổi. Mật khẩu mới sẽ được mã hóa trước khi lưu vào database.
+     * Validates the old password before updating. The new password will be hashed before saving to the database.
      * </p>
      *
-     * @param changePasswordRequest chứa mật khẩu cũ và mật khẩu mới
-     * @param email email của user cần thay đổi mật khẩu
-     * @throws AppException nếu mật khẩu cũ không đúng
+     * @param changePasswordRequest contains old and new passwords
+     * @param email email of the user whose password will be changed
+     * @throws AppException if the old password is incorrect
      */
     public void changePassword(ChangePasswordRequest changePasswordRequest, String email) {
         String oldPassword = changePasswordRequest.getOldPassword();
@@ -82,6 +81,12 @@ public class UserService {
         userRepository.changePasswordByEmail(email, hashPassword);
     }
 
+    /**
+     * Reset a user's password using OTP verification.
+     *
+     * @param forgotPasswordRequest contains email, OTP, new password, and confirm password
+     * @throws AppException if passwords do not match or OTP is invalid/expired
+     */
     public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
         String email = forgotPasswordRequest.getEmail();
         String newPassword = forgotPasswordRequest.getNewPassword();

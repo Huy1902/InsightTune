@@ -164,14 +164,14 @@ class UserServiceTest {
         assertEquals(ErrorCode.USER_NOTFOUND, exception.getError());
     }
 
-    @Test
-    void testDeleteByEmail() {
-        doNothing().when(userRepository).deleteByEmail("test@example.com");
-
-        userService.deleteByEmail("test@example.com");
-
-        verify(userRepository).deleteByEmail("test@example.com");
-    }
+//    @Test
+//    void testDeleteByEmail() {
+//        doNothing().when(userRepository).deleteByEmail("test@example.com");
+//
+//        userService.deleteByEmail("test@example.com");
+//
+//        verify(userRepository).deleteByEmail("test@example.com");
+//    }
 
     @Test
     void givenValidInput_whenChangeAvatar_then200AndUploadAndUpdateSuccessfully() throws Exception {

@@ -10,14 +10,13 @@ spring:
       path: /h2-console
       settings:
         web-allow-others: true
-
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
+            client-id: 707539669485-hvb782jf95k54qogpjmcalbjiiec9nrd.apps.googleusercontent.com
+#            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: email, profile
         provider:
           google:
@@ -29,8 +28,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${EMAIL}
-    password: ${EMAIL_PASSWORD}
+    username: tqdinhtt@gmail.com
+    password: xplg rcic ooaa eatb
     properties:
       mail:
         smtp:
@@ -52,10 +51,10 @@ spring:
       mode: always
 
 server:
-  port: 8080 # port riêng cho auth-service
+  port: 4006
 
 jwt:
-  signerKey : ${SIGNER_KEY}
+  signerKey : Q+W+8at86K9vMPRa3ZZEHWOL6wiQzDmNS0X9Wu8omL2h5qgfIIb0oEchMm+v49MP
 
 user-service:
-  create-path: http://user-service/users/create
+  create-path: http://user-service.spotube.local:4005/users/create

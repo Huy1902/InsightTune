@@ -14,10 +14,9 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface TrackRepository extends JpaRepository<Track, UUID> {
-  // Tìm theo tiêu đề (title)
   List<Track> findByTitleContainingIgnoreCase(String title);
 
-  // Tìm bài có ít nhất 1 artist thuộc danh sách truyền vào
+  // find list of tracks belonging to at least 1 artist in input
   @Query("SELECT DISTINCT t FROM Track t JOIN t.artists a WHERE a IN :artists")
   List<Track> findByArtistsIn(@Param("artists") List<Artist> artists);
 
@@ -31,7 +30,7 @@ public interface TrackRepository extends JpaRepository<Track, UUID> {
 """)
   List<Track> findAllByAlbumOrdered(@Param("albumId") UUID albumId);
 
-  // Lấy tất cả bài có cùng nghệ sĩ (trong set artist)
+  // get all tracks having the same artist
   @Query("""
     SELECT DISTINCT t
     FROM Track t
@@ -43,7 +42,7 @@ public interface TrackRepository extends JpaRepository<Track, UUID> {
 
   @Query("""
     SELECT t FROM Track t
-    ORDER BY FUNCTION('RAND')
+    ORDER BY FUNCTION('RANDOM')
     """)
   List<Track> findRandomTracks(Pageable pageable);
 
