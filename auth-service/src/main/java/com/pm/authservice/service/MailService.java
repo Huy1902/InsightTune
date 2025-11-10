@@ -16,22 +16,22 @@ import java.nio.charset.StandardCharsets;
 
 
 /**
- * {@code MailService} là lớp chịu trách nhiệm gửi email trong hệ thống.
+ * {@code MailService} is responsible for sending emails in the system.
  * <p>
- * Lớp này sử dụng {@link JavaMailSender} của Spring Boot để tạo và gửi email dạng HTML.
- * Nó được sử dụng chủ yếu để gửi mã OTP (One-Time Password) xác thực đến người dùng.
+ * This class uses Spring Boot's {@link JavaMailSender} to create and send HTML emails.
+ * It is primarily used to send OTP (One-Time Password) verification codes to users.
  *
- * <p><strong>Chức năng chính:</strong></p>
+ * <p><strong>Main functionalities:</strong></p>
  * <ul>
- *     <li>Đọc file HTML template từ thư mục <code>resources/templates</code>.</li>
- *     <li>Thay thế placeholder <code>[[OTP_CODE]]</code> trong template bằng mã OTP thực tế.</li>
- *     <li>Gửi email đến người dùng với nội dung HTML đã được xử lý.</li>
+ *     <li>Read HTML template files from the <code>resources/templates</code> folder.</li>
+ *     <li>Replace the placeholder <code>[[OTP_CODE]]</code> in the template with the actual OTP code.</li>
+ *     <li>Send emails to users with the processed HTML content.</li>
  * </ul>
  *
- * <p>Lưu ý: Template phải được đặt trong classpath tại
+ * <p>Note: The template must be placed in the classpath at
  * <code>src/main/resources/templates/otp-email.html</code>.</p>
  *
- * @author Trần Quang Đỉnh
+ * @author Dinh
  * @version 1.0
  * @see JavaMailSender
  * @see com.pm.authservice.exception.AppException
@@ -47,21 +47,21 @@ public class MailService {
 
 
     /**
-     * Gửi email chứa mã OTP đến người dùng.
+     * Sends an email containing the OTP to the user.
      *
-     * <p>Phương thức này thực hiện các bước sau:</p>
+     * <p>This method performs the following steps:</p>
      * <ol>
-     *     <li>Đọc nội dung file HTML template từ thư mục <code>resources/templates</code>.</li>
-     *     <li>Thay thế placeholder <code>[[OTP_CODE]]</code> bằng mã OTP thực tế.</li>
-     *     <li>Tạo đối tượng {@link MimeMessage} và cấu hình tiêu đề, người nhận, và nội dung HTML.</li>
-     *     <li>Gửi email qua {@link JavaMailSender}.</li>
+     *     <li>Read the HTML template file from <code>resources/templates</code>.</li>
+     *     <li>Replace the <code>[[OTP_CODE]]</code> placeholder with the actual OTP code.</li>
+     *     <li>Create a {@link MimeMessage} and configure the subject, recipient, and HTML content.</li>
+     *     <li>Send the email via {@link JavaMailSender}.</li>
      * </ol>
      *
-     * @param email địa chỉ email của người nhận.
-     * @param otp   mã OTP cần gửi đến người dùng.
-     * @throws MessagingException nếu xảy ra lỗi khi tạo hoặc gửi email.
-     * @throws IOException nếu không thể đọc file template hoặc gặp lỗi I/O khác.
-     * @throws com.pm.authservice.exception.AppException nếu không tìm thấy file template email trong classpath.
+     * @param email the recipient's email address
+     * @param otp   the OTP code to send to the user
+     * @throws MessagingException if an error occurs while creating or sending the email
+     * @throws IOException if the template file cannot be read or other I/O errors occur
+     * @throws com.pm.authservice.exception.AppException if the email template file is not found in the classpath
      */
     public void sendMail(String email, String otp) throws MessagingException, IOException {
 

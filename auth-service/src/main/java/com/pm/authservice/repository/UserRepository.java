@@ -17,10 +17,10 @@ public interface UserRepository extends JpaRepository<User,Long> {
     boolean existsByEmail(String email);
 
     /**
-     * Cập nhật role của user dựa trên email.
+     * Update the role of a user based on their email.
      *
-     * @param email email của người dùng
-     * @param role  role mới cần cập nhật
+     * @param email the user's email
+     * @param role  the new role to be updated
      */
     @Modifying
     @Transactional
@@ -28,20 +28,20 @@ public interface UserRepository extends JpaRepository<User,Long> {
     void changeRoleByEmail(@Param("email") String email, @Param("role") Role role);
 
     /**
-     * Lấy mật khẩu của user theo email.
+     * Retrieve the password of a user by email.
      *
-     * @param email email của người dùng
-     * @return mật khẩu của user dưới dạng String
+     * @param email the user's email
+     * @return the user's password as a String
      */
     @Query("SELECT u.password FROM User u WHERE u.email = :email")
     String getPasswordByEmail(String email);
 
 
     /**
-     * Cập nhật mật khẩu của user dựa trên email.
+     * Update the password of a user based on their email.
      *
-     * @param email       email của người dùng
-     * @param newPassword mật khẩu mới cần cập nhật
+     * @param email       the user's email
+     * @param newPassword the new password to be updated
      */
     @Modifying
     @Transactional

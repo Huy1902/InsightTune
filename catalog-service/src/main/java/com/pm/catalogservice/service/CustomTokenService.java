@@ -17,12 +17,12 @@ public class CustomTokenService {
     String SIGNER_KEY;
 
     /**
-     * Xác thực token JWT.
+     * Verify a JWT access token.
      *
-     * @param token access token cần verify
-     * @return true nếu token hợp lệ và chưa hết hạn, false nếu không hợp lệ
-     * @throws JOSEException  nếu có lỗi khi verify
-     * @throws ParseException nếu token không hợp lệ
+     * @param token the JWT access token to verify
+     * @return true if the token is valid and not expired, false otherwise
+     * @throws JOSEException  if there is an error during token verification
+     * @throws ParseException if the token cannot be parsed
      */
     public boolean verifyToken(String token) throws JOSEException, ParseException {
 
@@ -38,13 +38,13 @@ public class CustomTokenService {
     }
 
     /**
-     * Lấy email (subject) từ access token JWT.
+     * Extract the email (subject) from a valid JWT access token.
      *
-     * @param token access token hợp lệ
-     * @return email của user
-     * @throws ParseException  nếu token không hợp lệ
-     * @throws JOSEException   nếu token không hợp lệ
-     * @throws RuntimeException nếu token không hợp lệ hoặc đã hết hạn
+     * @param token a valid JWT access token
+     * @return the email of the user
+     * @throws ParseException  if the token cannot be parsed
+     * @throws JOSEException   if the token cannot be verified
+     * @throws RuntimeException if the token is invalid or expired
      */
     public String getEmailFromToken(String token) throws ParseException, JOSEException {
         if (!verifyToken(token)) {
@@ -52,8 +52,6 @@ public class CustomTokenService {
         }
 
         SignedJWT signedJWT = SignedJWT.parse(token);
-
-        // Lấy claim 'sub' (email)
         return signedJWT.getJWTClaimsSet().getSubject();
     }
 }
