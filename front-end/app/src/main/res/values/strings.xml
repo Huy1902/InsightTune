@@ -84,5 +84,7 @@
     <string name="chat_bot_hello">Hello! How can I help you?</string>
     <string name="update_profile_successfully">Update profile successfully!</string>
     <string name="made_for_you">Made for you</string>
+    <string name="update_profile_details">You must fill all the information below.</string>
+    <string name="change_password_successfully">Password changed successfully!</string>
 
 </resources>

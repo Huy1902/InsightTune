@@ -362,7 +362,7 @@ fun HomeScreenContent(
             } else {
                 item {
                     Text(
-                        "Made for you",
+                        stringResource(R.string.made_for_you),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold,
                         style = AppTheme.typography.bodyLarge,

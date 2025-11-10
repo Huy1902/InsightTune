@@ -85,5 +85,7 @@
     <string name="chat_bot_hello">Xin chào! Tôi có thể giúp gì cho bạn?</string>
     <string name="update_profile_successfully">Cập nhật thông tin thành công!</string>
     <string name="made_for_you">Dành cho bạn</string>
+    <string name="update_profile_details">Bạn cần điền tẩt cả thông tin sau.</string>
+    <string name="change_password_successfully">Mật khẩu được thay đổi thành công!</string>
 
 </resources>

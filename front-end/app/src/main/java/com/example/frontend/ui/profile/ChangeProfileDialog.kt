@@ -51,11 +51,20 @@ fun ChangeProfileDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(
-                stringResource(R.string.edit_profile),
-                fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.titleLarge
-            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    stringResource(R.string.edit_profile),
+                    fontWeight = FontWeight.Bold,
+                    style = AppTheme.typography.titleLarge
+                )
+                Text(
+                    stringResource(R.string.update_profile_details),
+                    fontWeight = FontWeight.Bold,
+                    style = AppTheme.typography.labelMedium
+                )
+            }
         },
         text = {
             Column(
@@ -117,8 +126,12 @@ fun ChangeProfileDialog(
         confirmButton = {
             TextButton(onClick = {
                 onConfirm(firstName, lastName, phone, address, role)
-                if (uiState.error == null) {
-                    Toast.makeText(context, context.getString(R.string.update_profile_successfully), Toast.LENGTH_SHORT).show()
+                if (uiState.error != null) {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.update_profile_successfully),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     onDismiss()
                 }
             }) {
