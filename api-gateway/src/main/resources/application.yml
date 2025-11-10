@@ -5,7 +5,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eureka-service:8761/eureka/
 spring:
   application:
     name: api-gateway
@@ -23,7 +23,7 @@ spring:
             response-timeout: 5s
           routes:
                     - id: catalog-service
-                      uri: lb://catalog-service
+                      uri: http://catalog-service.spotube.local:4000
                       predicates:
                         - Path=/tracks/**
                       filters:
@@ -39,7 +39,7 @@ spring:
                             fallbackUri: forward:/__fallback/tracks
 
                     - id: playing-service
-                      uri: lb://playing-service
+                      uri: http://playing-service.spotube.local:4001
                       predicates:
                         - Path=/play/**
                       filters:
@@ -49,108 +49,114 @@ spring:
                             name: playCB
                             fallbackUri: forward:/__fallback/play
 
-                    - id: upload-service
-                      uri: lb://upload-service
-                      predicates:
-                        - Path=/upload/**
-                      filters:
-                        - StripPrefix=0
-                        - name: RequestSize
-                          args:
-                            maxSize: 50MB
-                        - name: CircuitBreaker
-                          args:
-                            name: uploadCB
-                            fallbackUri: forward:/__fallback/upload
+#                    - id: upload-service
+#                      uri: lb://upload-service
+#                      predicates:
+#                        - Path=/upload/**
+#                      filters:
+#                        - StripPrefix=0
+#                        - name: RequestSize
+#                          args:
+#                            maxSize: 50MB
+#                        - name: CircuitBreaker
+#                          args:
+#                            name: uploadCB
+#                            fallbackUri: forward:/__fallback/upload
 
                     - id: user-service
-                      uri: lb://user-service
+                      uri: http://user-service.spotube.local:4005
                       predicates:
                         - Path=/users/**
                       filters:
                         - StripPrefix=0
 
                     - id: auth-service-user
-                      uri: lb://auth-service
+                      uri: http://auth-service.spotube.local:4006
                       predicates:
                         - Path=/user/**
                       filters:
                         - StripPrefix=0
 
                     - id: auth-service-auth
-                      uri: lb://auth-service
+                      uri: http://auth-service.spotube.local:4006
                       predicates:
                         - Path=/auth/**
                       filters:
                         - StripPrefix=0
 
                     - id: auth-service-google
-                      uri: lb://auth-service
+                      uri: http://auth-service.spotube.local:4006
                       predicates:
                         - Path=/api/auth/**
                       filters:
                         - StripPrefix=0
 
                     - id: history-service
-                      uri: lb://history-service
+                      uri: http://history-service.spotube.local:4003
                       predicates:
                         - Path=/history/**
                       filters:
                         - StripPrefix=0
 
                     - id: favorite-service
-                      uri: lb://favorite-service
+                      uri: http://favorite-service.spotube.local:4004
                       predicates:
                         - Path=/favorites/**
                       filters:
                         - StripPrefix=0
 
                     - id: recommend-service
-                      uri: lb://recommend-service
+                      uri: http://recommend-service.spotube.local:4008
                       predicates:
                         - Path=/recommend
                       filters:
                         - StripPrefix=0
 
                     - id: docs-catalog
-                      uri: lb://catalog-service
+                      uri: http://catalog-service.spotube.local:4000
                       predicates: [ Path=/_docs/catalog ]
                       filters:
                         - SetPath=/v3/api-docs
 
                     - id: docs-play
-                      uri: lb://playing-service
+                      uri: http://playing-service.spotube.local:4001
                       predicates: [ Path=/_docs/play ]
                       filters:
                         - SetPath=/v3/api-docs
 
-                    - id: docs-upload
-                      uri: lb://upload-service
-                      predicates: [ Path=/_docs/upload ]
-                      filters:
-                        - SetPath=/v3/api-docs
+#                    - id: docs-upload
+#                      uri: lb://upload-service
+#                      predicates: [ Path=/_docs/upload ]
+#                      filters:
+#                        - SetPath=/v3/api-docs
 
                     - id: docs-user
-                      uri: lb://user-service
+                      uri: http://user-service.spotube.local:4005
                       predicates: [ Path=/_docs/user ]
                       filters:
                         - SetPath=/v3/api-docs
 
                     - id: docs-auth
-                      uri: lb://auth-service
+                      uri: http://auth-service.spotube.local:4006
                       predicates: [ Path=/_docs/auth ]
                       filters:
                         - SetPath=/v3/api-docs
 
                     - id: docs-history
-                      uri: lb://history-service
+                      uri: http://history-service.spotube.local:4003
                       predicates: [ Path=/_docs/history ]
                       filters:
                         - SetPath=/v3/api-docs
 
                     - id: docs-favorite
-                      uri: lb://favorite-service
+                      uri: http://favorite-service.spotube.local:4004
                       predicates: [ Path=/_docs/favorite ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-recommend
+                      uri: http://recommend-service.spotube.local:4008
+                      predicates: [ Path=/_docs/recommend ]
                       filters:
                         - SetPath=/v3/api-docs
           default-filters:
@@ -163,18 +169,6 @@ spring:
                           allowedMethods: "*"
                           allowedHeaders: "*"
                           allowCredentials: false
-
-#    # -------- Static discovery (no Eureka): maps logical names -> URLs -------
-#    discovery:
-#      client:
-#        simple:
-#          instances:
-#            track-service:
-#              - uri: http://localhost:4000
-#            playing-service:
-#              - uri: http://localhost:4001
-#            upload-service:
-#              - uri: http://localhost:4002
 
 springdoc:
   swagger-ui:
@@ -194,3 +188,5 @@ springdoc:
         url: /_docs/history
       - name: Favorite Service
         url: /_docs/favorite
+      - name: Recommend Service
+        url: /_docs/recommend

@@ -19,17 +19,16 @@
         <module>api-gateway</module>
         <module>history-service</module>
         <module>recommend-service</module>
+        <module>infrastructure</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <!-- If you ever want to skip site globally, flip this to true via CLI: -Dmaven.site.skip=true -->
         <maven.site.skip>false</maven.site.skip>
     </properties>
 
     <build>
-        <!-- Put the Site plugin in build/plugins so the version is inherited by all modules -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -38,7 +37,6 @@
             </plugin>
         </plugins>
 
-        <!-- Centralize plugin versions -->
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -55,10 +53,8 @@
         </pluginManagement>
     </build>
 
-    <!-- Only the parent defines reports (children typically don't need their own site) -->
     <reporting>
         <plugins>
-            <!-- Project info reports (pin version to avoid "empty version" warning) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -76,7 +72,6 @@
                 </reportSets>
             </plugin>
 
-            <!-- Aggregated MAIN Javadoc (no test-aggregate) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -86,7 +81,6 @@
                     <doclint>none</doclint>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${maven.compiler.release}</source>
-                    <!-- silence generated code (adjust as needed) -->
                     <excludePackageNames>track.events.*</excludePackageNames>
                 </configuration>
                 <reportSets>

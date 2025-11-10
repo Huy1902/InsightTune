@@ -43,7 +43,7 @@ public interface TrackRepository extends JpaRepository<Track, UUID> {
 
   @Query("""
     SELECT t FROM Track t
-    ORDER BY FUNCTION('RAND')
+    ORDER BY FUNCTION('RANDOM')
     """)
   List<Track> findRandomTracks(Pageable pageable);
 

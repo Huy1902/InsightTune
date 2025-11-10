@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name="rec-sys", url="${rec.url:http://localhost:4007}", configuration = FeignLogConfig.class)
+@FeignClient(name="rec-sys", url="http://rec-sys.spotube.local:4007")
 public interface RecServiceClient {
   @PostMapping(value = "/recommend", consumes = "application/json")
   RecTrackResponseDto recommend(@RequestBody RecTrackRequestDto recTrackRequestDto);

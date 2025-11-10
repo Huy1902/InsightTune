@@ -54,6 +54,6 @@ public class HistoryController {
     @PermitAll
     public ResponseEntity<List<History>> searchByEmail(@RequestParam String email) {
       return ResponseEntity.ok()
-              .body(historyService.findAllByEmail(email));
+              .body(historyService.findRecentlyHistory(email));
     }
 }

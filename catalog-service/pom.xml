@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.pm</groupId>
-    <artifactId>catalogservice-service</artifactId>
+    <artifactId>catalog-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>catalogservice-service</name>
-    <description>catalogservice-service</description>
+    <name>catalog-service</name>
+    <description>catalog-service</description>
     <url/>
     <licenses>
         <license/>
