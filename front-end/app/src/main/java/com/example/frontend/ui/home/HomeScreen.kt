@@ -1,5 +1,6 @@
 package com.example.frontend.ui.home
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -168,6 +169,10 @@ fun HomeScreen(
                 )
             }
             composable(BottomNavItem.ChatBot.route) {
+                // Lấy context từ Composable
+                val context = LocalContext.current
+                // Lấy application từ context đó
+                val application = context.applicationContext as Application
                 val chatbotApi = ApiClient.chatbotApi
                 val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
                 val chatbotViewModelFactory = ChatbotViewModelFactory(chatbotApi, trackRepository)

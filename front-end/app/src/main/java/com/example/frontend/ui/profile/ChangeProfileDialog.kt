@@ -117,7 +117,7 @@ fun ChangeProfileDialog(
         confirmButton = {
             TextButton(onClick = {
                 onConfirm(firstName, lastName, phone, address, role)
-                if (uiState.error != null) {
+                if (uiState.error == null) {
                     Toast.makeText(context, context.getString(R.string.update_profile_successfully), Toast.LENGTH_SHORT).show()
                     onDismiss()
                 }

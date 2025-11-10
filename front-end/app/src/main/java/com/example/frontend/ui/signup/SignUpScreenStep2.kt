@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -136,7 +137,9 @@ fun SignUpStep2Content(
             AppTextField(
                 value = password,
                 onValueChange = onPasswordChange,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("password_field"),
                 placeholderText = "",
                 isPassword = true
             )
@@ -157,7 +160,9 @@ fun SignUpStep2Content(
             AppTextField(
                 value = confirmPassword,
                 onValueChange = onConfirmPasswordChange,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("confirm_password_field"),
                 placeholderText = "",
                 isPassword = true
             )
@@ -170,6 +175,7 @@ fun SignUpStep2Content(
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier
                 .height(56.dp)
+                .testTag("next_button_step2")
         ) {
             Text(
                 stringResource(R.string.next),
@@ -186,6 +192,7 @@ fun SignUpStep2Content(
                 fontWeight = FontWeight.Bold,
                 style = AppTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.testTag("error_message_text")
             )
         }
     }

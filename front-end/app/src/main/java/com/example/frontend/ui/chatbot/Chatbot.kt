@@ -1,6 +1,8 @@
 package com.example.frontend.ui.chatbot
 
+import android.app.Activity
 import android.content.ContentValues.TAG
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
@@ -24,12 +27,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.frontend.R
@@ -42,6 +48,23 @@ fun ChatBotScreen(
     musicPlayerViewModel: MusicPlayerViewModel,
     navController: NavController
 ) {
+
+    val context = LocalContext.current
+    val recordAudioPermission = android.Manifest.permission.RECORD_AUDIO
+    val hasPermission = ContextCompat.checkSelfPermission(
+        context,
+        recordAudioPermission
+    ) == PackageManager.PERMISSION_GRANTED
+
+    if (!hasPermission) {
+        ActivityCompat.requestPermissions(
+            context as Activity,
+            arrayOf(recordAudioPermission),
+            123
+        )
+    }
+
+
 
     val trackToPlay by viewModel.trackToPlay.collectAsState()
 
@@ -108,7 +131,8 @@ fun ChatBotScreen(
                             textInput = ""
 
                         }
-                    }
+                    },
+                    onVoiceClick = {viewModel.startVoiceInteraction() }
                 )
             }
         }
@@ -172,7 +196,8 @@ fun MessageBubble(text: String, isFromUser: Boolean) {
 fun MessageInput(
     text: String,
     onTextChange: (String) -> Unit,
-    onSendClick: () -> Unit
+    onSendClick: () -> Unit,
+    onVoiceClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -180,6 +205,15 @@ fun MessageInput(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        IconButton(onClick = onVoiceClick) {
+            Icon(
+                imageVector = Icons.Filled.Mic,
+                contentDescription = "Voice",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+
+
         Spacer(modifier = Modifier.width(8.dp))
         OutlinedTextField(
             value = text,
