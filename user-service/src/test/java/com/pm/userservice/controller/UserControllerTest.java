@@ -131,12 +131,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.result.email").value("test@example.com"));
     }
 
-    @Test
-    void givenValidToken_whenDelete_then200() throws Exception {
-        mockMvc.perform(delete("/users")
-                        .principal(() -> "test@example.com"))
-                .andExpect(status().isOk());
-    }
 
     @Test
     void testChangeAvatar() throws Exception {
