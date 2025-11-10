@@ -175,7 +175,7 @@ fun HomeScreen(
                 val application = context.applicationContext as Application
                 val chatbotApi = ApiClient.chatbotApi
                 val trackRepository = TrackRepositoryImpl(ApiClient.trackApi)
-                val chatbotViewModelFactory = ChatbotViewModelFactory(application,chatbotApi, trackRepository)
+                val chatbotViewModelFactory = ChatbotViewModelFactory(chatbotApi, trackRepository)
                 val vm: ChatbotViewModel = viewModel(factory = chatbotViewModelFactory)
                 ChatBotScreen(
                     vm,
