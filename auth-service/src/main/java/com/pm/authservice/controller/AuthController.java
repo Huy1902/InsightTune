@@ -22,12 +22,12 @@ import java.text.ParseException;
 import java.util.Map;
 
 /**
- * Controller xử lý các API liên quan đến xác thực người dùng.
+ * Controller that handles APIs related to user authentication.
  * <p>
- * Bao gồm các chức năng:
+ * Includes the following functionalities:
  * <ul>
- *     <li>Đăng ký (register)</li>
- *     <li>Đăng nhập (login)</li>
+ *     <li>User registration (register)</li>
+ *     <li>User login</li>
  *     <li>Refresh access token</li>
  *     <li>Logout</li>
  * </ul>
@@ -47,10 +47,10 @@ public class AuthController {
     }
 
     /**
-     * API đăng ký người dùng mới.
+     * API for registering a new user.
      *
-     * @param registerRequest thông tin đăng ký (email, password, firstname, lastname, ...)
-     * @return ApiResponse chứa thông tin user vừa được tạo
+     * @param registerRequest registration information (email, password, firstname, lastname, etc.)
+     * @return ApiResponse containing the information of the newly created user
      */
     @PostMapping("/register")
     @Operation(summary = "Register", description = "API register")
@@ -66,10 +66,10 @@ public class AuthController {
 
 
     /**
-     * API đăng nhập bằng email và password.
+     * API for logging in using email and password.
      *
-     * @param loginRequest thông tin login (email, password)
-     * @return ApiResponse chứa thông tin xác thực, access token và refresh token
+     * @param loginRequest login information (email, password)
+     * @return ApiResponse containing authentication details, access token, and refresh token
      */
     @PostMapping("/login")
     @Operation(summary = "Login", description = "API login bằng email, password")
@@ -83,12 +83,12 @@ public class AuthController {
     }
 
     /**
-     * API refresh access token.
+     * API to refresh the access token.
      *
-     * @param request thông tin refresh token
-     * @return ApiResponse chứa access token mới
-     * @throws ParseException nếu token không parse được
-     * @throws JOSEException  nếu token không hợp lệ
+     * @param request refresh token information
+     * @return ApiResponse containing the new access token
+     * @throws ParseException if the token cannot be parsed
+     * @throws JOSEException  if the token is invalid
      */
     @PostMapping("/refresh")
     @Operation(summary = "Refresh accessToken", description = "API refresh, need accessToken")
@@ -100,11 +100,11 @@ public class AuthController {
     }
 
     /**
-     * API logout người dùng.
+     * API for logging out a user.
      *
-     * @param logoutRequest thông tin refresh token và access token
-     * @return ApiResponse xác nhận logout
-     * @throws ParseException nếu token không parse được
+     * @param logoutRequest information including refresh token and access token
+     * @return ApiResponse confirming the logout
+     * @throws ParseException if the token cannot be parsed
      */
     @PostMapping("/logout")
     @Operation(summary = "Logout", description = "API logout bằng refreshToken ở body và accessToken header")
@@ -116,10 +116,10 @@ public class AuthController {
     }
 
     /**
-     * API gửi OTP đến email người dùng khi quên mật khẩu.
+     * API to send an OTP to the user's email when they forget their password.
      *
-     * @param email địa chỉ email của người dùng
-     * @return ApiResponse thông báo OTP đã được gửi
+     * @param email the user's email address
+     * @return ApiResponse indicating that the OTP has been sent
      */
     @PostMapping("/forgot_password")
     @Operation(summary = "Forgot password", description = "API for to get otp in email")

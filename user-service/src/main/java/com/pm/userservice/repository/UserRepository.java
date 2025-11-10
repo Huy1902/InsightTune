@@ -19,10 +19,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void deleteByEmail(String email);
 
     /**
-     * Cập nhật avatar của user theo email.
+     * Update the user's avatar by email.
      *
-     * @param email email của user cần thay đổi avatar
-     * @param avatar link hoặc tên file avatar mới
+     * @param email the email of the user whose avatar needs to be changed
+     * @param avatar the new avatar link or file name
      */
     @Modifying
     @Transactional

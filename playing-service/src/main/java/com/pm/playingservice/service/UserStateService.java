@@ -23,17 +23,17 @@ public class UserStateService {
   private final UserStateRepository userStateRepository;
 
   /**
-   * Cập nhật hoặc thêm mới trạng thái người dùng (UserState) trong hệ thống.
+   * Update or insert a user's state (UserState) in the system.
    * <p>
-   * Nếu trạng thái của người dùng đã tồn tại (dựa trên email), phương thức sẽ cập nhật
-   * thông tin bản ghi hiện có với {@code trackId} và {@code positionMs} mới.
-   * Nếu không tồn tại, hệ thống sẽ tạo bản ghi mới trong cơ sở dữ liệu.
+   * If the user's state already exists (based on email), the method will update
+   * the existing record with the new {@code trackId} and {@code positionMs}.
+   * If it does not exist, a new record will be created in the database.
    * </p>
    *
-   * @param userStateUpdateRequestDto đối tượng chứa thông tin cập nhật trạng thái người dùng,
-   *                                  bao gồm email, trackId và vị trí phát hiện tại (positionMs)
-   * @return {@link UserStateUpdateRespondDto} chứa thông điệp phản hồi khi cập nhật thành công
-   * @throws RuntimeException nếu có lỗi xảy ra trong quá trình thao tác với cơ sở dữ liệu
+   * @param userStateUpdateRequestDto object containing the user's state update information,
+   *                                  including email, trackId, and current playback position (positionMs)
+   * @return {@link UserStateUpdateRespondDto} containing a response message after successful update
+   * @throws RuntimeException if any error occurs during database operations
    *
    * @see UserState
    * @see UserStateRepository

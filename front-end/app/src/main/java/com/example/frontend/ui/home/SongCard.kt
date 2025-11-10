@@ -61,8 +61,11 @@ fun SongCard(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(coverImageUrl ?: R.drawable.spotube)
+                    .data(coverImageUrl)
                     .crossfade(true)
+                    .error(R.drawable.spotube_cropped)
+                    .fallback(R.drawable.spotube_cropped)
+                    .placeholder(R.drawable.spotube_cropped)
                     .build(),
                 placeholder = painterResource(id = R.drawable.spotube_cropped),
                 contentDescription = "Cover of $songName",
@@ -114,8 +117,11 @@ fun HorizontalSongCard(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(coverImageUrl ?: R.drawable.spotube_cropped)
+                .data(coverImageUrl)
                 .crossfade(true)
+                .error(R.drawable.spotube_cropped)
+                .fallback(R.drawable.spotube_cropped)
+                .placeholder(R.drawable.spotube_cropped)
                 .build(),
             placeholder = painterResource(id = R.drawable.spotube_cropped),
             contentDescription = "Cover of $songName",

@@ -36,11 +36,11 @@ public class FavoriteService {
     }
 
     /**
-     * Thêm bài hát yêu thích cho người dùng.
+     * Add a song to the user's favorite list.
      *
-     * @param email email của người dùng
-     * @param createFavoriteRequestDto thông tin bài hát cần thêm
-     * @return FavoriteResponseDto chứa thông tin bài hát đã thêm
+     * @param email the email of the user
+     * @param createFavoriteRequestDto information about the song to add (songId, title, album, artists, etc.)
+     * @return FavoriteResponseDto containing the information of the song that was just added to the favorite list
      */
     public FavoriteResponseDto addFavorite(String email,
                                            CreateFavoriteRequestDto createFavoriteRequestDto) {

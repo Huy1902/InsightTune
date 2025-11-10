@@ -24,12 +24,12 @@ public class PlayingController {
   private final KafkaService kafkaService;
 
   /**
-   * Nhận yêu cầu phát nhạc và trả về link nghe nhạc cùng link ảnh bìa.
+   * Receive a play request and return the music link along with the cover image link.
    *
-   * @param req thông tin bài hát cần phát
-   * @param auth thông tin xác thực người dùng
-   * @return link nhạc và ảnh bìa
-   * @throws Exception nếu xảy ra lỗi khi lấy URL
+   * @param req information about the track to play
+   * @param auth authentication information of the user
+   * @return links to the music file and cover image
+   * @throws Exception if there is an error retrieving the URLs
    */
   @PostMapping
   @Operation(summary = "Receive a play request then send back a play response contain a mp3 link and image link")
@@ -47,11 +47,11 @@ public class PlayingController {
   }
 
   /**
-   * Lấy link ảnh hoặc file từ AWS S3 dựa trên key.
+   * Get the link to an image or file from AWS S3 based on the key.
    *
-   * @param key khóa lưu trữ file trên S3
-   * @return link truy cập file tạm thời
-   * @throws Exception nếu không thể tạo URL
+   * @param key the storage key of the file on S3
+   * @return temporary access link to the file
+   * @throws Exception if unable to generate the URL
    */
   @GetMapping("/url")
   @Operation(summary = "Get an image link of a song")
@@ -61,12 +61,12 @@ public class PlayingController {
   }
 
   /**
-   * Cập nhật trạng thái phát nhạc của người dùng.
+   * Update the playback state of a user.
    *
-   * @param userStateRequestDto thông tin trạng thái phát nhạc
-   * @param auth thông tin xác thực người dùng
-   * @return trạng thái phát nhạc đã cập nhật
-   * @throws Exception nếu không thể cập nhật
+   * @param userStateRequestDto information about the user's playback state
+   * @param auth authentication information of the user
+   * @return the updated playback state
+   * @throws Exception if unable to update the state
    */
   @PostMapping("/user_state")
   @Operation(summary = "Update user state of an user")
@@ -81,11 +81,11 @@ public class PlayingController {
   }
 
   /**
-   * Lấy trạng thái phát nhạc gần nhất của người dùng.
+   * Retrieve the most recent playback state of a user.
    *
-   * @param auth thông tin xác thực người dùng
-   * @return trạng thái phát nhạc hiện tại của người dùng
-   * @throws Exception nếu không tìm thấy hoặc xảy ra lỗi khi truy vấn
+   * @param auth authentication information of the user
+   * @return current playback state of the user
+   * @throws Exception if not found or an error occurs during query
    */
   @GetMapping("/user_state")
   @Operation(summary = "Find user state by email")

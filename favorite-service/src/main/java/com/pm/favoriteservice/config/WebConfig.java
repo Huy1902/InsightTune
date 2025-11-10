@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 public class WebConfig {
 
     @Bean
-    @LoadBalanced // nếu có Eureka
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }

@@ -136,7 +136,6 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -201,6 +200,9 @@
                                 <exclude>com/pm/authservice/dto/**</exclude>
                                 <!-- spring configs -->
                                 <exclude>com/pm/authservice/config/**</exclude>
+                                <exclude>com/pm/authservice/models/**</exclude>
+                                <exclude>com/pm/authservice/entrypoint/**</exclude>
+                                <exclude>com/pm/authservice/exception/**</exclude>
                                 <!-- optional DTOs -->
                                 <!-- <exclude>com/pm/uploadservice/dto/**</exclude> -->
                             </excludes>
@@ -208,6 +210,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 

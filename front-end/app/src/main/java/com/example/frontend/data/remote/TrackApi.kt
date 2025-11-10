@@ -25,4 +25,6 @@ interface TrackApi {
     @POST("tracks/by-ids")
     suspend fun getTracksById(@Body trackIds: List<String>): List<GetTracksResponse>
 
+    @GET("recommend?num_item=5")
+    suspend fun getRecommendTracks(): List<GetTracksResponse>
 }

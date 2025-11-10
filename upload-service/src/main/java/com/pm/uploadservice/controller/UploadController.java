@@ -22,10 +22,10 @@ public class UploadController {
   private final UploadService uploadService;
 
   /**
-   * Upload một file MP3 lên Object Store Bucket.
+   * Upload an MP3 file to the object storage bucket.
    *
-   * @param file file nhạc cần upload
-   * @return thông tin file sau khi upload thành công
+   * @param file MP3 file to upload
+   * @return {@link TrackUploadResponseDto} containing metadata and storage keys
    */
   @PostMapping("/upload")
   @Operation(summary = "Upload a mp3 file to Object Store Bucket")
@@ -40,6 +40,13 @@ public class UploadController {
     return ResponseEntity.ok().body(trackUploadResponseDto);
   }
 
+  /**
+   * Upload an MP3 file to the object storage bucket with a custom key.
+   *
+   * @param file MP3 file to upload
+   * @param key custom key to store the file under
+   * @return {@link TrackUploadResponseDto} containing metadata and storage keys
+   */
   @PostMapping("/upload_with_key")
   @Operation(summary = "Upload a mp3 file to Object Store Bucket")
   public ResponseEntity<TrackUploadResponseDto> upload_with_key(@RequestParam MultipartFile file,
@@ -55,16 +62,16 @@ public class UploadController {
   }
 
   /**
-   * Xử lý lỗi toàn cục cho các request upload không hợp lệ.
+   * Global exception handler for invalid upload requests.
    */
   @RestControllerAdvice
   public static class GlobalExceptionHandler {
 
     /**
-     * Bắt và xử lý lỗi khi request upload bị sai định dạng hoặc thiếu phần dữ liệu.
+     * Handles errors when the upload request is malformed or missing parts.
      *
-     * @param e ngoại lệ phát sinh trong quá trình upload
-     * @return thông báo lỗi 400 (Bad Request)
+     * @param e exception thrown during upload
+     * @return HTTP 400 (Bad Request) with error message
      */
     @ExceptionHandler({MultipartException.class, MissingServletRequestPartException.class})
     public ResponseEntity<String> handleMultipartErrors(Exception e) {

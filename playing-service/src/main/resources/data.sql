@@ -1,4 +1,3 @@
--- data.sql (H2, email unique)
 DELETE FROM user_state;
 
 INSERT INTO user_state (id, email, track_id, position_ms) VALUES

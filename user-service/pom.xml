@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.pm</groupId>
     <artifactId>user-service</artifactId>
@@ -169,6 +169,8 @@
                                 <exclude>com/pm/userservice/dto/**</exclude>
                                 <!-- spring configs -->
                                 <exclude>com/pm/userservice/config/**</exclude>
+                                <exclude>com/pm/userservice/mapper/**</exclude>
+                                <exclude>com/pm/userservice/exception/**</exclude>
                                 <!-- optional DTOs -->
                                 <!-- <exclude>com/pm/uploadservice/dto/**</exclude> -->
                             </excludes>
