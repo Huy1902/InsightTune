@@ -65,10 +65,9 @@ fun ChatBotScreen(
     }
 
 
-
     val trackToPlay by viewModel.trackToPlay.collectAsState()
 
-    var textInput by remember {mutableStateOf("")}
+    var textInput by remember { mutableStateOf("") }
 
     val messages by viewModel.messages.collectAsState()
     val isBotTyping by viewModel.isBotTyping.collectAsState()
@@ -78,65 +77,70 @@ fun ChatBotScreen(
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
         }
-        trackToPlay?.let {
-            track ->
+        trackToPlay?.let { track ->
             musicPlayerViewModel.playSong(
                 track.id,
                 track.storageKey,
                 track.title,
                 track.artists.toString(),
                 track.coverImageKey.toString()
-                )
+            )
         }
         viewModel.onTrackPlayed()
     }
 
     Scaffold(
         topBar = { TopBar() },
-        content = { padding ->
-            Column(
+        contentWindowInsets = WindowInsets(0.dp)
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(innerPadding)
+        //  .windowInsetsPadding(WindowInsets.safeDrawing)
+        ) {
+            LazyColumn(
+                state = listState,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .background(MaterialTheme.colorScheme.background)
-                    .imePadding()
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)
             ) {
-                LazyColumn(
-                    state= listState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    items(messages.size) { index ->
-                        val msg = messages[index]
-                        MessageBubble(text = msg.text, isFromUser = msg.isFromUser)
+                items(messages.size) { index ->
+                    val msg = messages[index]
+                    MessageBubble(text = msg.text, isFromUser = msg.isFromUser)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                if (isBotTyping) {
+                    item {
+                        MessageBubble(
+                            text = stringResource(R.string.bot_thinking),
+                            isFromUser = false
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
-
-                    if (isBotTyping) {
-                        item {
-                            MessageBubble(text = stringResource(R.string.bot_thinking), isFromUser = false)
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    }
                 }
-                MessageInput(
-                    text = textInput,
-                    onTextChange = {newText -> textInput = newText},
-                    onSendClick = {
-                        if (textInput.isNotBlank()) {
-                            Log.d(TAG, "Tin nhắn đã gửi: ${textInput}")
-                            viewModel.sendMessage(textInput)
-                            textInput = ""
-
-                        }
-                    },
-                    onVoiceClick = {viewModel.startVoiceInteraction() }
-                )
             }
+
+            MessageInput(
+                text = textInput,
+                onTextChange = { newText -> textInput = newText },
+                onSendClick = {
+                    if (textInput.isNotBlank()) {
+                        Log.d(TAG, "Tin nhắn đã gửi: ${textInput}")
+                        viewModel.sendMessage(textInput)
+                        textInput = ""
+                    }
+                },
+                onVoiceClick = { viewModel.startVoiceInteraction() },
+                modifier = Modifier
+                    .imePadding()
+                    //.navigationBarsPadding()
+            )
         }
-    )
+    }
 }
 
 @Composable
@@ -197,10 +201,11 @@ fun MessageInput(
     text: String,
     onTextChange: (String) -> Unit,
     onSendClick: () -> Unit,
-    onVoiceClick: () -> Unit
+    onVoiceClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -246,5 +251,5 @@ fun MessageInput(
 @Preview(showBackground = true)
 @Composable
 fun ChatBotScreenPreview() {
-  //  ChatBotScreen()
+    //  ChatBotScreen()
 }

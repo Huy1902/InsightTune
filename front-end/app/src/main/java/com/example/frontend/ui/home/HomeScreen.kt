@@ -283,7 +283,7 @@ fun HomeScreenContent(
     }
 
     LaunchedEffect(Unit) {
-        vm.loadTracks()
+        vm.loadTracks(limit = 10)
     }
 
     LaunchedEffect(Unit) {
