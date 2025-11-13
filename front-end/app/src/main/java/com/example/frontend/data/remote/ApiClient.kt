@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object ApiClient {
 
@@ -22,7 +23,10 @@ object ApiClient {
 
     private val mainClient by lazy {
         OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(prefs) { refreshAuthApi })
+            .addInterceptor(AuthInterceptor(prefs) { refreshAuthApi }) // Sửa ở đây
+            .connectTimeout(100, TimeUnit.SECONDS)
+            .readTimeout(100, TimeUnit.SECONDS)
+            .writeTimeout(100, TimeUnit.SECONDS)
             .addInterceptor(logging)
             .build()
     }

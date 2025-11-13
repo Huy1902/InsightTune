@@ -71,6 +71,8 @@ import com.example.frontend.core.SessionManager
 import com.example.frontend.service.MusicService
 import com.example.frontend.ui.theme.AppTheme
 import com.example.frontend.ui.theme.ThemeSetting
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 
 @OptIn(UnstableApi::class)
@@ -129,6 +131,14 @@ fun ProfileScreen(
                 action = MusicService.ACTION_STOP_SERVICE
             }
             context.startService(stopIntent)
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("707539669485-hvb782jf95k54qogpjmcalbjiiec9nrd.apps.googleusercontent.com")
+                .requestEmail()
+                .build()
+            val googleSignInClient = GoogleSignIn.getClient(context, gso)
+
+            googleSignInClient.signOut().addOnCompleteListener {
+            }
             vm.clearLocalTokens()
             onNavigateLogin()
         },
@@ -159,7 +169,8 @@ fun ProfileScreen(
     if (showPassDialog) {
         ChangePasswordDialog(
             onDismiss = { showPassDialog = false },
-            onConfirm = { oldPass, newPass -> vm.changePassword(oldPass, newPass) }
+            onConfirm = { oldPass, newPass -> vm.changePassword(oldPass, newPass) },
+            uiState = uiState
         )
     }
     if (showThemeSelectorDialog) {
@@ -272,10 +283,10 @@ fun ProfileScreenContent(
                 stringResource(R.string.change_password),
                 onChangePasswordClick
             )
-            ProfileItem(
-                stringResource(R.string.history),
-                onHistoryClick
-            )
+//            ProfileItem(
+//                stringResource(R.string.history),
+//                onHistoryClick
+//            )
             ProfileItem(
                 stringResource(R.string.change_theme),
                     onChangeThemeClick

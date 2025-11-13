@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 /**
- * Controller xử lý các API đăng nhập OAuth2.
+ * Controller that handles OAuth2 login APIs.
  * <p>
- * Hiện tại hỗ trợ đăng nhập bằng Google.
+ * Currently supports login via Google.
  * </p>
  */
 @RestController
@@ -28,16 +28,16 @@ public class Oauth2LoginController {
     }
 
     /**
-     * API đăng nhập bằng Google OAuth2.
+     * API for logging in using Google OAuth2.
      * <p>
-     * Client gửi ID token nhận được từ Google, server xác thực token và đăng nhập người dùng.
-     * Nếu người dùng chưa tồn tại, sẽ tự động tạo tài khoản mới.
+     * The client sends the ID token received from Google; the server validates the token and logs in the user.
+     * If the user does not exist, a new account will be automatically created.
      * </p>
      *
-     * @param request thông tin OAuth2 login (chứa Google ID token)
-     * @return ApiResponse chứa AuthenticationResponse với access token và thông tin user
-     * @throws GeneralSecurityException nếu token Google không hợp lệ
-     * @throws IOException              nếu có lỗi IO khi xác thực token
+     * @param request OAuth2 login information (contains Google ID token)
+     * @return ApiResponse containing AuthenticationResponse with access token and user information
+     * @throws GeneralSecurityException if the Google token is invalid
+     * @throws IOException              if an I/O error occurs during token validation
      */
     @PostMapping("/google")
     public ApiResponse<AuthenticationResponse> loginWithGoogle(@RequestBody Oauth2LoginRequest request) throws GeneralSecurityException, IOException {

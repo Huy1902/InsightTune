@@ -1,6 +1,8 @@
 package com.example.frontend.ui.chatbot
 
+import android.app.Activity
 import android.content.ContentValues.TAG
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
@@ -24,12 +27,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.frontend.R
@@ -43,9 +49,25 @@ fun ChatBotScreen(
     navController: NavController
 ) {
 
+    val context = LocalContext.current
+    val recordAudioPermission = android.Manifest.permission.RECORD_AUDIO
+    val hasPermission = ContextCompat.checkSelfPermission(
+        context,
+        recordAudioPermission
+    ) == PackageManager.PERMISSION_GRANTED
+
+    if (!hasPermission) {
+        ActivityCompat.requestPermissions(
+            context as Activity,
+            arrayOf(recordAudioPermission),
+            123
+        )
+    }
+
+
     val trackToPlay by viewModel.trackToPlay.collectAsState()
 
-    var textInput by remember {mutableStateOf("")}
+    var textInput by remember { mutableStateOf("") }
 
     val messages by viewModel.messages.collectAsState()
     val isBotTyping by viewModel.isBotTyping.collectAsState()
@@ -55,64 +77,70 @@ fun ChatBotScreen(
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
         }
-        trackToPlay?.let {
-            track ->
+        trackToPlay?.let { track ->
             musicPlayerViewModel.playSong(
                 track.id,
                 track.storageKey,
                 track.title,
                 track.artists.toString(),
                 track.coverImageKey.toString()
-                )
+            )
         }
         viewModel.onTrackPlayed()
     }
 
     Scaffold(
         topBar = { TopBar() },
-        content = { padding ->
-            Column(
+        contentWindowInsets = WindowInsets(0.dp)
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(innerPadding)
+        //  .windowInsetsPadding(WindowInsets.safeDrawing)
+        ) {
+            LazyColumn(
+                state = listState,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .background(MaterialTheme.colorScheme.background)
-                    .imePadding()
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)
             ) {
-                LazyColumn(
-                    state= listState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    items(messages.size) { index ->
-                        val msg = messages[index]
-                        MessageBubble(text = msg.text, isFromUser = msg.isFromUser)
+                items(messages.size) { index ->
+                    val msg = messages[index]
+                    MessageBubble(text = msg.text, isFromUser = msg.isFromUser)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                if (isBotTyping) {
+                    item {
+                        MessageBubble(
+                            text = stringResource(R.string.bot_thinking),
+                            isFromUser = false
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
-
-                    if (isBotTyping) {
-                        item {
-                            MessageBubble(text = stringResource(R.string.bot_thinking), isFromUser = false)
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    }
                 }
-                MessageInput(
-                    text = textInput,
-                    onTextChange = {newText -> textInput = newText},
-                    onSendClick = {
-                        if (textInput.isNotBlank()) {
-                            Log.d(TAG, "Tin nhắn đã gửi: ${textInput}")
-                            viewModel.sendMessage(textInput)
-                            textInput = ""
-
-                        }
-                    }
-                )
             }
+
+            MessageInput(
+                text = textInput,
+                onTextChange = { newText -> textInput = newText },
+                onSendClick = {
+                    if (textInput.isNotBlank()) {
+                        Log.d(TAG, "Tin nhắn đã gửi: ${textInput}")
+                        viewModel.sendMessage(textInput)
+                        textInput = ""
+                    }
+                },
+                onVoiceClick = { viewModel.startVoiceInteraction() },
+                modifier = Modifier
+                    .imePadding()
+                    //.navigationBarsPadding()
+            )
         }
-    )
+    }
 }
 
 @Composable
@@ -172,14 +200,25 @@ fun MessageBubble(text: String, isFromUser: Boolean) {
 fun MessageInput(
     text: String,
     onTextChange: (String) -> Unit,
-    onSendClick: () -> Unit
+    onSendClick: () -> Unit,
+    onVoiceClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        IconButton(onClick = onVoiceClick) {
+            Icon(
+                imageVector = Icons.Filled.Mic,
+                contentDescription = "Voice",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+
+
         Spacer(modifier = Modifier.width(8.dp))
         OutlinedTextField(
             value = text,
@@ -212,5 +251,5 @@ fun MessageInput(
 @Preview(showBackground = true)
 @Composable
 fun ChatBotScreenPreview() {
-  //  ChatBotScreen()
+    //  ChatBotScreen()
 }

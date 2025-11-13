@@ -27,11 +27,11 @@ public class FavoriteController {
     }
 
     /**
-     * API thêm bài hát vào danh sách yêu thích.
+     * API to add a song to the user's favorite list.
      *
-     * @param authentication thông tin người dùng hiện tại
-     * @param createFavoriteRequestDto thông tin bài hát cần thêm
-     * @return FavoriteResponseDto thông tin bài hát đã thêm
+     * @param authentication current authenticated user
+     * @param createFavoriteRequestDto information about the track to add
+     * @return FavoriteResponseDto containing the added track details
      */
     @PostMapping("/add")
     @Operation(summary = "Add favorite song", description = "need token")
@@ -43,10 +43,10 @@ public class FavoriteController {
     }
 
     /**
-     * API lấy danh sách bài hát yêu thích của người dùng.
+     * API to retrieve all favorite tracks of the user.
      *
-     * @param authentication thông tin người dùng hiện tại
-     * @return danh sách TrackResponseDto của các bài hát yêu thích
+     * @param authentication current authenticated user
+     * @return list of TrackResponseDto representing favorite tracks
      */
     @GetMapping
     @Operation(summary = "Get all favorite songs", description = "need token")
@@ -59,11 +59,11 @@ public class FavoriteController {
     }
 
     /**
-     * API xóa bài hát khỏi danh sách yêu thích.
+     * API to remove a song from the user's favorite list.
      *
-     * @param authentication thông tin người dùng hiện tại
-     * @param deleteFavoriteRequestDto thông tin bài hát cần xóa
-     * @return thông báo xóa thành công
+     * @param authentication current authenticated user
+     * @param deleteFavoriteRequestDto information about the track to remove
+     * @return message confirming successful deletion
      */
     @PostMapping("/delete")
     @Operation(summary = "Delete favorite song", description = "need token")
@@ -75,11 +75,11 @@ public class FavoriteController {
     }
 
     /**
-     * API kiểm tra bài hát có trong danh sách yêu thích hay không.
+     * API to check if a song exists in the user's favorite list.
      *
-     * @param authentication thông tin người dùng hiện tại
-     * @param id ID của bài hát cần kiểm tra
-     * @return true nếu bài hát có trong danh sách yêu thích, false nếu không
+     * @param authentication current authenticated user
+     * @param id track ID to check
+     * @return true if the track exists in favorites, false otherwise
      */
     @GetMapping("/check/{id}")
     @Operation(summary = "Check favorite song in db", description = "need token, songId")

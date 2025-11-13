@@ -61,8 +61,9 @@ class HomeViewModel(context: Context) : ViewModel() {
 
                 val tracksWithUrls = initialTracks.map { track ->
                     async {
-                        val response = playingRepo.getUrlTrack(track.storageKey, track.coverImageKey)
-                        TrackUiModel(trackInfo = track, coverImageUrl = response.coverImageUrl)
+                        //val response = playingRepo.getUrlTrack(track.storageKey, track.coverImageKey)
+                        val response = playingRepo.getImage(track.coverImageKey ?: "")
+                        TrackUiModel(trackInfo = track, coverImageUrl = response.url)
                     }
                 }.awaitAll()
 
@@ -115,8 +116,9 @@ class HomeViewModel(context: Context) : ViewModel() {
                 val historyTracks = history.map { historyItem ->
                     async {
                         val historyItemSongs = repo.getTrackById(historyItem.trackId)
-                        val response = playingRepo.getUrlTrack(historyItemSongs.storageKey, historyItemSongs.coverImageKey)
-                        TrackUiModel(trackInfo = historyItemSongs, coverImageUrl = response.coverImageUrl)
+//                        val response = playingRepo.getUrlTrack(historyItemSongs.storageKey, historyItemSongs.coverImageKey)
+                        val response = playingRepo.getImage(historyItemSongs.coverImageKey ?: "")
+                        TrackUiModel(trackInfo = historyItemSongs, coverImageUrl = response.url)
                     }
                 }.awaitAll()
                 _history.value = historyTracks

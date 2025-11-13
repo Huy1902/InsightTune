@@ -58,11 +58,11 @@ public class AuthService {
     }
 
     /**
-     * Tìm user theo email.
+     * Find a user by email.
      *
-     * @param email email người dùng
-     * @return User tìm được
-     * @throws AppException nếu user không tồn tại
+     * @param email the user's email
+     * @return the found User
+     * @throws AppException if the user does not exist
      */
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(()
@@ -70,21 +70,21 @@ public class AuthService {
     }
 
     /**
-     * Kiểm tra xem email đã tồn tại hay chưa.
+     * Check whether an email already exists.
      *
-     * @param email email người dùng
-     * @return true nếu email tồn tại, false nếu chưa
+     * @param email the user's email
+     * @return true if the email exists, false otherwise
      */
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
     /**
-     * Xác thực đăng nhập bằng email và password.
+     * Authenticate login using email and password.
      *
-     * @param authenticationRequest thông tin đăng nhập
-     * @return AuthenticationResponse chứa access token, refresh token, trạng thái authenticated
-     * @throws AppException nếu user không tồn tại hoặc mật khẩu không đúng
+     * @param authenticationRequest login information
+     * @return AuthenticationResponse containing access token, refresh token, and authenticated status
+     * @throws AppException if the user does not exist or the password is incorrect
      */
     public AuthenticationResponse authenticate(LoginRequest authenticationRequest) {
         // find user
@@ -103,7 +103,6 @@ public class AuthService {
         // accessToken
         var token = tokenService.generateAccessToken(user);
 
-        // luu refreshToken vao db
         String refreshToken = tokenService.generateRefreshToken(user);
 
         return AuthenticationResponse.builder()
@@ -114,11 +113,11 @@ public class AuthService {
     }
 
     /**
-     * Tạo người dùng mới và gửi thông tin sang user-service.
+     * Create a new user and send the information to the user-service.
      *
-     * @param registerRequest thông tin đăng ký
-     * @return UserProfileResponse chứa thông tin người dùng vừa tạo
-     * @throws AppException nếu email đã tồn tại, password không khớp hoặc không kết nối được user-service
+     * @param registerRequest registration information
+     * @return UserProfileResponse containing the newly created user's information
+     * @throws AppException if the email already exists, the password does not match, or the user-service is unreachable
      */
     public UserProfileResponse createUser(RegisterRequest registerRequest) {
         User user = new  User();
@@ -131,15 +130,12 @@ public class AuthService {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
         }
 
-        // luu user vao db
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        // lay role tu form
         user.setRole(roleRepository.findByName("USER").orElseThrow(()
                 -> new AppException(ErrorCode.ROLE_NOTFOUND)));
         save(user);
 
-        // lay thong tin userprofile
         UserProfileResponse userProfileResponse = UserProfileResponse.builder()
                 .id(findByEmail(registerRequest.getEmail()).getId())
                 .email(registerRequest.getEmail())
@@ -162,10 +158,10 @@ public class AuthService {
     }
 
     /**
-     * Logout người dùng, thu hồi refresh token.
+     * Logout a user and revoke the refresh token.
      *
-     * @param request thông tin logout chứa refresh token
-     * @throws AppException nếu refresh token không hợp lệ
+     * @param request logout information containing the refresh token
+     * @throws AppException if the refresh token is invalid
      */
     public void logout(LogoutRequest request){
 
@@ -177,20 +173,20 @@ public class AuthService {
     }
 
     /**
-     * Gửi mã OTP đến địa chỉ email của người dùng để xác thực.
+     * Sends an OTP to the user's email for verification.
      * <p>
-     * Phương thức này sẽ:
+     * This method will:
      * <ul>
-     *   <li>Kiểm tra xem người dùng có tồn tại trong hệ thống hay không (theo email).</li>
-     *   <li>Tạo mã OTP gồm 6 chữ số ngẫu nhiên.</li>
-     *   <li>Lưu hoặc cập nhật mã OTP vào cơ sở dữ liệu, kèm thời gian hết hạn (5 phút).</li>
-     *   <li>Gửi mã OTP đến email của người dùng thông qua {@link MailService}.</li>
+     *   <li>Check if the user exists in the system (by email).</li>
+     *   <li>Generate a 6-digit random OTP.</li>
+     *   <li>Save or update the OTP in the database, with an expiration time of 5 minutes.</li>
+     *   <li>Send the OTP to the user's email via {@link MailService}.</li>
      * </ul>
-     * Nếu người dùng không tồn tại hoặc quá trình gửi email thất bại, phương thức sẽ ném ra ngoại lệ tương ứng.
+     * If the user does not exist or the email sending process fails, the method will throw the corresponding exception.
      *
-     * @param email địa chỉ email của người dùng cần gửi mã OTP.
-     * @throws AppException nếu không tìm thấy người dùng tương ứng với email.
-     * @throws RuntimeException nếu xảy ra lỗi khi gửi email (ví dụ: lỗi kết nối SMTP, cấu hình sai, hoặc template không hợp lệ).
+     * @param email the user's email address to send the OTP to
+     * @throws AppException if no user is found for the given email
+     * @throws RuntimeException if an error occurs while sending the email (e.g., SMTP connection error, misconfiguration, or invalid template)
      *
      * @see MailService#sendMail(String, String)
      * @see OneTimePassword

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -131,7 +132,9 @@ fun SignUpStep3Content(
             AppTextField(
                 value = firstName,
                 onValueChange = onFirstNameChange,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("firstname_field"),
                 textColor = MaterialTheme.colorScheme.onSurface
             )
 
@@ -148,7 +151,9 @@ fun SignUpStep3Content(
             AppTextField(
                 value = lastName,
                 onValueChange = onLastNameChange,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("lastname_field"),
                 textColor = MaterialTheme.colorScheme.onSurface
             )
         }
@@ -163,6 +168,7 @@ fun SignUpStep3Content(
             ),
             modifier = Modifier
                 .height(56.dp)
+                .testTag("create_account_button")
         ) {
             if (uiState is Resource.Loading) {
                 CircularProgressIndicator(

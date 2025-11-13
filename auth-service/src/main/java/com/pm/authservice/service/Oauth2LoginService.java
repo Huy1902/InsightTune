@@ -21,13 +21,13 @@ import java.util.Arrays;
 import java.util.Collections;
 
 /**
- * Service xử lý login OAuth2 với Google.
+ * Service handling OAuth2 login with Google.
  * <p>
- * Bao gồm các chức năng:
+ * Includes the following functionalities:
  * <ul>
  *     <li>Verify Google ID Token</li>
- *     <li>Login bằng Google</li>
- *     <li>Tự động tạo user mới nếu email chưa tồn tại</li>
+ *     <li>Login using Google</li>
+ *     <li>Automatically create a new user if the email does not exist</li>
  * </ul>
  * </p>
  */
@@ -45,12 +45,12 @@ public class Oauth2LoginService {
     }
 
     /**
-     * Verify Google ID Token từ client.
+     * Verify Google ID Token from the client.
      *
-     * @param idTokenString chuỗi ID token từ Google
-     * @return GoogleIdToken đã verify hợp lệ, hoặc null nếu không hợp lệ
-     * @throws GeneralSecurityException nếu xác thực bảo mật thất bại
-     * @throws IOException              nếu có lỗi I/O
+     * @param idTokenString the ID token string from Google
+     * @return a verified GoogleIdToken, or null if invalid
+     * @throws GeneralSecurityException if security verification fails
+     * @throws IOException              if an I/O error occurs
      */
     protected GoogleIdToken verifyGoogleIdToken(String idTokenString) throws GeneralSecurityException, IOException {
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
@@ -64,17 +64,17 @@ public class Oauth2LoginService {
     }
 
     /**
-     * Login bằng Google OAuth2.
+     * Login using Google OAuth2.
      * <p>
-     * Nếu user chưa tồn tại, sẽ tự động tạo user mới với password mặc định "GOOGLE_LOGIN".
-     * Sau đó tiến hành authenticate và trả về access token + refresh token.
+     * If the user does not exist, a new user will be automatically created with the default password "GOOGLE_LOGIN".
+     * Then the user is authenticated and receives an access token and refresh token.
      * </p>
      *
-     * @param request Oauth2LoginRequest chứa Google ID token
-     * @return AuthenticationResponse chứa access token, refresh token, trạng thái authenticated
-     * @throws GeneralSecurityException nếu xác thực token thất bại
-     * @throws IOException              nếu có lỗi I/O
-     * @throws AppException             nếu ID token null hoặc không hợp lệ
+     * @param request Oauth2LoginRequest containing the Google ID token
+     * @return AuthenticationResponse containing access token, refresh token, and authenticated status
+     * @throws GeneralSecurityException if token verification fails
+     * @throws IOException              if an I/O error occurs
+     * @throws AppException             if the ID token is null or invalid
      */
     public AuthenticationResponse loginGoogle(Oauth2LoginRequest request) throws GeneralSecurityException, IOException {
         String idTokenString = request.getIdToken();
@@ -92,7 +92,6 @@ public class Oauth2LoginService {
 
         boolean checkUser = authService.existsByEmail(email);
         if (!checkUser) {
-            // Tách chuỗi thành mảng từ, bỏ bớt khoảng trắng thừa
             String[] parts = (name != null ? name.trim().split("\\s+") : new String[0]);
 
             String firstName = parts.length > 1

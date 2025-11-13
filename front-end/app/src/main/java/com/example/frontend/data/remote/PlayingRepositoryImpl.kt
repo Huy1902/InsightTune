@@ -38,6 +38,8 @@ class PlayingRepositoryImpl(
         val response = playingApi.getImage(key)
         if (response.isSuccessful) {
             val body = response.body() ?: throw Exception("Empty response")
+            Log.d("PLAYING", "Got image: $body")
+            return body
         }
         return response.body() ?: throw Exception("Empty response")
     }

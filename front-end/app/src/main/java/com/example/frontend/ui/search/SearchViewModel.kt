@@ -82,8 +82,9 @@ class SearchViewModel(
                 val results = trackRepository.searchTracks(keyword)
                 val tracksWithUrls = results.map { track ->
                     async {
-                        val response = playingRepo.getUrlTrack(track.storageKey, track.coverImageKey)
-                        TrackUiModel(trackInfo = track, coverImageUrl = response.coverImageUrl)
+                       // val response = playingRepo.getUrlTrack(track.storageKey, track.coverImageKey)
+                        val response = playingRepo.getImage(track.coverImageKey ?: "")
+                        TrackUiModel(trackInfo = track, coverImageUrl = response.url)
                     }
                 }.awaitAll()
                 _searchResults.value = tracksWithUrls

@@ -31,10 +31,10 @@ public class UserController {
     }
 
     /**
-     * Tạo client profile mới.
+     * Create a new client profile.
      *
-     * @param req request chứa thông tin email, password và các field cần thiết
-     * @return ApiResponse chứa thông tin user vừa tạo
+     * @param req request containing email, password, and other necessary fields
+     * @return ApiResponse containing the newly created user information
      */
     @PostMapping("/create")
     @Operation(summary = "Create user", description = "Receive email and password to create user")
@@ -49,10 +49,10 @@ public class UserController {
     }
 
     /**
-     * Lấy thông tin user dựa trên access token.
+     * Get user information based on access token.
      *
-     * @param principal principal chứa thông tin email từ token
-     * @return ApiResponse chứa thông tin user
+     * @param principal principal containing email from the token
+     * @return ApiResponse containing the user information
      */
     @GetMapping
     @Operation(summary = "Find user by token", description = "Find user by token")
@@ -64,12 +64,12 @@ public class UserController {
     }
 
     /**
-     * Cập nhật thông tin user.
+     * Update user profile information.
      *
-     * @param principal principal chứa email từ token
-     * @param request request chứa thông tin cập nhật
-     * @return ApiResponse chứa thông tin user sau khi update
-     * @throws JsonProcessingException nếu có lỗi khi xử lý JSON
+     * @param principal principal containing email from the token
+     * @param request request containing the updated user information
+     * @return ApiResponse containing the updated user information
+     * @throws JsonProcessingException if an error occurs while processing JSON
      */
     @PutMapping
     @Operation(summary = "Update user profile"
@@ -83,11 +83,11 @@ public class UserController {
     }
 
     /**
-     * Thay đổi avatar của user.
+     * Change the user's avatar.
      *
-     * @param principal principal chứa email từ token
-     * @param avatar file ảnh upload
-     * @return ApiResponse với message thành công và link avatar mới
+     * @param principal principal containing email from the token
+     * @param avatar uploaded avatar file
+     * @return ApiResponse with a success message and the new avatar link
      */
     @PutMapping("/avatar")
     @Operation(summary = "Change user avatar")

@@ -1,5 +1,6 @@
 package com.example.frontend.ui.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -37,11 +39,13 @@ import com.example.frontend.ui.theme.AppTheme
 @Composable
 fun ChangePasswordDialog(
     onDismiss: () -> Unit,
-    onConfirm: (oldPass: String, newPass: String) -> Unit
+    onConfirm: (oldPass: String, newPass: String) -> Unit,
+    uiState: ProfileUiState
 ) {
     var oldPass by remember { mutableStateOf("") }
     var newPass by remember { mutableStateOf("") }
     var success by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
 
 
@@ -71,28 +75,25 @@ fun ChangePasswordDialog(
                     isPassword = true,
                     textColor = MaterialTheme.colorScheme.onSurface
                 )
-//                if (oldPass.length < 8 || newPass.length < 8) {
-//                    Text(
-//                        text = stringResource(R.string.register_password_details),
-//                        color = MaterialTheme.colorScheme.error
-//                    )
-//                } else if (oldPass == newPass) {
-//                    Text(
-//                        text = stringResource(R.string.do_not_use_old_password),
-//                        color = MaterialTheme.colorScheme.error
-//                    )
-//                } else {
-//                    Text(
-//                        text = stringResource(R.string.wrong_password),
-//                        color = MaterialTheme.colorScheme.error
-//                    )
-//                }
+                if (uiState.error != null) {
+                    Text(
+                        text = uiState.error,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
         },
         confirmButton = {
             TextButton(onClick = {
                 onConfirm(oldPass, newPass)
-                onDismiss()
+                if (uiState.error != null) {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.change_password_successfully),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    onDismiss()
+                }
             }) {
                 Text("OK")
             }
@@ -117,7 +118,12 @@ fun ChangePasswordDialogPreview() {
         Box(Modifier.fillMaxSize()) {
             ChangePasswordDialog(
                 onDismiss = {},
-                onConfirm = { _, _ -> }
+                onConfirm = { _, _ -> },
+                uiState = ProfileUiState(
+                    fullName = "Preview User",
+                    email = "preview@email.com",
+                    error = "Error message"
+                )
             )
         }
     }
