@@ -317,7 +317,7 @@ fun HomeScreenContent(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "SpoTube",
+                    "InsightTune",
                     fontWeight = FontWeight.Bold,
                     style = AppTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground,

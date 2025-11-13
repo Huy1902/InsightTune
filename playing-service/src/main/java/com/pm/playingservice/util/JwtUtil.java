@@ -13,7 +13,7 @@ import java.security.Key;
 @Component
 public class JwtUtil {
 
-  @Value("${spotube.jwt.shared_secret}")
+  @Value("${insighttune.jwt.shared_secret}")
   private String secret;
 
   private Key key() {

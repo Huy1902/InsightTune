@@ -24,7 +24,7 @@
             android:name=".AppMainActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
-            android:label="SpoTube"
+            android:label="InsightTune"
             android:theme="@style/Theme.FrontEnd">
 
             <intent-filter>

@@ -159,7 +159,7 @@ fun TopBar() {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "SpoTube",
+            text = "InsightTune",
             color = MaterialTheme.colorScheme.onBackground,
             style = AppTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold

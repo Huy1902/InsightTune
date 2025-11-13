@@ -1,6 +1,6 @@
 {
  "Resources": {
-  "InsightTuneVPCED7DBAAA": {
+  "InsightTuneVPC408FDE8A": {
    "Type": "AWS::EC2::VPC",
    "Properties": {
     "CidrBlock": "10.0.0.0/16",
@@ -15,7 +15,7 @@
     ]
    }
   },
-  "InsightTuneVPCPublicSubnet1Subnet5EE28A79": {
+  "InsightTuneVPCPublicSubnet1Subnet1C5D0641": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
     "AvailabilityZone": {
@@ -43,11 +43,11 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
-  "InsightTuneVPCPublicSubnet1RouteTable024EC8F8": {
+  "InsightTuneVPCPublicSubnet1RouteTable2DAD518E": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
     "Tags": [
@@ -57,37 +57,37 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
-  "InsightTuneVPCPublicSubnet1RouteTableAssociationDED118AB": {
+  "InsightTuneVPCPublicSubnet1RouteTableAssociation0B649D24": {
    "Type": "AWS::EC2::SubnetRouteTableAssociation",
    "Properties": {
     "RouteTableId": {
-     "Ref": "InsightTuneVPCPublicSubnet1RouteTable024EC8F8"
+     "Ref": "InsightTuneVPCPublicSubnet1RouteTable2DAD518E"
     },
     "SubnetId": {
-     "Ref": "InsightTuneVPCPublicSubnet1Subnet5EE28A79"
+     "Ref": "InsightTuneVPCPublicSubnet1Subnet1C5D0641"
     }
    }
   },
-  "InsightTuneVPCPublicSubnet1DefaultRoute46F494A8": {
+  "InsightTuneVPCPublicSubnet1DefaultRouteF2843FA6": {
    "Type": "AWS::EC2::Route",
    "Properties": {
     "DestinationCidrBlock": "0.0.0.0/0",
     "GatewayId": {
-     "Ref": "InsightTuneVPCIGW4425213E"
+     "Ref": "InsightTuneVPCIGW47411212"
     },
     "RouteTableId": {
-     "Ref": "InsightTuneVPCPublicSubnet1RouteTable024EC8F8"
+     "Ref": "InsightTuneVPCPublicSubnet1RouteTable2DAD518E"
     }
    },
    "DependsOn": [
-    "InsightTuneVPCVPCGWD9DD75C4"
+    "InsightTuneVPCVPCGW41FEDE9C"
    ]
   },
-  "InsightTuneVPCPublicSubnet1EIPDF38B558": {
+  "InsightTuneVPCPublicSubnet1EIPBEA617BC": {
    "Type": "AWS::EC2::EIP",
    "Properties": {
     "Domain": "vpc",
@@ -99,17 +99,17 @@
     ]
    }
   },
-  "InsightTuneVPCPublicSubnet1NATGatewayC78A9862": {
+  "InsightTuneVPCPublicSubnet1NATGateway6457F28A": {
    "Type": "AWS::EC2::NatGateway",
    "Properties": {
     "AllocationId": {
      "Fn::GetAtt": [
-      "InsightTuneVPCPublicSubnet1EIPDF38B558",
+      "InsightTuneVPCPublicSubnet1EIPBEA617BC",
       "AllocationId"
      ]
     },
     "SubnetId": {
-     "Ref": "InsightTuneVPCPublicSubnet1Subnet5EE28A79"
+     "Ref": "InsightTuneVPCPublicSubnet1Subnet1C5D0641"
     },
     "Tags": [
      {
@@ -119,11 +119,11 @@
     ]
    },
    "DependsOn": [
-    "InsightTuneVPCPublicSubnet1DefaultRoute46F494A8",
-    "InsightTuneVPCPublicSubnet1RouteTableAssociationDED118AB"
+    "InsightTuneVPCPublicSubnet1DefaultRouteF2843FA6",
+    "InsightTuneVPCPublicSubnet1RouteTableAssociation0B649D24"
    ]
   },
-  "InsightTuneVPCPublicSubnet2Subnet5DB9A171": {
+  "InsightTuneVPCPublicSubnet2SubnetCD83D830": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
     "AvailabilityZone": {
@@ -151,11 +151,11 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
-  "InsightTuneVPCPublicSubnet2RouteTableB1B5B325": {
+  "InsightTuneVPCPublicSubnet2RouteTable73A827BF": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
     "Tags": [
@@ -165,37 +165,37 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
-  "InsightTuneVPCPublicSubnet2RouteTableAssociation1F29A606": {
+  "InsightTuneVPCPublicSubnet2RouteTableAssociationAE6D54B0": {
    "Type": "AWS::EC2::SubnetRouteTableAssociation",
    "Properties": {
     "RouteTableId": {
-     "Ref": "InsightTuneVPCPublicSubnet2RouteTableB1B5B325"
+     "Ref": "InsightTuneVPCPublicSubnet2RouteTable73A827BF"
     },
     "SubnetId": {
-     "Ref": "InsightTuneVPCPublicSubnet2Subnet5DB9A171"
+     "Ref": "InsightTuneVPCPublicSubnet2SubnetCD83D830"
     }
    }
   },
-  "InsightTuneVPCPublicSubnet2DefaultRouteCDA83180": {
+  "InsightTuneVPCPublicSubnet2DefaultRouteAB5B7408": {
    "Type": "AWS::EC2::Route",
    "Properties": {
     "DestinationCidrBlock": "0.0.0.0/0",
     "GatewayId": {
-     "Ref": "InsightTuneVPCIGW4425213E"
+     "Ref": "InsightTuneVPCIGW47411212"
     },
     "RouteTableId": {
-     "Ref": "InsightTuneVPCPublicSubnet2RouteTableB1B5B325"
+     "Ref": "InsightTuneVPCPublicSubnet2RouteTable73A827BF"
     }
    },
    "DependsOn": [
-    "InsightTuneVPCVPCGWD9DD75C4"
+    "InsightTuneVPCVPCGW41FEDE9C"
    ]
   },
-  "InsightTuneVPCPublicSubnet2EIPB49080E0": {
+  "InsightTuneVPCPublicSubnet2EIPF0269E16": {
    "Type": "AWS::EC2::EIP",
    "Properties": {
     "Domain": "vpc",
@@ -207,17 +207,17 @@
     ]
    }
   },
-  "InsightTuneVPCPublicSubnet2NATGateway50313DA4": {
+  "InsightTuneVPCPublicSubnet2NATGateway72CC5129": {
    "Type": "AWS::EC2::NatGateway",
    "Properties": {
     "AllocationId": {
      "Fn::GetAtt": [
-      "InsightTuneVPCPublicSubnet2EIPB49080E0",
+      "InsightTuneVPCPublicSubnet2EIPF0269E16",
       "AllocationId"
      ]
     },
     "SubnetId": {
-     "Ref": "InsightTuneVPCPublicSubnet2Subnet5DB9A171"
+     "Ref": "InsightTuneVPCPublicSubnet2SubnetCD83D830"
     },
     "Tags": [
      {
@@ -227,11 +227,11 @@
     ]
    },
    "DependsOn": [
-    "InsightTuneVPCPublicSubnet2DefaultRouteCDA83180",
-    "InsightTuneVPCPublicSubnet2RouteTableAssociation1F29A606"
+    "InsightTuneVPCPublicSubnet2DefaultRouteAB5B7408",
+    "InsightTuneVPCPublicSubnet2RouteTableAssociationAE6D54B0"
    ]
   },
-  "InsightTuneVPCPrivateSubnet1Subnet44580B19": {
+  "InsightTuneVPCPrivateSubnet1Subnet67922459": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
     "AvailabilityZone": {
@@ -259,11 +259,11 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
-  "InsightTuneVPCPrivateSubnet1RouteTableE3429285": {
+  "InsightTuneVPCPrivateSubnet1RouteTable28ECD037": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
     "Tags": [
@@ -273,34 +273,34 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
-  "InsightTuneVPCPrivateSubnet1RouteTableAssociation79EC27B2": {
+  "InsightTuneVPCPrivateSubnet1RouteTableAssociation58ADC4A1": {
    "Type": "AWS::EC2::SubnetRouteTableAssociation",
    "Properties": {
     "RouteTableId": {
-     "Ref": "InsightTuneVPCPrivateSubnet1RouteTableE3429285"
+     "Ref": "InsightTuneVPCPrivateSubnet1RouteTable28ECD037"
     },
     "SubnetId": {
-     "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+     "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
     }
    }
   },
-  "InsightTuneVPCPrivateSubnet1DefaultRouteD93BBA3D": {
+  "InsightTuneVPCPrivateSubnet1DefaultRoute8E3FFD9F": {
    "Type": "AWS::EC2::Route",
    "Properties": {
     "DestinationCidrBlock": "0.0.0.0/0",
     "NatGatewayId": {
-     "Ref": "InsightTuneVPCPublicSubnet1NATGatewayC78A9862"
+     "Ref": "InsightTuneVPCPublicSubnet1NATGateway6457F28A"
     },
     "RouteTableId": {
-     "Ref": "InsightTuneVPCPrivateSubnet1RouteTableE3429285"
+     "Ref": "InsightTuneVPCPrivateSubnet1RouteTable28ECD037"
     }
    }
   },
-  "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9": {
+  "InsightTuneVPCPrivateSubnet2Subnet9F451B1E": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
     "AvailabilityZone": {
@@ -328,11 +328,11 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
-  "InsightTuneVPCPrivateSubnet2RouteTable923DD509": {
+  "InsightTuneVPCPrivateSubnet2RouteTable6CA81906": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
     "Tags": [
@@ -342,34 +342,34 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
-  "InsightTuneVPCPrivateSubnet2RouteTableAssociation7E0A2C7E": {
+  "InsightTuneVPCPrivateSubnet2RouteTableAssociationAD268358": {
    "Type": "AWS::EC2::SubnetRouteTableAssociation",
    "Properties": {
     "RouteTableId": {
-     "Ref": "InsightTuneVPCPrivateSubnet2RouteTable923DD509"
+     "Ref": "InsightTuneVPCPrivateSubnet2RouteTable6CA81906"
     },
     "SubnetId": {
-     "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+     "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
     }
    }
   },
-  "InsightTuneVPCPrivateSubnet2DefaultRoute716B1CDE": {
+  "InsightTuneVPCPrivateSubnet2DefaultRouteD49E600C": {
    "Type": "AWS::EC2::Route",
    "Properties": {
     "DestinationCidrBlock": "0.0.0.0/0",
     "NatGatewayId": {
-     "Ref": "InsightTuneVPCPublicSubnet2NATGateway50313DA4"
+     "Ref": "InsightTuneVPCPublicSubnet2NATGateway72CC5129"
     },
     "RouteTableId": {
-     "Ref": "InsightTuneVPCPrivateSubnet2RouteTable923DD509"
+     "Ref": "InsightTuneVPCPrivateSubnet2RouteTable6CA81906"
     }
    }
   },
-  "InsightTuneVPCIGW4425213E": {
+  "InsightTuneVPCIGW47411212": {
    "Type": "AWS::EC2::InternetGateway",
    "Properties": {
     "Tags": [
@@ -380,14 +380,14 @@
     ]
    }
   },
-  "InsightTuneVPCVPCGWD9DD75C4": {
+  "InsightTuneVPCVPCGW41FEDE9C": {
    "Type": "AWS::EC2::VPCGatewayAttachment",
    "Properties": {
     "InternetGatewayId": {
-     "Ref": "InsightTuneVPCIGW4425213E"
+     "Ref": "InsightTuneVPCIGW47411212"
     },
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
@@ -397,10 +397,10 @@
     "DBSubnetGroupDescription": "Subnet group for catalogServiceDb database",
     "SubnetIds": [
      {
-      "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+      "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
      },
      {
-      "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+      "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
      }
     ]
    }
@@ -417,7 +417,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
@@ -524,10 +524,10 @@
      "BrokerAZDistribution": "DEFAULT",
      "ClientSubnets": [
       {
-       "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
       },
       {
-       "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
       }
      ],
      "InstanceType": "kafka.m5.xlarge"
@@ -537,15 +537,15 @@
     "NumberOfBrokerNodes": 2
    }
   },
-  "InsightTuneCluster4B5AF973": {
+  "InsightTuneClusterE95E4CEF": {
    "Type": "AWS::ECS::Cluster"
   },
-  "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952": {
+  "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D": {
    "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
    "Properties": {
     "Name": "insighttune.local",
     "Vpc": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    }
   },
@@ -693,7 +693,7 @@
    "Type": "AWS::ECS::Service",
    "Properties": {
     "Cluster": {
-     "Ref": "InsightTuneCluster4B5AF973"
+     "Ref": "InsightTuneClusterE95E4CEF"
     },
     "DeploymentConfiguration": {
      "Alarms": {
@@ -719,10 +719,10 @@
       ],
       "Subnets": [
        {
-        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
        },
        {
-        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+        "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
        }
       ]
      }
@@ -758,7 +758,7 @@
      ],
      "NamespaceId": {
       "Fn::GetAtt": [
-       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
        "Id"
       ]
      },
@@ -770,7 +770,7 @@
     "Name": "eureka-service",
     "NamespaceId": {
      "Fn::GetAtt": [
-      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
       "Id"
      ]
     }
@@ -791,7 +791,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -990,7 +990,7 @@
    "Type": "AWS::ECS::Service",
    "Properties": {
     "Cluster": {
-     "Ref": "InsightTuneCluster4B5AF973"
+     "Ref": "InsightTuneClusterE95E4CEF"
     },
     "DeploymentConfiguration": {
      "Alarms": {
@@ -1016,10 +1016,10 @@
       ],
       "Subnets": [
        {
-        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
        },
        {
-        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+        "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
        }
       ]
      }
@@ -1065,7 +1065,7 @@
      ],
      "NamespaceId": {
       "Fn::GetAtt": [
-       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
        "Id"
       ]
      },
@@ -1077,7 +1077,7 @@
     "Name": "catalog-service",
     "NamespaceId": {
      "Fn::GetAtt": [
-      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
       "Id"
      ]
     }
@@ -1108,7 +1108,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -1261,7 +1261,7 @@
    "Type": "AWS::ECS::Service",
    "Properties": {
     "Cluster": {
-     "Ref": "InsightTuneCluster4B5AF973"
+     "Ref": "InsightTuneClusterE95E4CEF"
     },
     "DeploymentConfiguration": {
      "Alarms": {
@@ -1287,10 +1287,10 @@
       ],
       "Subnets": [
        {
-        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
        },
        {
-        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+        "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
        }
       ]
      }
@@ -1327,7 +1327,7 @@
      ],
      "NamespaceId": {
       "Fn::GetAtt": [
-       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
        "Id"
       ]
      },
@@ -1339,7 +1339,7 @@
     "Name": "history-service",
     "NamespaceId": {
      "Fn::GetAtt": [
-      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
       "Id"
      ]
     }
@@ -1361,7 +1361,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -1505,7 +1505,7 @@
    "Type": "AWS::ECS::Service",
    "Properties": {
     "Cluster": {
-     "Ref": "InsightTuneCluster4B5AF973"
+     "Ref": "InsightTuneClusterE95E4CEF"
     },
     "DeploymentConfiguration": {
      "Alarms": {
@@ -1531,10 +1531,10 @@
       ],
       "Subnets": [
        {
-        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
        },
        {
-        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+        "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
        }
       ]
      }
@@ -1570,7 +1570,7 @@
      ],
      "NamespaceId": {
       "Fn::GetAtt": [
-       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
        "Id"
       ]
      },
@@ -1582,7 +1582,7 @@
     "Name": "playing-service",
     "NamespaceId": {
      "Fn::GetAtt": [
-      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
       "Id"
      ]
     }
@@ -1603,7 +1603,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -1746,7 +1746,7 @@
    "Type": "AWS::ECS::Service",
    "Properties": {
     "Cluster": {
-     "Ref": "InsightTuneCluster4B5AF973"
+     "Ref": "InsightTuneClusterE95E4CEF"
     },
     "DeploymentConfiguration": {
      "Alarms": {
@@ -1772,10 +1772,10 @@
       ],
       "Subnets": [
        {
-        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
        },
        {
-        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+        "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
        }
       ]
      }
@@ -1811,7 +1811,7 @@
      ],
      "NamespaceId": {
       "Fn::GetAtt": [
-       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
        "Id"
       ]
      },
@@ -1823,7 +1823,7 @@
     "Name": "favorite-service",
     "NamespaceId": {
      "Fn::GetAtt": [
-      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
       "Id"
      ]
     }
@@ -1844,7 +1844,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -1987,7 +1987,7 @@
    "Type": "AWS::ECS::Service",
    "Properties": {
     "Cluster": {
-     "Ref": "InsightTuneCluster4B5AF973"
+     "Ref": "InsightTuneClusterE95E4CEF"
     },
     "DeploymentConfiguration": {
      "Alarms": {
@@ -2013,10 +2013,10 @@
       ],
       "Subnets": [
        {
-        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
        },
        {
-        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+        "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
        }
       ]
      }
@@ -2052,7 +2052,7 @@
      ],
      "NamespaceId": {
       "Fn::GetAtt": [
-       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
        "Id"
       ]
      },
@@ -2064,7 +2064,7 @@
     "Name": "rec-sys",
     "NamespaceId": {
      "Fn::GetAtt": [
-      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
       "Id"
      ]
     }
@@ -2085,7 +2085,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -2228,7 +2228,7 @@
    "Type": "AWS::ECS::Service",
    "Properties": {
     "Cluster": {
-     "Ref": "InsightTuneCluster4B5AF973"
+     "Ref": "InsightTuneClusterE95E4CEF"
     },
     "DeploymentConfiguration": {
      "Alarms": {
@@ -2254,10 +2254,10 @@
       ],
       "Subnets": [
        {
-        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
        },
        {
-        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+        "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
        }
       ]
      }
@@ -2293,7 +2293,7 @@
      ],
      "NamespaceId": {
       "Fn::GetAtt": [
-       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
        "Id"
       ]
      },
@@ -2305,7 +2305,7 @@
     "Name": "recommend-service",
     "NamespaceId": {
      "Fn::GetAtt": [
-      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
       "Id"
      ]
     }
@@ -2326,7 +2326,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -2469,7 +2469,7 @@
    "Type": "AWS::ECS::Service",
    "Properties": {
     "Cluster": {
-     "Ref": "InsightTuneCluster4B5AF973"
+     "Ref": "InsightTuneClusterE95E4CEF"
     },
     "DeploymentConfiguration": {
      "Alarms": {
@@ -2495,10 +2495,10 @@
       ],
       "Subnets": [
        {
-        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
        },
        {
-        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+        "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
        }
       ]
      }
@@ -2534,7 +2534,7 @@
      ],
      "NamespaceId": {
       "Fn::GetAtt": [
-       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
        "Id"
       ]
      },
@@ -2546,7 +2546,7 @@
     "Name": "auth-service",
     "NamespaceId": {
      "Fn::GetAtt": [
-      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
       "Id"
      ]
     }
@@ -2567,7 +2567,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -2710,7 +2710,7 @@
    "Type": "AWS::ECS::Service",
    "Properties": {
     "Cluster": {
-     "Ref": "InsightTuneCluster4B5AF973"
+     "Ref": "InsightTuneClusterE95E4CEF"
     },
     "DeploymentConfiguration": {
      "Alarms": {
@@ -2736,10 +2736,10 @@
       ],
       "Subnets": [
        {
-        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
        },
        {
-        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+        "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
        }
       ]
      }
@@ -2775,7 +2775,7 @@
      ],
      "NamespaceId": {
       "Fn::GetAtt": [
-       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
        "Id"
       ]
      },
@@ -2787,7 +2787,7 @@
     "Name": "user-service",
     "NamespaceId": {
      "Fn::GetAtt": [
-      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "InsightTuneClusterDefaultServiceDiscoveryNamespaceAD04552D",
       "Id"
      ]
     }
@@ -2808,7 +2808,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -2963,10 +2963,10 @@
     ],
     "Subnets": [
      {
-      "Ref": "InsightTuneVPCPublicSubnet1Subnet5EE28A79"
+      "Ref": "InsightTuneVPCPublicSubnet1Subnet1C5D0641"
      },
      {
-      "Ref": "InsightTuneVPCPublicSubnet2Subnet5DB9A171"
+      "Ref": "InsightTuneVPCPublicSubnet2SubnetCD83D830"
      }
     ],
     "Type": "application"
@@ -2984,13 +2984,13 @@
     "HistoryServiceCloudmapServiceA75DC4A8",
     "HistoryServiceSecurityGroup64662903",
     "HistoryServiceF59A75C3",
+    "InsightTuneVPCPublicSubnet1DefaultRouteF2843FA6",
+    "InsightTuneVPCPublicSubnet1RouteTableAssociation0B649D24",
+    "InsightTuneVPCPublicSubnet2DefaultRouteAB5B7408",
+    "InsightTuneVPCPublicSubnet2RouteTableAssociationAE6D54B0",
     "PlayingServiceCloudmapService4C4DBA5D",
     "PlayingServiceSecurityGroup39198A15",
-    "PlayingService8BD0AC58",
-    "InsightTuneVPCPublicSubnet1DefaultRoute46F494A8",
-    "InsightTuneVPCPublicSubnet1RouteTableAssociationDED118AB",
-    "InsightTuneVPCPublicSubnet2DefaultRouteCDA83180",
-    "InsightTuneVPCPublicSubnet2RouteTableAssociation1F29A606"
+    "PlayingService8BD0AC58"
    ]
   },
   "APIGatewayServiceLBSecurityGroup8524BFD1": {
@@ -3007,7 +3007,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -3114,7 +3114,7 @@
     ],
     "TargetType": "ip",
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [
@@ -3139,7 +3139,7 @@
    "Type": "AWS::ECS::Service",
    "Properties": {
     "Cluster": {
-     "Ref": "InsightTuneCluster4B5AF973"
+     "Ref": "InsightTuneClusterE95E4CEF"
     },
     "DeploymentConfiguration": {
      "Alarms": {
@@ -3176,10 +3176,10 @@
       ],
       "Subnets": [
        {
-        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet67922459"
        },
        {
-        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+        "Ref": "InsightTuneVPCPrivateSubnet2Subnet9F451B1E"
        }
       ]
      }
@@ -3222,7 +3222,7 @@
      }
     ],
     "VpcId": {
-     "Ref": "InsightTuneVPCED7DBAAA"
+     "Ref": "InsightTuneVPC408FDE8A"
     }
    },
    "DependsOn": [

@@ -108,7 +108,7 @@ fun MusicPlayer(
                     tint = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = "SpoTube",
+                    text = "InsightTune",
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 8.dp),

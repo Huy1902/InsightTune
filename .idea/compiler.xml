@@ -10,8 +10,10 @@
         <module name="eureka-service" />
         <module name="recommend-service" />
         <module name="infrastructure" />
-        <module name="api-gateway" />
         <module name="history-service" />
+        <module name="api-gateway" />
+        <module name="upload-service" />
+        <module name="playing-service" />
       </profile>
       <profile name="Annotation profile for favorite-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -22,25 +24,24 @@
         </processorPath>
         <module name="favorite-service" />
       </profile>
+      <profile name="Annotation profile for insighttune (parent)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="catalog-service" />
+      </profile>
       <profile name="Annotation profile for user-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="auth-service" />
         <module name="user-service" />
-      </profile>
-      <profile name="Annotation profile for spotube (parent)" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-        </processorPath>
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

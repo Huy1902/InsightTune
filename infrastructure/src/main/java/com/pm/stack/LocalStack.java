@@ -42,7 +42,7 @@ public class LocalStack extends Stack {
                     List.of(8761),
                     null,
                     Map.of("EUREKA_CLIENT_FETCHREGISTRY", "false",
-                            "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE","http://eureka-service.spotube.local:8761/eureka/",
+                            "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE","http://eureka-service.insighttune.local:8761/eureka/",
                             "EUREKA_CLIENT_REGISTERWITHEUREKA", "false"));
     FargateService catalogService =
             createFargateService("CatalogService",
@@ -108,7 +108,7 @@ public class LocalStack extends Stack {
   }
 
   private Vpc createVpc() {
-    return Vpc.Builder.create(this, "SpoTubeVPC").vpcName("SpoTubeVPC")
+    return Vpc.Builder.create(this, "InsightTuneVPC").vpcName("InsightTuneVPC")
             .maxAzs(2)
             .build();
   }
@@ -157,10 +157,10 @@ public class LocalStack extends Stack {
   }
 
   private Cluster createEcsCluster() {
-    return Cluster.Builder.create(this, "SpoTubeCluster")
+    return Cluster.Builder.create(this, "InsightTuneCluster")
             .vpc(vpc)
             .defaultCloudMapNamespace(CloudMapNamespaceOptions.builder()
-                    .name("spotube.local").build())
+                    .name("insighttune.local").build())
             .build();
   }
 
@@ -194,7 +194,7 @@ public class LocalStack extends Stack {
             "localhost.localstack.cloud:4512");
     envVars.put(
             "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
-            "http://eureka-service.spotube.local:8761/eureka/"
+            "http://eureka-service.insighttune.local:8761/eureka/"
     );
     if (additionalEnvVars != null) {
       envVars.putAll(additionalEnvVars);
@@ -236,7 +236,7 @@ public class LocalStack extends Stack {
     Map<String, String> envVars = new HashMap<>();
     envVars.put(
             "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
-            "http://eureka-service.spotube.local:8761/eureka/"
+            "http://eureka-service.insighttune.local:8761/eureka/"
     );
 
 

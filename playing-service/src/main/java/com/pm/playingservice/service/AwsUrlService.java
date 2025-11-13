@@ -15,16 +15,16 @@ import java.util.Date;
 @Component
 public class AwsUrlService {
 
-  @Value("${spotube.aws.cloudfront.distributionDomainName}")
+  @Value("${insighttune.aws.cloudfront.distributionDomainName}")
   private String distributionDomainName; // e.g. dxxxx.cloudfront.net
 
-  @Value("${spotube.aws.cloudfront.keypairId}")
+  @Value("${insighttune.aws.cloudfront.keypairId}")
   private String cloudFrontKeyPairId;    // Public key ID from CloudFront (Key Group)
 
-  @Value("${spotube.aws.cloudfront.urlTtlSeconds:604800}")
+  @Value("${insighttune.aws.cloudfront.urlTtlSeconds:604800}")
   private long urlTtlSeconds;
 
-  @Value("${spotube.aws.pvtkeyPath}")
+  @Value("${insighttune.aws.pvtkeyPath}")
   private Resource privateKeyResource;   // DER (PKCS#8) private key
 
   public String getUrl(String objectKey) throws Exception {
