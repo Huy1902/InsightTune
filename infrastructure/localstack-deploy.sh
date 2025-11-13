@@ -16,9 +16,9 @@ if ! aws s3 ls "s3://$BUCKET" >/dev/null 2>&1; then
   aws s3 mb "s3://$BUCKET"
 fi
 
-echo ">> Deploying CloudFormation stack 'spotube'..."
+echo ">> Deploying CloudFormation stack 'insighttune'..."
 aws cloudformation deploy \
-  --stack-name spotube \
+  --stack-name insighttune \
   --template-file "./cdk.out/localstack.template.json" \
   --s3-bucket "$BUCKET" \
   --capabilities CAPABILITY_NAMED_IAM \

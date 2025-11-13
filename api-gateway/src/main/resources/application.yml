@@ -23,7 +23,7 @@ spring:
             response-timeout: 5s
           routes:
                     - id: catalog-service
-                      uri: http://catalog-service.spotube.local:4000
+                      uri: http://catalog-service.insighttune.local:4000
                       predicates:
                         - Path=/tracks/**
                       filters:
@@ -39,7 +39,7 @@ spring:
                             fallbackUri: forward:/__fallback/tracks
 
                     - id: playing-service
-                      uri: http://playing-service.spotube.local:4001
+                      uri: http://playing-service.insighttune.local:4001
                       predicates:
                         - Path=/play/**
                       filters:
@@ -64,62 +64,62 @@ spring:
 #                            fallbackUri: forward:/__fallback/upload
 
                     - id: user-service
-                      uri: http://user-service.spotube.local:4005
+                      uri: http://user-service.insighttune.local:4005
                       predicates:
                         - Path=/users/**
                       filters:
                         - StripPrefix=0
 
                     - id: auth-service-user
-                      uri: http://auth-service.spotube.local:4006
+                      uri: http://auth-service.insighttune.local:4006
                       predicates:
                         - Path=/user/**
                       filters:
                         - StripPrefix=0
 
                     - id: auth-service-auth
-                      uri: http://auth-service.spotube.local:4006
+                      uri: http://auth-service.insighttune.local:4006
                       predicates:
                         - Path=/auth/**
                       filters:
                         - StripPrefix=0
 
                     - id: auth-service-google
-                      uri: http://auth-service.spotube.local:4006
+                      uri: http://auth-service.insighttune.local:4006
                       predicates:
                         - Path=/api/auth/**
                       filters:
                         - StripPrefix=0
 
                     - id: history-service
-                      uri: http://history-service.spotube.local:4003
+                      uri: http://history-service.insighttune.local:4003
                       predicates:
                         - Path=/history/**
                       filters:
                         - StripPrefix=0
 
                     - id: favorite-service
-                      uri: http://favorite-service.spotube.local:4004
+                      uri: http://favorite-service.insighttune.local:4004
                       predicates:
                         - Path=/favorites/**
                       filters:
                         - StripPrefix=0
 
                     - id: recommend-service
-                      uri: http://recommend-service.spotube.local:4008
+                      uri: http://recommend-service.insighttune.local:4008
                       predicates:
                         - Path=/recommend
                       filters:
                         - StripPrefix=0
 
                     - id: docs-catalog
-                      uri: http://catalog-service.spotube.local:4000
+                      uri: http://catalog-service.insighttune.local:4000
                       predicates: [ Path=/_docs/catalog ]
                       filters:
                         - SetPath=/v3/api-docs
 
                     - id: docs-play
-                      uri: http://playing-service.spotube.local:4001
+                      uri: http://playing-service.insighttune.local:4001
                       predicates: [ Path=/_docs/play ]
                       filters:
                         - SetPath=/v3/api-docs
@@ -131,31 +131,31 @@ spring:
 #                        - SetPath=/v3/api-docs
 
                     - id: docs-user
-                      uri: http://user-service.spotube.local:4005
+                      uri: http://user-service.insighttune.local:4005
                       predicates: [ Path=/_docs/user ]
                       filters:
                         - SetPath=/v3/api-docs
 
                     - id: docs-auth
-                      uri: http://auth-service.spotube.local:4006
+                      uri: http://auth-service.insighttune.local:4006
                       predicates: [ Path=/_docs/auth ]
                       filters:
                         - SetPath=/v3/api-docs
 
                     - id: docs-history
-                      uri: http://history-service.spotube.local:4003
+                      uri: http://history-service.insighttune.local:4003
                       predicates: [ Path=/_docs/history ]
                       filters:
                         - SetPath=/v3/api-docs
 
                     - id: docs-favorite
-                      uri: http://favorite-service.spotube.local:4004
+                      uri: http://favorite-service.insighttune.local:4004
                       predicates: [ Path=/_docs/favorite ]
                       filters:
                         - SetPath=/v3/api-docs
 
                     - id: docs-recommend
-                      uri: http://recommend-service.spotube.local:4008
+                      uri: http://recommend-service.insighttune.local:4008
                       predicates: [ Path=/_docs/recommend ]
                       filters:
                         - SetPath=/v3/api-docs

@@ -39,7 +39,7 @@ cd ..
 cd user-service/
 docker build -t user-service:latest .
 
-cd ..
-cd infrastructure/
-chmod +x localstack-deploy.sh
-./localstack-deploy.sh
+#cd ..
+#cd infrastructure/
+#chmod +x localstack-deploy.sh
+#./localstack-deploy.sh

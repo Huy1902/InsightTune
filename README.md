@@ -1,4 +1,4 @@
-# SpoTube
+# InsightTune
 
 This is our project for Mobile Development Course in University of Engineer and Technology
 

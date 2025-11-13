@@ -124,7 +124,7 @@ class MusicService : MediaSessionService() {
     private fun buildNotification(): Notification {
         return NotificationCompat.Builder(this,     CHANNEL_ID)
             .setContentTitle("On playing")
-            .setContentText("SpoTube")
+            .setContentText("InsightTune")
             .setSmallIcon(android.R.drawable.ic_media_play)
             .setOngoing(true)
             .build()
