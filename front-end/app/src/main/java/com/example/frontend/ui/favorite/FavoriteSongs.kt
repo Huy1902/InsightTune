@@ -138,7 +138,8 @@ private fun FavoriteSongItem(
             songName = track.title,
             artistName = artistString,
             coverImageUrl = trackModel.coverImageUrl,
-            onClick = onClick
+            onClick = onClick,
+            modifier = Modifier.weight(1f)
         )
         IconButton(onClick = onRemoveClick) {
             Icon(
