@@ -36,62 +36,46 @@ fun isValidPassword(password: String): Boolean {
 fun CreateNewPassword(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    // var errorMessage by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
 
     val uiState = vm.forgotPasswordState.collectAsState().value
+    LaunchedEffect(Unit) {
+        vm.resetForgotPasswordState()
+    }
     LaunchedEffect(uiState) {
-        when (uiState) {
-            is Resource.Success -> {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.create_new_password_successfully),
-                    Toast.LENGTH_SHORT
-                ).show()
-                errorMessage = null
-                onNext()
-            }
-            is Resource.Error -> {
-                errorMessage = uiState.message
-            }
-            else -> {
-            }
+        if (uiState is Resource.Success) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.create_new_password_successfully),
+                Toast.LENGTH_SHORT
+            ).show()
+            onNext()
         }
     }
     CreateNewPasswordContent(
         password = password,
         onPasswordChange = {
             password = it
-            errorMessage = null
+            if (uiState is Resource.Error) vm.resetForgotPasswordState()
         },
         confirmPassword = confirmPassword,
         onConfirmPasswordChange = {
             confirmPassword = it
-            errorMessage = null
+            if (uiState is Resource.Error) vm.resetForgotPasswordState()
         },
-        errorMessage = errorMessage,
+        uiState = uiState,
         onBackClick = onBack,
         onNextClick = {
             when {
                 !isValidPassword(password) -> {
-                    errorMessage =
-                        context.getString(R.string.register_password_details)
                 }
-
                 password != confirmPassword -> {
-                    errorMessage =
-                        context.getString(R.string.password_do_not_match)
                 }
-
-                uiState is Resource.Error -> {
-                    errorMessage = uiState.message
-                }
-
                 else -> {
-                    errorMessage = null
                     vm.onNewPasswordChange(password)
                     vm.onConfirmNewPasswordChange(confirmPassword)
-                    vm.createNewPassword(onSuccess = onNext)
+                    vm.createNewPassword()
                 }
             }
         },
@@ -105,7 +89,7 @@ fun CreateNewPasswordContent(
     onPasswordChange: (String) -> Unit,
     confirmPassword: String,
     onConfirmPasswordChange: (String) -> Unit,
-    errorMessage: String?,
+    uiState: Resource<*>,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     isLoading: Boolean = false
@@ -205,10 +189,10 @@ fun CreateNewPasswordContent(
             }
         }
 
-        errorMessage?.let {
+        if (uiState is Resource.Error) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                it,
+                uiState.message ?: "Unknown error",
                 fontWeight = FontWeight.Bold,
                 style = AppTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.error,
@@ -220,15 +204,5 @@ fun CreateNewPasswordContent(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun CreateNewPasswordPreview() {
-    AppTheme {
-        CreateNewPasswordContent(
-            password = "password123",
-            onPasswordChange = {},
-            confirmPassword = "password123",
-            onConfirmPasswordChange = {},
-            errorMessage = "Passwords do not match.",
-            onBackClick = {},
-            onNextClick = {}
-        )
-    }
+
 }

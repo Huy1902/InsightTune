@@ -164,7 +164,6 @@ class AuthViewModel(context: Context) : ViewModel() {
     }
 
     fun createNewPassword(
-        onSuccess: () -> Unit
     ) {
         viewModelScope.launch {
             _forgotPasswordState.value = Resource.Loading
@@ -173,7 +172,6 @@ class AuthViewModel(context: Context) : ViewModel() {
                 Log.d("CREATE_NEW_PASSWORD", "Create new password response: ${response.code}")
                 if (response.code == 200) {
                     _forgotPasswordState.value = Resource.Success(response)
-                    onSuccess()
                 } else {
                     _forgotPasswordState.value = Resource.Error(response.message)
                 }
@@ -183,6 +181,10 @@ class AuthViewModel(context: Context) : ViewModel() {
                 _forgotPasswordState.value = Resource.Error(e.message ?: "Unknown error")
             }
         }
+    }
+
+    fun resetForgotPasswordState() {
+        _forgotPasswordState.value = Resource.Idle
     }
 
     fun clearToken() {
