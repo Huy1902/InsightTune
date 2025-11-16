@@ -1,4 +1,4 @@
-package com.example.frontend.ui.login // Hoặc package bạn muốn đặt
+package com.example.frontend.ui.login
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background

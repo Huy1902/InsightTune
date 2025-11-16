@@ -82,8 +82,13 @@ class UserRepositoryImpl(
             return body ?: throw Exception("Empty body")
         } else {
             val errorBody = response.errorBody()?.string()
-            Log.e("REGISTER", "Register failed: code=${response.code()} error=$errorBody")
-            throw Exception("Register failed: ${response.code()} $errorBody")
+            val errorMessage = try {
+                val json = org.json.JSONObject(errorBody ?: "{}")
+                json.optString("message", "HTTP ${response.code()}: ${response.message()}")
+            } catch (e: Exception) {
+                "HTTP ${response.code()}: ${response.message()}"
+            }
+            throw Exception(errorMessage)
         }
     }
 
@@ -229,7 +234,14 @@ class UserRepositoryImpl(
         if (response.isSuccessful) {
             return response.body() ?: throw Exception("Empty response")
         } else {
-            throw Exception("HTTP ${response.code()}: ${response.message()}")
+            val errorBody = response.errorBody()?.string()
+            val errorMessage = try {
+                val json = org.json.JSONObject(errorBody ?: "{}")
+                json.optString("message", "HTTP ${response.code()}: ${response.message()}")
+            } catch (e: Exception) {
+                "HTTP ${response.code()}: ${response.message()}"
+            }
+            throw Exception(errorMessage)
         }
     }
 }

@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.R
+import com.example.frontend.core.Resource
 import com.example.frontend.ui.common.AppTextField
 import com.example.frontend.ui.signup.AuthViewModel
 import com.example.frontend.ui.theme.AppTheme
@@ -38,6 +39,25 @@ fun CreateNewPassword(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
 
+    val uiState = vm.forgotPasswordState.collectAsState().value
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is Resource.Success -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.create_new_password_successfully),
+                    Toast.LENGTH_SHORT
+                ).show()
+                errorMessage = null
+                onNext()
+            }
+            is Resource.Error -> {
+                errorMessage = uiState.message
+            }
+            else -> {
+            }
+        }
+    }
     CreateNewPasswordContent(
         password = password,
         onPasswordChange = {
@@ -63,21 +83,19 @@ fun CreateNewPassword(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit)
                         context.getString(R.string.password_do_not_match)
                 }
 
+                uiState is Resource.Error -> {
+                    errorMessage = uiState.message
+                }
+
                 else -> {
+                    errorMessage = null
                     vm.onNewPasswordChange(password)
                     vm.onConfirmNewPasswordChange(confirmPassword)
-                    vm.createNewPassword {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.create_new_password_successfully), // <-- SỬA LẠI
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    errorMessage = null
-                    onNext()
+                    vm.createNewPassword(onSuccess = onNext)
                 }
             }
-        }
+        },
+        isLoading = uiState is Resource.Loading
     )
 }
 
@@ -89,7 +107,8 @@ fun CreateNewPasswordContent(
     onConfirmPasswordChange: (String) -> Unit,
     errorMessage: String?,
     onBackClick: () -> Unit,
-    onNextClick: () -> Unit
+    onNextClick: () -> Unit,
+    isLoading: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -166,15 +185,24 @@ fun CreateNewPasswordContent(
 
         Button(
             onClick = onNextClick,
+            enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier.height(56.dp)
         ) {
-            Text(
-                stringResource(R.string.confirm),
-                fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    stringResource(R.string.confirm),
+                    fontWeight = FontWeight.Bold,
+                    style = AppTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
         }
 
         errorMessage?.let {
