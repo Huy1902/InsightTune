@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.frontend.core.AppPreferences
 import com.example.frontend.core.Resource
 import com.example.frontend.data.register.AuthResponseDto
+import com.example.frontend.data.register.ForgotPasswordResponse
 import com.example.frontend.data.register.RegisterResponseDto
 import com.example.frontend.data.remote.ApiClient
 import com.example.frontend.data.remote.UserRepositoryImpl
@@ -31,6 +32,10 @@ class AuthViewModel(context: Context) : ViewModel() {
 
     private val _registerState = MutableStateFlow<Resource<RegisterResponseDto>>(Resource.Idle)
     val registerState: StateFlow<Resource<RegisterResponseDto>> = _registerState
+
+    private val _forgotPasswordState = MutableStateFlow<Resource<ForgotPasswordResponse>>(Resource.Idle)
+
+    val forgotPasswordState: StateFlow<Resource<ForgotPasswordResponse>> = _forgotPasswordState
 
 
     var email by mutableStateOf("")
@@ -159,20 +164,27 @@ class AuthViewModel(context: Context) : ViewModel() {
     }
 
     fun createNewPassword(
-        onSuccess: () -> Unit
     ) {
         viewModelScope.launch {
+            _forgotPasswordState.value = Resource.Loading
             try {
                 val response = repo.forgetPassword(otp, email, newPassword, confirmNewPassword)
                 Log.d("CREATE_NEW_PASSWORD", "Create new password response: ${response.code}")
                 if (response.code == 200) {
-                    onSuccess()
+                    _forgotPasswordState.value = Resource.Success(response)
+                } else {
+                    _forgotPasswordState.value = Resource.Error(response.message)
                 }
             } catch (e: Exception) {
                 Log.d("CREATE_NEW_PASSWORD", "Create new password error: ${e.message}")
                 e.printStackTrace()
+                _forgotPasswordState.value = Resource.Error(e.message ?: "Unknown error")
             }
         }
+    }
+
+    fun resetForgotPasswordState() {
+        _forgotPasswordState.value = Resource.Idle
     }
 
     fun clearToken() {

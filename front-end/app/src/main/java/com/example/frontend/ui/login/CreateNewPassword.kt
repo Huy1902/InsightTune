@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.R
+import com.example.frontend.core.Resource
 import com.example.frontend.ui.common.AppTextField
 import com.example.frontend.ui.signup.AuthViewModel
 import com.example.frontend.ui.theme.AppTheme
@@ -35,49 +36,50 @@ fun isValidPassword(password: String): Boolean {
 fun CreateNewPassword(vm: AuthViewModel, onNext: () -> Unit, onBack: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    // var errorMessage by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
 
+    val uiState = vm.forgotPasswordState.collectAsState().value
+    LaunchedEffect(Unit) {
+        vm.resetForgotPasswordState()
+    }
+    LaunchedEffect(uiState) {
+        if (uiState is Resource.Success) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.create_new_password_successfully),
+                Toast.LENGTH_SHORT
+            ).show()
+            onNext()
+        }
+    }
     CreateNewPasswordContent(
         password = password,
         onPasswordChange = {
             password = it
-            errorMessage = null
+            if (uiState is Resource.Error) vm.resetForgotPasswordState()
         },
         confirmPassword = confirmPassword,
         onConfirmPasswordChange = {
             confirmPassword = it
-            errorMessage = null
+            if (uiState is Resource.Error) vm.resetForgotPasswordState()
         },
-        errorMessage = errorMessage,
+        uiState = uiState,
         onBackClick = onBack,
         onNextClick = {
             when {
                 !isValidPassword(password) -> {
-                    errorMessage =
-                        context.getString(R.string.register_password_details)
                 }
-
                 password != confirmPassword -> {
-                    errorMessage =
-                        context.getString(R.string.password_do_not_match)
                 }
-
                 else -> {
                     vm.onNewPasswordChange(password)
                     vm.onConfirmNewPasswordChange(confirmPassword)
-                    vm.createNewPassword {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.create_new_password_successfully), // <-- SỬA LẠI
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    errorMessage = null
-                    onNext()
+                    vm.createNewPassword()
                 }
             }
-        }
+        },
+        isLoading = uiState is Resource.Loading
     )
 }
 
@@ -87,9 +89,10 @@ fun CreateNewPasswordContent(
     onPasswordChange: (String) -> Unit,
     confirmPassword: String,
     onConfirmPasswordChange: (String) -> Unit,
-    errorMessage: String?,
+    uiState: Resource<*>,
     onBackClick: () -> Unit,
-    onNextClick: () -> Unit
+    onNextClick: () -> Unit,
+    isLoading: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -166,21 +169,30 @@ fun CreateNewPasswordContent(
 
         Button(
             onClick = onNextClick,
+            enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier.height(56.dp)
         ) {
-            Text(
-                stringResource(R.string.confirm),
-                fontWeight = FontWeight.Bold,
-                style = AppTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    stringResource(R.string.confirm),
+                    fontWeight = FontWeight.Bold,
+                    style = AppTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
         }
 
-        errorMessage?.let {
+        if (uiState is Resource.Error) {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                it,
+                uiState.message ?: "Unknown error",
                 fontWeight = FontWeight.Bold,
                 style = AppTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.error,
@@ -192,15 +204,5 @@ fun CreateNewPasswordContent(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun CreateNewPasswordPreview() {
-    AppTheme {
-        CreateNewPasswordContent(
-            password = "password123",
-            onPasswordChange = {},
-            confirmPassword = "password123",
-            onConfirmPasswordChange = {},
-            errorMessage = "Passwords do not match.",
-            onBackClick = {},
-            onNextClick = {}
-        )
-    }
+
 }
