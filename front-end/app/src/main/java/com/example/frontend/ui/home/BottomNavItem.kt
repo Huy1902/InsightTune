@@ -1,0 +1,27 @@
+package com.example.frontend.ui.home
+
+import androidx.annotation.StringRes // Thêm import này
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.frontend.R
+
+sealed class BottomNavItem(val route: String, @StringRes val labelResId: Int? = null, val icon: ImageVector? = null) {
+    object Home : BottomNavItem(
+        "home",
+        R.string.home,
+        Icons.Default.Home
+    )
+
+    object Search : BottomNavItem("search", R.string.search, Icons.Default.Search)
+    object Favorites : BottomNavItem("favorites", R.string.playlist, Icons.Default.Favorite)
+    object ChatBot : BottomNavItem("chatbot", R.string.chat_bot, Icons.Default.Chat)
+    object Profile : BottomNavItem("profile", R.string.profile, Icons.Default.AccountCircle)
+
+    object Track : BottomNavItem("track/{trackId}/{urlKey}/{title}/{artist}/{imageKey}")
+}

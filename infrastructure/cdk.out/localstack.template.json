@@ -1,0 +1,3313 @@
+{
+ "Resources": {
+  "InsightTuneVPCED7DBAAA": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "InsightTuneVPC"
+     }
+    ]
+   }
+  },
+  "InsightTuneVPCPublicSubnet1Subnet5EE28A79": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.0.0/18",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "InsightTuneVPCPublicSubnet1RouteTable024EC8F8": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "InsightTuneVPCPublicSubnet1RouteTableAssociationDED118AB": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "InsightTuneVPCPublicSubnet1RouteTable024EC8F8"
+    },
+    "SubnetId": {
+     "Ref": "InsightTuneVPCPublicSubnet1Subnet5EE28A79"
+    }
+   }
+  },
+  "InsightTuneVPCPublicSubnet1DefaultRoute46F494A8": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "InsightTuneVPCIGW4425213E"
+    },
+    "RouteTableId": {
+     "Ref": "InsightTuneVPCPublicSubnet1RouteTable024EC8F8"
+    }
+   },
+   "DependsOn": [
+    "InsightTuneVPCVPCGWD9DD75C4"
+   ]
+  },
+  "InsightTuneVPCPublicSubnet1EIPDF38B558": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PublicSubnet1"
+     }
+    ]
+   }
+  },
+  "InsightTuneVPCPublicSubnet1NATGatewayC78A9862": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "InsightTuneVPCPublicSubnet1EIPDF38B558",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "InsightTuneVPCPublicSubnet1Subnet5EE28A79"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PublicSubnet1"
+     }
+    ]
+   },
+   "DependsOn": [
+    "InsightTuneVPCPublicSubnet1DefaultRoute46F494A8",
+    "InsightTuneVPCPublicSubnet1RouteTableAssociationDED118AB"
+   ]
+  },
+  "InsightTuneVPCPublicSubnet2Subnet5DB9A171": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.64.0/18",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PublicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "InsightTuneVPCPublicSubnet2RouteTableB1B5B325": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PublicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "InsightTuneVPCPublicSubnet2RouteTableAssociation1F29A606": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "InsightTuneVPCPublicSubnet2RouteTableB1B5B325"
+    },
+    "SubnetId": {
+     "Ref": "InsightTuneVPCPublicSubnet2Subnet5DB9A171"
+    }
+   }
+  },
+  "InsightTuneVPCPublicSubnet2DefaultRouteCDA83180": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "InsightTuneVPCIGW4425213E"
+    },
+    "RouteTableId": {
+     "Ref": "InsightTuneVPCPublicSubnet2RouteTableB1B5B325"
+    }
+   },
+   "DependsOn": [
+    "InsightTuneVPCVPCGWD9DD75C4"
+   ]
+  },
+  "InsightTuneVPCPublicSubnet2EIPB49080E0": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PublicSubnet2"
+     }
+    ]
+   }
+  },
+  "InsightTuneVPCPublicSubnet2NATGateway50313DA4": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "InsightTuneVPCPublicSubnet2EIPB49080E0",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "InsightTuneVPCPublicSubnet2Subnet5DB9A171"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PublicSubnet2"
+     }
+    ]
+   },
+   "DependsOn": [
+    "InsightTuneVPCPublicSubnet2DefaultRouteCDA83180",
+    "InsightTuneVPCPublicSubnet2RouteTableAssociation1F29A606"
+   ]
+  },
+  "InsightTuneVPCPrivateSubnet1Subnet44580B19": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.128.0/18",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PrivateSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "InsightTuneVPCPrivateSubnet1RouteTableE3429285": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PrivateSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "InsightTuneVPCPrivateSubnet1RouteTableAssociation79EC27B2": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "InsightTuneVPCPrivateSubnet1RouteTableE3429285"
+    },
+    "SubnetId": {
+     "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+    }
+   }
+  },
+  "InsightTuneVPCPrivateSubnet1DefaultRouteD93BBA3D": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "InsightTuneVPCPublicSubnet1NATGatewayC78A9862"
+    },
+    "RouteTableId": {
+     "Ref": "InsightTuneVPCPrivateSubnet1RouteTableE3429285"
+    }
+   }
+  },
+  "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      1,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "10.0.192.0/18",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PrivateSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "InsightTuneVPCPrivateSubnet2RouteTable923DD509": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "localstack/InsightTuneVPC/PrivateSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "InsightTuneVPCPrivateSubnet2RouteTableAssociation7E0A2C7E": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "InsightTuneVPCPrivateSubnet2RouteTable923DD509"
+    },
+    "SubnetId": {
+     "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+    }
+   }
+  },
+  "InsightTuneVPCPrivateSubnet2DefaultRoute716B1CDE": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "InsightTuneVPCPublicSubnet2NATGateway50313DA4"
+    },
+    "RouteTableId": {
+     "Ref": "InsightTuneVPCPrivateSubnet2RouteTable923DD509"
+    }
+   }
+  },
+  "InsightTuneVPCIGW4425213E": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "InsightTuneVPC"
+     }
+    ]
+   }
+  },
+  "InsightTuneVPCVPCGWD9DD75C4": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "InsightTuneVPCIGW4425213E"
+    },
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "catalogServiceDbSubnetGroup8E7F2140": {
+   "Type": "AWS::RDS::DBSubnetGroup",
+   "Properties": {
+    "DBSubnetGroupDescription": "Subnet group for catalogServiceDb database",
+    "SubnetIds": [
+     {
+      "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+     },
+     {
+      "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+     }
+    ]
+   }
+  },
+  "catalogServiceDbSecurityGroup8153B263": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Security group for catalogServiceDb database",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "localstackcatalogServiceDbSecret45ACE7A23fdaad7efa858a3daf9490cf0a702aeb": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Generated by the CDK for stack: ",
+       {
+        "Ref": "AWS::StackName"
+       }
+      ]
+     ]
+    },
+    "GenerateSecretString": {
+     "ExcludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
+     "GenerateStringKey": "password",
+     "PasswordLength": 30,
+     "SecretStringTemplate": "{\"username\":\"admin\"}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "catalogServiceDbSecretAttachment4556FE29": {
+   "Type": "AWS::SecretsManager::SecretTargetAttachment",
+   "Properties": {
+    "SecretId": {
+     "Ref": "localstackcatalogServiceDbSecret45ACE7A23fdaad7efa858a3daf9490cf0a702aeb"
+    },
+    "TargetId": {
+     "Ref": "catalogServiceDb4D81CF32"
+    },
+    "TargetType": "AWS::RDS::DBInstance"
+   }
+  },
+  "catalogServiceDb4D81CF32": {
+   "Type": "AWS::RDS::DBInstance",
+   "Properties": {
+    "AllocatedStorage": "20",
+    "CopyTagsToSnapshot": true,
+    "DBInstanceClass": "db.t2.micro",
+    "DBName": "catalog-service-db",
+    "DBSubnetGroupName": {
+     "Ref": "catalogServiceDbSubnetGroup8E7F2140"
+    },
+    "Engine": "postgres",
+    "EngineVersion": "17.2",
+    "MasterUserPassword": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "localstackcatalogServiceDbSecret45ACE7A23fdaad7efa858a3daf9490cf0a702aeb"
+       },
+       ":SecretString:password::}}"
+      ]
+     ]
+    },
+    "MasterUsername": "admin",
+    "StorageType": "gp2",
+    "VPCSecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "catalogServiceDbSecurityGroup8153B263",
+       "GroupId"
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "catalogServiceDbHealthCheck": {
+   "Type": "AWS::Route53::HealthCheck",
+   "Properties": {
+    "HealthCheckConfig": {
+     "FailureThreshold": 3,
+     "IPAddress": {
+      "Fn::GetAtt": [
+       "catalogServiceDb4D81CF32",
+       "Endpoint.Address"
+      ]
+     },
+     "Port": {
+      "Fn::GetAtt": [
+       "catalogServiceDb4D81CF32",
+       "Endpoint.Port"
+      ]
+     },
+     "RequestInterval": 30,
+     "Type": "TCP"
+    }
+   }
+  },
+  "MskCluster": {
+   "Type": "AWS::MSK::Cluster",
+   "Properties": {
+    "BrokerNodeGroupInfo": {
+     "BrokerAZDistribution": "DEFAULT",
+     "ClientSubnets": [
+      {
+       "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+      },
+      {
+       "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+      }
+     ],
+     "InstanceType": "kafka.m5.xlarge"
+    },
+    "ClusterName": "kafka-cluster",
+    "KafkaVersion": "3.6.0",
+    "NumberOfBrokerNodes": 2
+   }
+  },
+  "InsightTuneCluster4B5AF973": {
+   "Type": "AWS::ECS::Cluster"
+  },
+  "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952": {
+   "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
+   "Properties": {
+    "Name": "insighttune.local",
+    "Vpc": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   }
+  },
+  "EurekaServiceTaskTaskRoleC6A68C3C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "EurekaServiceTaskD1F7CD9F": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "EUREKA_CLIENT_REGISTERWITHEUREKA",
+        "Value": "false"
+       },
+       {
+        "Name": "SPRING_KAFKA_BOOTSTRAP_SERVERS",
+        "Value": "localhost.localstack.cloud:4510, localhost.localstack.cloud:4511, localhost.localstack.cloud:4512"
+       },
+       {
+        "Name": "EUREKA_CLIENT_FETCHREGISTRY",
+        "Value": "false"
+       },
+       {
+        "Name": "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
+        "Value": "http://eureka-service.insighttune.local:8761/eureka/"
+       }
+      ],
+      "Essential": true,
+      "Image": "eureka-service",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "EurekaServiceLogGroupE13593FE"
+        },
+        "awslogs-stream-prefix": "eureka-service",
+        "awslogs-region": {
+         "Ref": "AWS::Region"
+        }
+       }
+      },
+      "Name": "eureka-serviceContainer",
+      "PortMappings": [
+       {
+        "ContainerPort": 8761,
+        "HostPort": 8761,
+        "Protocol": "tcp"
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "EurekaServiceTaskExecutionRole27F699D1",
+      "Arn"
+     ]
+    },
+    "Family": "localstackEurekaServiceTaskB8E79393",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "EurekaServiceTaskTaskRoleC6A68C3C",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "EurekaServiceTaskExecutionRole27F699D1": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "EurekaServiceTaskExecutionRoleDefaultPolicyA0097A1D": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EurekaServiceLogGroupE13593FE",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EurekaServiceTaskExecutionRoleDefaultPolicyA0097A1D",
+    "Roles": [
+     {
+      "Ref": "EurekaServiceTaskExecutionRole27F699D1"
+     }
+    ]
+   }
+  },
+  "EurekaServiceLogGroupE13593FE": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/eureka-service",
+    "RetentionInDays": 1
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "EurekaService41E45EF4": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "InsightTuneCluster4B5AF973"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "EurekaServiceSecurityGroup056028E5",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       },
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       }
+      ]
+     }
+    },
+    "ServiceName": "eureka-service",
+    "ServiceRegistries": [
+     {
+      "RegistryArn": {
+       "Fn::GetAtt": [
+        "EurekaServiceCloudmapService786D34AE",
+        "Arn"
+       ]
+      }
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "EurekaServiceTaskD1F7CD9F"
+    }
+   },
+   "DependsOn": [
+    "EurekaServiceTaskTaskRoleC6A68C3C"
+   ]
+  },
+  "EurekaServiceCloudmapService786D34AE": {
+   "Type": "AWS::ServiceDiscovery::Service",
+   "Properties": {
+    "DnsConfig": {
+     "DnsRecords": [
+      {
+       "TTL": 60,
+       "Type": "A"
+      }
+     ],
+     "NamespaceId": {
+      "Fn::GetAtt": [
+       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "Id"
+      ]
+     },
+     "RoutingPolicy": "MULTIVALUE"
+    },
+    "HealthCheckCustomConfig": {
+     "FailureThreshold": 1
+    },
+    "Name": "eureka-service",
+    "NamespaceId": {
+     "Fn::GetAtt": [
+      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "Id"
+     ]
+    }
+   },
+   "DependsOn": [
+    "EurekaServiceTaskTaskRoleC6A68C3C"
+   ]
+  },
+  "EurekaServiceSecurityGroup056028E5": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "localstack/EurekaService/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "EurekaServiceTaskTaskRoleC6A68C3C"
+   ]
+  },
+  "CatalogServiceTaskTaskRole211A46E8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "CatalogServiceTask167C217F": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "SPRING_SQL_INIT_MODE",
+        "Value": "always"
+       },
+       {
+        "Name": "SPRING_DATASOURCE_URL",
+        "Value": {
+         "Fn::Join": [
+          "",
+          [
+           "jdbc:postgresql://",
+           {
+            "Fn::GetAtt": [
+             "catalogServiceDb4D81CF32",
+             "Endpoint.Address"
+            ]
+           },
+           ":",
+           {
+            "Fn::GetAtt": [
+             "catalogServiceDb4D81CF32",
+             "Endpoint.Port"
+            ]
+           },
+           "/catalog-service-db"
+          ]
+         ]
+        }
+       },
+       {
+        "Name": "SPRING_DATASOURCE_PASSWORD",
+        "Value": {
+         "Fn::Join": [
+          "",
+          [
+           "{{resolve:secretsmanager:",
+           {
+            "Ref": "catalogServiceDbSecretAttachment4556FE29"
+           },
+           ":SecretString:password::}}"
+          ]
+         ]
+        }
+       },
+       {
+        "Name": "SPRING_JPA_HIBERNATE_DDL_AUTO",
+        "Value": "update"
+       },
+       {
+        "Name": "SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT",
+        "Value": "1000"
+       },
+       {
+        "Name": "SPRING_DATASOURCE_USERNAME",
+        "Value": "admin"
+       },
+       {
+        "Name": "SPRING_KAFKA_BOOTSTRAP_SERVERS",
+        "Value": "localhost.localstack.cloud:4510, localhost.localstack.cloud:4511, localhost.localstack.cloud:4512"
+       },
+       {
+        "Name": "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
+        "Value": "http://eureka-service.insighttune.local:8761/eureka/"
+       }
+      ],
+      "Essential": true,
+      "Image": "catalog-service",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "CatalogServiceLogGroup3BBD07BC"
+        },
+        "awslogs-stream-prefix": "catalog-service",
+        "awslogs-region": {
+         "Ref": "AWS::Region"
+        }
+       }
+      },
+      "Name": "catalog-serviceContainer",
+      "PortMappings": [
+       {
+        "ContainerPort": 4000,
+        "HostPort": 4000,
+        "Protocol": "tcp"
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "CatalogServiceTaskExecutionRole7F336871",
+      "Arn"
+     ]
+    },
+    "Family": "localstackCatalogServiceTask07F5A565",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "CatalogServiceTaskTaskRole211A46E8",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "CatalogServiceTaskExecutionRole7F336871": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "CatalogServiceTaskExecutionRoleDefaultPolicy3449FF04": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "CatalogServiceLogGroup3BBD07BC",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CatalogServiceTaskExecutionRoleDefaultPolicy3449FF04",
+    "Roles": [
+     {
+      "Ref": "CatalogServiceTaskExecutionRole7F336871"
+     }
+    ]
+   }
+  },
+  "CatalogServiceLogGroup3BBD07BC": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/catalog-service",
+    "RetentionInDays": 1
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "CatalogServiceD9F8E450": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "InsightTuneCluster4B5AF973"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "CatalogServiceSecurityGroup4248EE74",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       },
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       }
+      ]
+     }
+    },
+    "ServiceName": "catalog-service",
+    "ServiceRegistries": [
+     {
+      "RegistryArn": {
+       "Fn::GetAtt": [
+        "CatalogServiceCloudmapService11F5F13A",
+        "Arn"
+       ]
+      }
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "CatalogServiceTask167C217F"
+    }
+   },
+   "DependsOn": [
+    "catalogServiceDb4D81CF32",
+    "catalogServiceDbSecretAttachment4556FE29",
+    "localstackcatalogServiceDbSecret45ACE7A23fdaad7efa858a3daf9490cf0a702aeb",
+    "catalogServiceDbSecurityGroup8153B263",
+    "catalogServiceDbSubnetGroup8E7F2140",
+    "catalogServiceDbHealthCheck",
+    "CatalogServiceTaskTaskRole211A46E8",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "MskCluster"
+   ]
+  },
+  "CatalogServiceCloudmapService11F5F13A": {
+   "Type": "AWS::ServiceDiscovery::Service",
+   "Properties": {
+    "DnsConfig": {
+     "DnsRecords": [
+      {
+       "TTL": 60,
+       "Type": "A"
+      }
+     ],
+     "NamespaceId": {
+      "Fn::GetAtt": [
+       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "Id"
+      ]
+     },
+     "RoutingPolicy": "MULTIVALUE"
+    },
+    "HealthCheckCustomConfig": {
+     "FailureThreshold": 1
+    },
+    "Name": "catalog-service",
+    "NamespaceId": {
+     "Fn::GetAtt": [
+      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "Id"
+     ]
+    }
+   },
+   "DependsOn": [
+    "catalogServiceDb4D81CF32",
+    "catalogServiceDbSecretAttachment4556FE29",
+    "localstackcatalogServiceDbSecret45ACE7A23fdaad7efa858a3daf9490cf0a702aeb",
+    "catalogServiceDbSecurityGroup8153B263",
+    "catalogServiceDbSubnetGroup8E7F2140",
+    "catalogServiceDbHealthCheck",
+    "CatalogServiceTaskTaskRole211A46E8",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "MskCluster"
+   ]
+  },
+  "CatalogServiceSecurityGroup4248EE74": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "localstack/CatalogService/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "catalogServiceDb4D81CF32",
+    "catalogServiceDbSecretAttachment4556FE29",
+    "localstackcatalogServiceDbSecret45ACE7A23fdaad7efa858a3daf9490cf0a702aeb",
+    "catalogServiceDbSecurityGroup8153B263",
+    "catalogServiceDbSubnetGroup8E7F2140",
+    "catalogServiceDbHealthCheck",
+    "CatalogServiceTaskTaskRole211A46E8",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "MskCluster"
+   ]
+  },
+  "HistoryServiceTaskTaskRole72029978": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "HistoryServiceTaskF1A39273": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "SPRING_KAFKA_BOOTSTRAP_SERVERS",
+        "Value": "localhost.localstack.cloud:4510, localhost.localstack.cloud:4511, localhost.localstack.cloud:4512"
+       },
+       {
+        "Name": "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
+        "Value": "http://eureka-service.insighttune.local:8761/eureka/"
+       }
+      ],
+      "Essential": true,
+      "Image": "history-service",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "HistoryServiceLogGroupDD5B5572"
+        },
+        "awslogs-stream-prefix": "history-service",
+        "awslogs-region": {
+         "Ref": "AWS::Region"
+        }
+       }
+      },
+      "Name": "history-serviceContainer",
+      "PortMappings": [
+       {
+        "ContainerPort": 4003,
+        "HostPort": 4003,
+        "Protocol": "tcp"
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "HistoryServiceTaskExecutionRoleD0F77844",
+      "Arn"
+     ]
+    },
+    "Family": "localstackHistoryServiceTask2C33D9EE",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "HistoryServiceTaskTaskRole72029978",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "HistoryServiceTaskExecutionRoleD0F77844": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "HistoryServiceTaskExecutionRoleDefaultPolicy680DAA7D": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "HistoryServiceLogGroupDD5B5572",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "HistoryServiceTaskExecutionRoleDefaultPolicy680DAA7D",
+    "Roles": [
+     {
+      "Ref": "HistoryServiceTaskExecutionRoleD0F77844"
+     }
+    ]
+   }
+  },
+  "HistoryServiceLogGroupDD5B5572": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/history-service",
+    "RetentionInDays": 1
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "HistoryServiceF59A75C3": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "InsightTuneCluster4B5AF973"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "HistoryServiceSecurityGroup64662903",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       },
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       }
+      ]
+     }
+    },
+    "ServiceName": "history-service",
+    "ServiceRegistries": [
+     {
+      "RegistryArn": {
+       "Fn::GetAtt": [
+        "HistoryServiceCloudmapServiceA75DC4A8",
+        "Arn"
+       ]
+      }
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "HistoryServiceTaskF1A39273"
+    }
+   },
+   "DependsOn": [
+    "HistoryServiceTaskTaskRole72029978",
+    "MskCluster"
+   ]
+  },
+  "HistoryServiceCloudmapServiceA75DC4A8": {
+   "Type": "AWS::ServiceDiscovery::Service",
+   "Properties": {
+    "DnsConfig": {
+     "DnsRecords": [
+      {
+       "TTL": 60,
+       "Type": "A"
+      }
+     ],
+     "NamespaceId": {
+      "Fn::GetAtt": [
+       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "Id"
+      ]
+     },
+     "RoutingPolicy": "MULTIVALUE"
+    },
+    "HealthCheckCustomConfig": {
+     "FailureThreshold": 1
+    },
+    "Name": "history-service",
+    "NamespaceId": {
+     "Fn::GetAtt": [
+      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "Id"
+     ]
+    }
+   },
+   "DependsOn": [
+    "HistoryServiceTaskTaskRole72029978",
+    "MskCluster"
+   ]
+  },
+  "HistoryServiceSecurityGroup64662903": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "localstack/HistoryService/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "HistoryServiceTaskTaskRole72029978",
+    "MskCluster"
+   ]
+  },
+  "PlayingServiceTaskTaskRole47534433": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "PlayingServiceTaskCDA1D377": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "SPRING_KAFKA_BOOTSTRAP_SERVERS",
+        "Value": "localhost.localstack.cloud:4510, localhost.localstack.cloud:4511, localhost.localstack.cloud:4512"
+       },
+       {
+        "Name": "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
+        "Value": "http://eureka-service.insighttune.local:8761/eureka/"
+       }
+      ],
+      "Essential": true,
+      "Image": "playing-service",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "PlayingServiceLogGroupF6516478"
+        },
+        "awslogs-stream-prefix": "playing-service",
+        "awslogs-region": {
+         "Ref": "AWS::Region"
+        }
+       }
+      },
+      "Name": "playing-serviceContainer",
+      "PortMappings": [
+       {
+        "ContainerPort": 4001,
+        "HostPort": 4001,
+        "Protocol": "tcp"
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "PlayingServiceTaskExecutionRoleE46C3656",
+      "Arn"
+     ]
+    },
+    "Family": "localstackPlayingServiceTask3EB72EB6",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "PlayingServiceTaskTaskRole47534433",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "PlayingServiceTaskExecutionRoleE46C3656": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "PlayingServiceTaskExecutionRoleDefaultPolicy6E2E0173": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "PlayingServiceLogGroupF6516478",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "PlayingServiceTaskExecutionRoleDefaultPolicy6E2E0173",
+    "Roles": [
+     {
+      "Ref": "PlayingServiceTaskExecutionRoleE46C3656"
+     }
+    ]
+   }
+  },
+  "PlayingServiceLogGroupF6516478": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/playing-service",
+    "RetentionInDays": 1
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "PlayingService8BD0AC58": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "InsightTuneCluster4B5AF973"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "PlayingServiceSecurityGroup39198A15",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       },
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       }
+      ]
+     }
+    },
+    "ServiceName": "playing-service",
+    "ServiceRegistries": [
+     {
+      "RegistryArn": {
+       "Fn::GetAtt": [
+        "PlayingServiceCloudmapService4C4DBA5D",
+        "Arn"
+       ]
+      }
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "PlayingServiceTaskCDA1D377"
+    }
+   },
+   "DependsOn": [
+    "PlayingServiceTaskTaskRole47534433"
+   ]
+  },
+  "PlayingServiceCloudmapService4C4DBA5D": {
+   "Type": "AWS::ServiceDiscovery::Service",
+   "Properties": {
+    "DnsConfig": {
+     "DnsRecords": [
+      {
+       "TTL": 60,
+       "Type": "A"
+      }
+     ],
+     "NamespaceId": {
+      "Fn::GetAtt": [
+       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "Id"
+      ]
+     },
+     "RoutingPolicy": "MULTIVALUE"
+    },
+    "HealthCheckCustomConfig": {
+     "FailureThreshold": 1
+    },
+    "Name": "playing-service",
+    "NamespaceId": {
+     "Fn::GetAtt": [
+      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "Id"
+     ]
+    }
+   },
+   "DependsOn": [
+    "PlayingServiceTaskTaskRole47534433"
+   ]
+  },
+  "PlayingServiceSecurityGroup39198A15": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "localstack/PlayingService/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "PlayingServiceTaskTaskRole47534433"
+   ]
+  },
+  "FavoriteServiceTaskTaskRoleD71661B7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "FavoriteServiceTask75461728": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "SPRING_KAFKA_BOOTSTRAP_SERVERS",
+        "Value": "localhost.localstack.cloud:4510, localhost.localstack.cloud:4511, localhost.localstack.cloud:4512"
+       },
+       {
+        "Name": "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
+        "Value": "http://eureka-service.insighttune.local:8761/eureka/"
+       }
+      ],
+      "Essential": true,
+      "Image": "favorite-service",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "FavoriteServiceLogGroup14280D5D"
+        },
+        "awslogs-stream-prefix": "favorite-service",
+        "awslogs-region": {
+         "Ref": "AWS::Region"
+        }
+       }
+      },
+      "Name": "favorite-serviceContainer",
+      "PortMappings": [
+       {
+        "ContainerPort": 4004,
+        "HostPort": 4004,
+        "Protocol": "tcp"
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "FavoriteServiceTaskExecutionRoleD5F00171",
+      "Arn"
+     ]
+    },
+    "Family": "localstackFavoriteServiceTaskD6BA17C5",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "FavoriteServiceTaskTaskRoleD71661B7",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "FavoriteServiceTaskExecutionRoleD5F00171": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "FavoriteServiceTaskExecutionRoleDefaultPolicy2CD833F5": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "FavoriteServiceLogGroup14280D5D",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "FavoriteServiceTaskExecutionRoleDefaultPolicy2CD833F5",
+    "Roles": [
+     {
+      "Ref": "FavoriteServiceTaskExecutionRoleD5F00171"
+     }
+    ]
+   }
+  },
+  "FavoriteServiceLogGroup14280D5D": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/favorite-service",
+    "RetentionInDays": 1
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "FavoriteServiceD79A4207": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "InsightTuneCluster4B5AF973"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "FavoriteServiceSecurityGroup41E8DBFB",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       },
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       }
+      ]
+     }
+    },
+    "ServiceName": "favorite-service",
+    "ServiceRegistries": [
+     {
+      "RegistryArn": {
+       "Fn::GetAtt": [
+        "FavoriteServiceCloudmapServiceE9428A1E",
+        "Arn"
+       ]
+      }
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "FavoriteServiceTask75461728"
+    }
+   },
+   "DependsOn": [
+    "FavoriteServiceTaskTaskRoleD71661B7"
+   ]
+  },
+  "FavoriteServiceCloudmapServiceE9428A1E": {
+   "Type": "AWS::ServiceDiscovery::Service",
+   "Properties": {
+    "DnsConfig": {
+     "DnsRecords": [
+      {
+       "TTL": 60,
+       "Type": "A"
+      }
+     ],
+     "NamespaceId": {
+      "Fn::GetAtt": [
+       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "Id"
+      ]
+     },
+     "RoutingPolicy": "MULTIVALUE"
+    },
+    "HealthCheckCustomConfig": {
+     "FailureThreshold": 1
+    },
+    "Name": "favorite-service",
+    "NamespaceId": {
+     "Fn::GetAtt": [
+      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "Id"
+     ]
+    }
+   },
+   "DependsOn": [
+    "FavoriteServiceTaskTaskRoleD71661B7"
+   ]
+  },
+  "FavoriteServiceSecurityGroup41E8DBFB": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "localstack/FavoriteService/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "FavoriteServiceTaskTaskRoleD71661B7"
+   ]
+  },
+  "RecSysServiceTaskTaskRole364EFE0F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "RecSysServiceTaskE3652AFC": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "SPRING_KAFKA_BOOTSTRAP_SERVERS",
+        "Value": "localhost.localstack.cloud:4510, localhost.localstack.cloud:4511, localhost.localstack.cloud:4512"
+       },
+       {
+        "Name": "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
+        "Value": "http://eureka-service.insighttune.local:8761/eureka/"
+       }
+      ],
+      "Essential": true,
+      "Image": "rec-sys",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "RecSysServiceLogGroup80977868"
+        },
+        "awslogs-stream-prefix": "rec-sys",
+        "awslogs-region": {
+         "Ref": "AWS::Region"
+        }
+       }
+      },
+      "Name": "rec-sysContainer",
+      "PortMappings": [
+       {
+        "ContainerPort": 4007,
+        "HostPort": 4007,
+        "Protocol": "tcp"
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "RecSysServiceTaskExecutionRole80F40233",
+      "Arn"
+     ]
+    },
+    "Family": "localstackRecSysServiceTask0C1F05E5",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "RecSysServiceTaskTaskRole364EFE0F",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "RecSysServiceTaskExecutionRole80F40233": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "RecSysServiceTaskExecutionRoleDefaultPolicyE3B1A1A1": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "RecSysServiceLogGroup80977868",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "RecSysServiceTaskExecutionRoleDefaultPolicyE3B1A1A1",
+    "Roles": [
+     {
+      "Ref": "RecSysServiceTaskExecutionRole80F40233"
+     }
+    ]
+   }
+  },
+  "RecSysServiceLogGroup80977868": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/rec-sys",
+    "RetentionInDays": 1
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "RecSysService0DDCF5D2": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "InsightTuneCluster4B5AF973"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "RecSysServiceSecurityGroupD806E730",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       },
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       }
+      ]
+     }
+    },
+    "ServiceName": "rec-sys",
+    "ServiceRegistries": [
+     {
+      "RegistryArn": {
+       "Fn::GetAtt": [
+        "RecSysServiceCloudmapService2F0F3BBC",
+        "Arn"
+       ]
+      }
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "RecSysServiceTaskE3652AFC"
+    }
+   },
+   "DependsOn": [
+    "RecSysServiceTaskTaskRole364EFE0F"
+   ]
+  },
+  "RecSysServiceCloudmapService2F0F3BBC": {
+   "Type": "AWS::ServiceDiscovery::Service",
+   "Properties": {
+    "DnsConfig": {
+     "DnsRecords": [
+      {
+       "TTL": 60,
+       "Type": "A"
+      }
+     ],
+     "NamespaceId": {
+      "Fn::GetAtt": [
+       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "Id"
+      ]
+     },
+     "RoutingPolicy": "MULTIVALUE"
+    },
+    "HealthCheckCustomConfig": {
+     "FailureThreshold": 1
+    },
+    "Name": "rec-sys",
+    "NamespaceId": {
+     "Fn::GetAtt": [
+      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "Id"
+     ]
+    }
+   },
+   "DependsOn": [
+    "RecSysServiceTaskTaskRole364EFE0F"
+   ]
+  },
+  "RecSysServiceSecurityGroupD806E730": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "localstack/RecSysService/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "RecSysServiceTaskTaskRole364EFE0F"
+   ]
+  },
+  "RecommendServiceTaskTaskRole181BC616": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "RecommendServiceTaskF9ECBE0C": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "SPRING_KAFKA_BOOTSTRAP_SERVERS",
+        "Value": "localhost.localstack.cloud:4510, localhost.localstack.cloud:4511, localhost.localstack.cloud:4512"
+       },
+       {
+        "Name": "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
+        "Value": "http://eureka-service.insighttune.local:8761/eureka/"
+       }
+      ],
+      "Essential": true,
+      "Image": "recommend-service",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "RecommendServiceLogGroup067EA487"
+        },
+        "awslogs-stream-prefix": "recommend-service",
+        "awslogs-region": {
+         "Ref": "AWS::Region"
+        }
+       }
+      },
+      "Name": "recommend-serviceContainer",
+      "PortMappings": [
+       {
+        "ContainerPort": 4008,
+        "HostPort": 4008,
+        "Protocol": "tcp"
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "RecommendServiceTaskExecutionRole6407CDC9",
+      "Arn"
+     ]
+    },
+    "Family": "localstackRecommendServiceTask5A9E4EB9",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "RecommendServiceTaskTaskRole181BC616",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "RecommendServiceTaskExecutionRole6407CDC9": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "RecommendServiceTaskExecutionRoleDefaultPolicyDBE3D448": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "RecommendServiceLogGroup067EA487",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "RecommendServiceTaskExecutionRoleDefaultPolicyDBE3D448",
+    "Roles": [
+     {
+      "Ref": "RecommendServiceTaskExecutionRole6407CDC9"
+     }
+    ]
+   }
+  },
+  "RecommendServiceLogGroup067EA487": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/recommend-service",
+    "RetentionInDays": 1
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "RecommendService021C3014": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "InsightTuneCluster4B5AF973"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "RecommendServiceSecurityGroupBB027FAC",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       },
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       }
+      ]
+     }
+    },
+    "ServiceName": "recommend-service",
+    "ServiceRegistries": [
+     {
+      "RegistryArn": {
+       "Fn::GetAtt": [
+        "RecommendServiceCloudmapService5F59B6EE",
+        "Arn"
+       ]
+      }
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "RecommendServiceTaskF9ECBE0C"
+    }
+   },
+   "DependsOn": [
+    "RecommendServiceTaskTaskRole181BC616"
+   ]
+  },
+  "RecommendServiceCloudmapService5F59B6EE": {
+   "Type": "AWS::ServiceDiscovery::Service",
+   "Properties": {
+    "DnsConfig": {
+     "DnsRecords": [
+      {
+       "TTL": 60,
+       "Type": "A"
+      }
+     ],
+     "NamespaceId": {
+      "Fn::GetAtt": [
+       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "Id"
+      ]
+     },
+     "RoutingPolicy": "MULTIVALUE"
+    },
+    "HealthCheckCustomConfig": {
+     "FailureThreshold": 1
+    },
+    "Name": "recommend-service",
+    "NamespaceId": {
+     "Fn::GetAtt": [
+      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "Id"
+     ]
+    }
+   },
+   "DependsOn": [
+    "RecommendServiceTaskTaskRole181BC616"
+   ]
+  },
+  "RecommendServiceSecurityGroupBB027FAC": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "localstack/RecommendService/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "RecommendServiceTaskTaskRole181BC616"
+   ]
+  },
+  "AuthServiceTaskTaskRoleE466B974": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "AuthServiceTask82E6680D": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "SPRING_KAFKA_BOOTSTRAP_SERVERS",
+        "Value": "localhost.localstack.cloud:4510, localhost.localstack.cloud:4511, localhost.localstack.cloud:4512"
+       },
+       {
+        "Name": "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
+        "Value": "http://eureka-service.insighttune.local:8761/eureka/"
+       }
+      ],
+      "Essential": true,
+      "Image": "auth-service",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "AuthServiceLogGroup34125B38"
+        },
+        "awslogs-stream-prefix": "auth-service",
+        "awslogs-region": {
+         "Ref": "AWS::Region"
+        }
+       }
+      },
+      "Name": "auth-serviceContainer",
+      "PortMappings": [
+       {
+        "ContainerPort": 4006,
+        "HostPort": 4006,
+        "Protocol": "tcp"
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "AuthServiceTaskExecutionRoleA1258495",
+      "Arn"
+     ]
+    },
+    "Family": "localstackAuthServiceTask4114E6CA",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "AuthServiceTaskTaskRoleE466B974",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "AuthServiceTaskExecutionRoleA1258495": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "AuthServiceTaskExecutionRoleDefaultPolicyF20AD0D3": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "AuthServiceLogGroup34125B38",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AuthServiceTaskExecutionRoleDefaultPolicyF20AD0D3",
+    "Roles": [
+     {
+      "Ref": "AuthServiceTaskExecutionRoleA1258495"
+     }
+    ]
+   }
+  },
+  "AuthServiceLogGroup34125B38": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/auth-service",
+    "RetentionInDays": 1
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "AuthService3C2B741A": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "InsightTuneCluster4B5AF973"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "AuthServiceSecurityGroup67F2FA7D",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       },
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       }
+      ]
+     }
+    },
+    "ServiceName": "auth-service",
+    "ServiceRegistries": [
+     {
+      "RegistryArn": {
+       "Fn::GetAtt": [
+        "AuthServiceCloudmapServiceBA6F14E5",
+        "Arn"
+       ]
+      }
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "AuthServiceTask82E6680D"
+    }
+   },
+   "DependsOn": [
+    "AuthServiceTaskTaskRoleE466B974"
+   ]
+  },
+  "AuthServiceCloudmapServiceBA6F14E5": {
+   "Type": "AWS::ServiceDiscovery::Service",
+   "Properties": {
+    "DnsConfig": {
+     "DnsRecords": [
+      {
+       "TTL": 60,
+       "Type": "A"
+      }
+     ],
+     "NamespaceId": {
+      "Fn::GetAtt": [
+       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "Id"
+      ]
+     },
+     "RoutingPolicy": "MULTIVALUE"
+    },
+    "HealthCheckCustomConfig": {
+     "FailureThreshold": 1
+    },
+    "Name": "auth-service",
+    "NamespaceId": {
+     "Fn::GetAtt": [
+      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "Id"
+     ]
+    }
+   },
+   "DependsOn": [
+    "AuthServiceTaskTaskRoleE466B974"
+   ]
+  },
+  "AuthServiceSecurityGroup67F2FA7D": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "localstack/AuthService/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "AuthServiceTaskTaskRoleE466B974"
+   ]
+  },
+  "UserServiceTaskTaskRole3959F240": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "UserServiceTaskCE24C7B8": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "SPRING_KAFKA_BOOTSTRAP_SERVERS",
+        "Value": "localhost.localstack.cloud:4510, localhost.localstack.cloud:4511, localhost.localstack.cloud:4512"
+       },
+       {
+        "Name": "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
+        "Value": "http://eureka-service.insighttune.local:8761/eureka/"
+       }
+      ],
+      "Essential": true,
+      "Image": "user-service",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "UserServiceLogGroupF8D8E736"
+        },
+        "awslogs-stream-prefix": "user-service",
+        "awslogs-region": {
+         "Ref": "AWS::Region"
+        }
+       }
+      },
+      "Name": "user-serviceContainer",
+      "PortMappings": [
+       {
+        "ContainerPort": 4005,
+        "HostPort": 4005,
+        "Protocol": "tcp"
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "UserServiceTaskExecutionRole35E26DAF",
+      "Arn"
+     ]
+    },
+    "Family": "localstackUserServiceTaskF7902988",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "UserServiceTaskTaskRole3959F240",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "UserServiceTaskExecutionRole35E26DAF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "UserServiceTaskExecutionRoleDefaultPolicyFED51482": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "UserServiceLogGroupF8D8E736",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "UserServiceTaskExecutionRoleDefaultPolicyFED51482",
+    "Roles": [
+     {
+      "Ref": "UserServiceTaskExecutionRole35E26DAF"
+     }
+    ]
+   }
+  },
+  "UserServiceLogGroupF8D8E736": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/user-service",
+    "RetentionInDays": 1
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "UserServiceDFC9364A": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "InsightTuneCluster4B5AF973"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "EnableECSManagedTags": false,
+    "LaunchType": "FARGATE",
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "UserServiceSecurityGroupF7F8526C",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       },
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       }
+      ]
+     }
+    },
+    "ServiceName": "user-service",
+    "ServiceRegistries": [
+     {
+      "RegistryArn": {
+       "Fn::GetAtt": [
+        "UserServiceCloudmapService0A0AB4A1",
+        "Arn"
+       ]
+      }
+     }
+    ],
+    "TaskDefinition": {
+     "Ref": "UserServiceTaskCE24C7B8"
+    }
+   },
+   "DependsOn": [
+    "UserServiceTaskTaskRole3959F240"
+   ]
+  },
+  "UserServiceCloudmapService0A0AB4A1": {
+   "Type": "AWS::ServiceDiscovery::Service",
+   "Properties": {
+    "DnsConfig": {
+     "DnsRecords": [
+      {
+       "TTL": 60,
+       "Type": "A"
+      }
+     ],
+     "NamespaceId": {
+      "Fn::GetAtt": [
+       "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+       "Id"
+      ]
+     },
+     "RoutingPolicy": "MULTIVALUE"
+    },
+    "HealthCheckCustomConfig": {
+     "FailureThreshold": 1
+    },
+    "Name": "user-service",
+    "NamespaceId": {
+     "Fn::GetAtt": [
+      "InsightTuneClusterDefaultServiceDiscoveryNamespace618F8952",
+      "Id"
+     ]
+    }
+   },
+   "DependsOn": [
+    "UserServiceTaskTaskRole3959F240"
+   ]
+  },
+  "UserServiceSecurityGroupF7F8526C": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "localstack/UserService/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "UserServiceTaskTaskRole3959F240"
+   ]
+  },
+  "APIGatewayTaskDefinitionTaskRole894A199F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "APIGatewayTaskDefinition199BB1B7": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Environment": [
+       {
+        "Name": "EUREKA_CLIENT_SERVICEURL_DEFAULTZONE",
+        "Value": "http://eureka-service.insighttune.local:8761/eureka/"
+       }
+      ],
+      "Essential": true,
+      "Image": "api-gateway",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "ApiGatewayLogGroupA9770429"
+        },
+        "awslogs-stream-prefix": "api-gateway",
+        "awslogs-region": {
+         "Ref": "AWS::Region"
+        }
+       }
+      },
+      "Name": "APIGatewayContainer",
+      "PortMappings": [
+       {
+        "ContainerPort": 4010,
+        "HostPort": 4010,
+        "Protocol": "tcp"
+       }
+      ]
+     }
+    ],
+    "Cpu": "256",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "APIGatewayTaskDefinitionExecutionRole555CBA21",
+      "Arn"
+     ]
+    },
+    "Family": "localstackAPIGatewayTaskDefinitionF109B4B7",
+    "Memory": "512",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "APIGatewayTaskDefinitionTaskRole894A199F",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "APIGatewayTaskDefinitionExecutionRole555CBA21": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   }
+  },
+  "APIGatewayTaskDefinitionExecutionRoleDefaultPolicy582C1C35": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "ApiGatewayLogGroupA9770429",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "APIGatewayTaskDefinitionExecutionRoleDefaultPolicy582C1C35",
+    "Roles": [
+     {
+      "Ref": "APIGatewayTaskDefinitionExecutionRole555CBA21"
+     }
+    ]
+   }
+  },
+  "ApiGatewayLogGroupA9770429": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/api-gateway",
+    "RetentionInDays": 1
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "APIGatewayServiceLBDA2B7609": {
+   "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+   "Properties": {
+    "LoadBalancerAttributes": [
+     {
+      "Key": "deletion_protection.enabled",
+      "Value": "false"
+     }
+    ],
+    "Scheme": "internet-facing",
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "APIGatewayServiceLBSecurityGroup8524BFD1",
+       "GroupId"
+      ]
+     }
+    ],
+    "Subnets": [
+     {
+      "Ref": "InsightTuneVPCPublicSubnet1Subnet5EE28A79"
+     },
+     {
+      "Ref": "InsightTuneVPCPublicSubnet2Subnet5DB9A171"
+     }
+    ],
+    "Type": "application"
+   },
+   "DependsOn": [
+    "CatalogServiceCloudmapService11F5F13A",
+    "CatalogServiceSecurityGroup4248EE74",
+    "CatalogServiceD9F8E450",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "FavoriteServiceCloudmapServiceE9428A1E",
+    "FavoriteServiceSecurityGroup41E8DBFB",
+    "FavoriteServiceD79A4207",
+    "HistoryServiceCloudmapServiceA75DC4A8",
+    "HistoryServiceSecurityGroup64662903",
+    "HistoryServiceF59A75C3",
+    "PlayingServiceCloudmapService4C4DBA5D",
+    "PlayingServiceSecurityGroup39198A15",
+    "PlayingService8BD0AC58",
+    "InsightTuneVPCPublicSubnet1DefaultRoute46F494A8",
+    "InsightTuneVPCPublicSubnet1RouteTableAssociationDED118AB",
+    "InsightTuneVPCPublicSubnet2DefaultRouteCDA83180",
+    "InsightTuneVPCPublicSubnet2RouteTableAssociation1F29A606"
+   ]
+  },
+  "APIGatewayServiceLBSecurityGroup8524BFD1": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Automatically created Security Group for ELB localstackAPIGatewayServiceLB0192615A",
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow from anyone on port 80",
+      "FromPort": 80,
+      "IpProtocol": "tcp",
+      "ToPort": 80
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "CatalogServiceCloudmapService11F5F13A",
+    "CatalogServiceSecurityGroup4248EE74",
+    "CatalogServiceD9F8E450",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "FavoriteServiceCloudmapServiceE9428A1E",
+    "FavoriteServiceSecurityGroup41E8DBFB",
+    "FavoriteServiceD79A4207",
+    "HistoryServiceCloudmapServiceA75DC4A8",
+    "HistoryServiceSecurityGroup64662903",
+    "HistoryServiceF59A75C3",
+    "PlayingServiceCloudmapService4C4DBA5D",
+    "PlayingServiceSecurityGroup39198A15",
+    "PlayingService8BD0AC58"
+   ]
+  },
+  "APIGatewayServiceLBSecurityGrouptolocalstackAPIGatewayServiceSecurityGroup37054EEE401074FDE5D2": {
+   "Type": "AWS::EC2::SecurityGroupEgress",
+   "Properties": {
+    "Description": "Load balancer to target",
+    "DestinationSecurityGroupId": {
+     "Fn::GetAtt": [
+      "APIGatewayServiceSecurityGroup98F3B93B",
+      "GroupId"
+     ]
+    },
+    "FromPort": 4010,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "APIGatewayServiceLBSecurityGroup8524BFD1",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "ToPort": 4010
+   },
+   "DependsOn": [
+    "CatalogServiceCloudmapService11F5F13A",
+    "CatalogServiceSecurityGroup4248EE74",
+    "CatalogServiceD9F8E450",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "FavoriteServiceCloudmapServiceE9428A1E",
+    "FavoriteServiceSecurityGroup41E8DBFB",
+    "FavoriteServiceD79A4207",
+    "HistoryServiceCloudmapServiceA75DC4A8",
+    "HistoryServiceSecurityGroup64662903",
+    "HistoryServiceF59A75C3",
+    "PlayingServiceCloudmapService4C4DBA5D",
+    "PlayingServiceSecurityGroup39198A15",
+    "PlayingService8BD0AC58"
+   ]
+  },
+  "APIGatewayServiceLBPublicListenerD6FA7F47": {
+   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+   "Properties": {
+    "DefaultActions": [
+     {
+      "TargetGroupArn": {
+       "Ref": "APIGatewayServiceLBPublicListenerECSGroupF9D8CC70"
+      },
+      "Type": "forward"
+     }
+    ],
+    "LoadBalancerArn": {
+     "Ref": "APIGatewayServiceLBDA2B7609"
+    },
+    "Port": 80,
+    "Protocol": "HTTP"
+   },
+   "DependsOn": [
+    "CatalogServiceCloudmapService11F5F13A",
+    "CatalogServiceSecurityGroup4248EE74",
+    "CatalogServiceD9F8E450",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "FavoriteServiceCloudmapServiceE9428A1E",
+    "FavoriteServiceSecurityGroup41E8DBFB",
+    "FavoriteServiceD79A4207",
+    "HistoryServiceCloudmapServiceA75DC4A8",
+    "HistoryServiceSecurityGroup64662903",
+    "HistoryServiceF59A75C3",
+    "PlayingServiceCloudmapService4C4DBA5D",
+    "PlayingServiceSecurityGroup39198A15",
+    "PlayingService8BD0AC58"
+   ]
+  },
+  "APIGatewayServiceLBPublicListenerECSGroupF9D8CC70": {
+   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+   "Properties": {
+    "Port": 80,
+    "Protocol": "HTTP",
+    "TargetGroupAttributes": [
+     {
+      "Key": "stickiness.enabled",
+      "Value": "false"
+     }
+    ],
+    "TargetType": "ip",
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "CatalogServiceCloudmapService11F5F13A",
+    "CatalogServiceSecurityGroup4248EE74",
+    "CatalogServiceD9F8E450",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "FavoriteServiceCloudmapServiceE9428A1E",
+    "FavoriteServiceSecurityGroup41E8DBFB",
+    "FavoriteServiceD79A4207",
+    "HistoryServiceCloudmapServiceA75DC4A8",
+    "HistoryServiceSecurityGroup64662903",
+    "HistoryServiceF59A75C3",
+    "PlayingServiceCloudmapService4C4DBA5D",
+    "PlayingServiceSecurityGroup39198A15",
+    "PlayingService8BD0AC58"
+   ]
+  },
+  "APIGatewayServiceA5206149": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "InsightTuneCluster4B5AF973"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 50
+    },
+    "DesiredCount": 1,
+    "EnableECSManagedTags": false,
+    "HealthCheckGracePeriodSeconds": 60,
+    "LaunchType": "FARGATE",
+    "LoadBalancers": [
+     {
+      "ContainerName": "APIGatewayContainer",
+      "ContainerPort": 4010,
+      "TargetGroupArn": {
+       "Ref": "APIGatewayServiceLBPublicListenerECSGroupF9D8CC70"
+      }
+     }
+    ],
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "APIGatewayServiceSecurityGroup98F3B93B",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet1Subnet44580B19"
+       },
+       {
+        "Ref": "InsightTuneVPCPrivateSubnet2SubnetAB7B9BA9"
+       }
+      ]
+     }
+    },
+    "ServiceName": "api-gateway",
+    "TaskDefinition": {
+     "Ref": "APIGatewayTaskDefinition199BB1B7"
+    }
+   },
+   "DependsOn": [
+    "APIGatewayServiceLBPublicListenerECSGroupF9D8CC70",
+    "APIGatewayServiceLBPublicListenerD6FA7F47",
+    "APIGatewayTaskDefinitionTaskRole894A199F",
+    "CatalogServiceCloudmapService11F5F13A",
+    "CatalogServiceSecurityGroup4248EE74",
+    "CatalogServiceD9F8E450",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "FavoriteServiceCloudmapServiceE9428A1E",
+    "FavoriteServiceSecurityGroup41E8DBFB",
+    "FavoriteServiceD79A4207",
+    "HistoryServiceCloudmapServiceA75DC4A8",
+    "HistoryServiceSecurityGroup64662903",
+    "HistoryServiceF59A75C3",
+    "PlayingServiceCloudmapService4C4DBA5D",
+    "PlayingServiceSecurityGroup39198A15",
+    "PlayingService8BD0AC58"
+   ]
+  },
+  "APIGatewayServiceSecurityGroup98F3B93B": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "localstack/APIGatewayService/Service/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "InsightTuneVPCED7DBAAA"
+    }
+   },
+   "DependsOn": [
+    "APIGatewayTaskDefinitionTaskRole894A199F",
+    "CatalogServiceCloudmapService11F5F13A",
+    "CatalogServiceSecurityGroup4248EE74",
+    "CatalogServiceD9F8E450",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "FavoriteServiceCloudmapServiceE9428A1E",
+    "FavoriteServiceSecurityGroup41E8DBFB",
+    "FavoriteServiceD79A4207",
+    "HistoryServiceCloudmapServiceA75DC4A8",
+    "HistoryServiceSecurityGroup64662903",
+    "HistoryServiceF59A75C3",
+    "PlayingServiceCloudmapService4C4DBA5D",
+    "PlayingServiceSecurityGroup39198A15",
+    "PlayingService8BD0AC58"
+   ]
+  },
+  "APIGatewayServiceSecurityGroupfromlocalstackAPIGatewayServiceLBSecurityGroup32B4CA424010F77DD79E": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "Load balancer to target",
+    "FromPort": 4010,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "APIGatewayServiceSecurityGroup98F3B93B",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "APIGatewayServiceLBSecurityGroup8524BFD1",
+      "GroupId"
+     ]
+    },
+    "ToPort": 4010
+   },
+   "DependsOn": [
+    "APIGatewayTaskDefinitionTaskRole894A199F",
+    "CatalogServiceCloudmapService11F5F13A",
+    "CatalogServiceSecurityGroup4248EE74",
+    "CatalogServiceD9F8E450",
+    "EurekaServiceCloudmapService786D34AE",
+    "EurekaServiceSecurityGroup056028E5",
+    "EurekaService41E45EF4",
+    "FavoriteServiceCloudmapServiceE9428A1E",
+    "FavoriteServiceSecurityGroup41E8DBFB",
+    "FavoriteServiceD79A4207",
+    "HistoryServiceCloudmapServiceA75DC4A8",
+    "HistoryServiceSecurityGroup64662903",
+    "HistoryServiceF59A75C3",
+    "PlayingServiceCloudmapService4C4DBA5D",
+    "PlayingServiceSecurityGroup39198A15",
+    "PlayingService8BD0AC58"
+   ]
+  }
+ },
+ "Outputs": {
+  "APIGatewayServiceLoadBalancerDNS7C7318A3": {
+   "Value": {
+    "Fn::GetAtt": [
+     "APIGatewayServiceLBDA2B7609",
+     "DNSName"
+    ]
+   }
+  },
+  "APIGatewayServiceServiceURL95056890": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "http://",
+      {
+       "Fn::GetAtt": [
+        "APIGatewayServiceLBDA2B7609",
+        "DNSName"
+       ]
+      }
+     ]
+    ]
+   }
+  }
+ }
+}

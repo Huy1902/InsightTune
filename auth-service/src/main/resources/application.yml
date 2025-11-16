@@ -1,0 +1,60 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:auth;DB_CLOSE_DELAY=-1    # DB chạy trong RAM, mỗi lần restart reset
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 707539669485-hvb782jf95k54qogpjmcalbjiiec9nrd.apps.googleusercontent.com
+#            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: email, profile
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # tạo/sync bảng tự động (update, create, create-drop, validate)
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 4006
+
+jwt:
+  signerKey : Q+W+8at86K9vMPRa3ZZEHWOL6wiQzDmNS0X9Wu8omL2h5qgfIIb0oEchMm+v49MP
+
+user-service:
+  create-path: http://user-service.insighttune.local:4005/users/create

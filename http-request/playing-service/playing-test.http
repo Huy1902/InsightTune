@@ -1,0 +1,30 @@
+
+### ----------------------------------------------------------------
+### Variables (edit these)
+### ----------------------------------------------------------------
+@baseUrl = http://localhost:4001
+@trackId = 1
+
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyXzAwMDAwMSIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NTgzNTQ0MjksImV4cCI6MTc1ODM1ODAyOX0.aaDsbQNtjcqqoiYOhdsGrIk-gncMBTjxDG94tLL6dCY
+### ----------------------------------------------------------------
+### 1) Get signed CloudFront URL for a track
+### ----------------------------------------------------------------
+# @name PlaySignedUrl
+POST {{baseUrl}}/play
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "track_key": "{{trackId}}"
+}
+
+### ----------------------------------------------------------------
+### 2) Negative test: missing/invalid token should be 401/403
+### ----------------------------------------------------------------
+# @name PlayUnauthorized
+POST {{baseUrl}}/play
+Content-Type: application/json
+
+{
+  "track_id": "{{trackId}}"
+}

@@ -1,0 +1,192 @@
+server:
+  port: 4010
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-service:8761/eureka/
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
+
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: 2000
+            response-timeout: 5s
+          routes:
+                    - id: catalog-service
+                      uri: http://catalog-service.insighttune.local:4000
+                      predicates:
+                        - Path=/tracks/**
+                      filters:
+                        - StripPrefix=0
+                        - name: Retry
+                          args:
+                            retries: 2
+                            methods: GET
+                            series: SERVER_ERROR
+                        - name: CircuitBreaker
+                          args:
+                            name: tracksCB
+                            fallbackUri: forward:/__fallback/tracks
+
+                    - id: playing-service
+                      uri: http://playing-service.insighttune.local:4001
+                      predicates:
+                        - Path=/play/**
+                      filters:
+                        - StripPrefix=0
+                        - name: CircuitBreaker
+                          args:
+                            name: playCB
+                            fallbackUri: forward:/__fallback/play
+
+#                    - id: upload-service
+#                      uri: lb://upload-service
+#                      predicates:
+#                        - Path=/upload/**
+#                      filters:
+#                        - StripPrefix=0
+#                        - name: RequestSize
+#                          args:
+#                            maxSize: 50MB
+#                        - name: CircuitBreaker
+#                          args:
+#                            name: uploadCB
+#                            fallbackUri: forward:/__fallback/upload
+
+                    - id: user-service
+                      uri: http://user-service.insighttune.local:4005
+                      predicates:
+                        - Path=/users/**
+                      filters:
+                        - StripPrefix=0
+
+                    - id: auth-service-user
+                      uri: http://auth-service.insighttune.local:4006
+                      predicates:
+                        - Path=/user/**
+                      filters:
+                        - StripPrefix=0
+
+                    - id: auth-service-auth
+                      uri: http://auth-service.insighttune.local:4006
+                      predicates:
+                        - Path=/auth/**
+                      filters:
+                        - StripPrefix=0
+
+                    - id: auth-service-google
+                      uri: http://auth-service.insighttune.local:4006
+                      predicates:
+                        - Path=/api/auth/**
+                      filters:
+                        - StripPrefix=0
+
+                    - id: history-service
+                      uri: http://history-service.insighttune.local:4003
+                      predicates:
+                        - Path=/history/**
+                      filters:
+                        - StripPrefix=0
+
+                    - id: favorite-service
+                      uri: http://favorite-service.insighttune.local:4004
+                      predicates:
+                        - Path=/favorites/**
+                      filters:
+                        - StripPrefix=0
+
+                    - id: recommend-service
+                      uri: http://recommend-service.insighttune.local:4008
+                      predicates:
+                        - Path=/recommend
+                      filters:
+                        - StripPrefix=0
+
+                    - id: docs-catalog
+                      uri: http://catalog-service.insighttune.local:4000
+                      predicates: [ Path=/_docs/catalog ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-play
+                      uri: http://playing-service.insighttune.local:4001
+                      predicates: [ Path=/_docs/play ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+#                    - id: docs-upload
+#                      uri: lb://upload-service
+#                      predicates: [ Path=/_docs/upload ]
+#                      filters:
+#                        - SetPath=/v3/api-docs
+
+                    - id: docs-user
+                      uri: http://user-service.insighttune.local:4005
+                      predicates: [ Path=/_docs/user ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-auth
+                      uri: http://auth-service.insighttune.local:4006
+                      predicates: [ Path=/_docs/auth ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-history
+                      uri: http://history-service.insighttune.local:4003
+                      predicates: [ Path=/_docs/history ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-favorite
+                      uri: http://favorite-service.insighttune.local:4004
+                      predicates: [ Path=/_docs/favorite ]
+                      filters:
+                        - SetPath=/v3/api-docs
+
+                    - id: docs-recommend
+                      uri: http://recommend-service.insighttune.local:4008
+                      predicates: [ Path=/_docs/recommend ]
+                      filters:
+                        - SetPath=/v3/api-docs
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials RETAIN_FIRST
+            - RemoveRequestHeader=Host
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                          allowedOrigins: "*"
+                          allowedMethods: "*"
+                          allowedHeaders: "*"
+                          allowCredentials: false
+
+springdoc:
+  swagger-ui:
+    path: /docs
+    urls:
+      - name: Catalog Service
+        url: /_docs/catalog
+      - name: Playing Service
+        url: /_docs/play
+      - name: Upload Service
+        url: /_docs/upload
+      - name: User Service
+        url: /_docs/user
+      - name: Auth Service
+        url: /_docs/auth
+      - name: History Service
+        url: /_docs/history
+      - name: Favorite Service
+        url: /_docs/favorite
+      - name: Recommend Service
+        url: /_docs/recommend
