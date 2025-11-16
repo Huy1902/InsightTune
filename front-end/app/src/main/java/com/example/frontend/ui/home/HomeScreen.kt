@@ -344,8 +344,8 @@ fun HomeScreenContent(
         Spacer(modifier = Modifier.size(10.dp))
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 80.dp),
+                .fillMaxSize(),
+                //.padding(bottom = 80.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (isLoading) {

@@ -23,7 +23,7 @@ object ApiClient {
 
     private val mainClient by lazy {
         OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(prefs) { refreshAuthApi }) // Sửa ở đây
+            .addInterceptor(AuthInterceptor(prefs) { refreshAuthApi })
             .connectTimeout(100, TimeUnit.SECONDS)
             .readTimeout(100, TimeUnit.SECONDS)
             .writeTimeout(100, TimeUnit.SECONDS)
@@ -70,7 +70,7 @@ object ApiClient {
     private val refreshAuthApi: AuthApi by lazy {
         Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
-            .client(refreshClient) // ✅ client riêng, không interceptor
+            .client(refreshClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(AuthApi::class.java)
