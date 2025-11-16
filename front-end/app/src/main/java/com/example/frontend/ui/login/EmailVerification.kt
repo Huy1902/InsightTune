@@ -114,6 +114,7 @@ fun OtpScreenContent(
             Text(
                 stringResource(R.string.email_verification),
                 style = AppTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.Center)
             )
@@ -122,6 +123,7 @@ fun OtpScreenContent(
         Text(
             stringResource(R.string.enter_otp),
             style = AppTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(AppTheme.spacing().M))
